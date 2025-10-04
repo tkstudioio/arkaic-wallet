@@ -1,0 +1,48 @@
+import { ArkaicPayment } from "@/components/types/arkaic";
+import { BitcoinLayer } from "@/components/types/common";
+import { get, replace, split, startsWith, toNumber, toString } from "lodash";
+import QueryString from "qs";
+
+export function parserBIP21Address(address: string): ArkaicPayment | undefined {
+  console.log(address);
+  if (
+    startsWith(address, "bc1") ||
+    startsWith(address, "tb1") ||
+    startsWith(address, "bcrt1")
+  ) {
+    return {
+      layer: BitcoinLayer.Onchain,
+      address: address,
+    };
+  }
+
+  if (startsWith(address, "tark1")) {
+    return {
+      layer: BitcoinLayer.Ark,
+      address,
+    };
+  }
+
+  if (!startsWith(address, "bitcoin:")) return;
+
+  const [onchainAddress, params] = split(replace(address, "bitcoin:", ""), "?");
+  const parsedParams = QueryString.parse(params);
+
+  const parsedAmount = get(parsedParams, "amount", undefined);
+  const arkAddress = get(parsedParams, "ark", undefined);
+  const amount = toNumber(replace(toString(parsedAmount), ".", ""));
+
+  if (!arkAddress) {
+    return {
+      layer: BitcoinLayer.Onchain,
+      address: onchainAddress,
+      amount,
+    };
+  }
+
+  return {
+    layer: BitcoinLayer.Ark,
+    address: toString(arkAddress),
+    amount,
+  };
+}

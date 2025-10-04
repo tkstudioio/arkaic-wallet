@@ -1,0 +1,66 @@
+import * as Crypto from "expo-crypto";
+
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import "@/global.css";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+
+if (!global.crypto) global.crypto = {} as any;
+// @ts-expect-error
+global.crypto.getRandomValues = Crypto.getRandomValues;
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <GluestackUIProvider mode='dark'>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen
+            name='index'
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='create-profile/index'
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='dashboard/index'
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='dashboard/onboard-funds/index'
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='dashboard/receive/index'
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='dashboard/send/index'
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+        <StatusBar style='auto' />
+      </ThemeProvider>
+    </GluestackUIProvider>
+  );
+}
