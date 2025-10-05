@@ -24,7 +24,7 @@ export function OnchainBalance() {
         .with({ isSuccess: true }, ({ data }) => (
           <Card variant={"ghost"} className={"aspect-video"}>
             <VStack space={"lg"} className='items-center my-auto'>
-              {data.boarding.confirmed && <Text>Onchain funds</Text>}
+              {data.boarding.confirmed ? <Text>Onchain funds</Text> : null}
               <Badge action={"info"}>
                 <BadgeText>Onchain wallet</BadgeText>
               </Badge>
@@ -34,14 +34,14 @@ export function OnchainBalance() {
                     ? Intl.NumberFormat("it-IT").format(data.boarding.confirmed)
                     : "no funds"}
                 </Heading>
-                {data.boarding.confirmed && <Text>SATS</Text>}
+                {data.boarding.confirmed ? <Text>SATS</Text> : null}
               </HStack>
               {match(onboardUtxos)
                 .with({ isPending: true }, () => <Spinner />)
                 .with({ isError: true }, () => (
                   <Text>Error onboarding funds</Text>
                 ))
-                .with({ isSuccess: true }, ({ mutate }) => (
+                .with({ isSuccess: true }, () => (
                   <Button
                     onPress={() => router.replace("/dashboard")}
                     variant={"link"}
@@ -68,8 +68,6 @@ export function OnchainBalance() {
                 )
                 .otherwise(() => null)}
             </VStack>
-
-            <HStack className='justify-around'>{/*  */}</HStack>
           </Card>
         ))
         .with({ isLoading: true }, () => <Spinner />)
