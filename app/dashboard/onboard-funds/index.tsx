@@ -48,10 +48,6 @@ function WaitingOnboardTransactionsList() {
       <Text>Error fetching waiting onboard transactions</Text>
     ))
     .with({ isSuccess: true }, ({ data: onboardingTransactions }) => {
-      if (isEmpty(onboardingTransactions)) {
-        return <Heading size='xl'>No transactions waiting onboard</Heading>;
-      }
-
       const waitingOnboard = filter(
         onboardingTransactions,
         (transaction: ArkTransaction) => transaction.settled
@@ -147,72 +143,4 @@ function WaitingOnboardTransactionsList() {
     })
 
     .otherwise(() => null);
-
-  // return match(waitingOnboardTransactions)
-  //   .with({ isSuccess: true }, ({ data: onboardingTransactions }) => {
-  //     if (isEmpty(onboardingTransactions)) {
-  //       return (
-  //         <View>
-  //           <Card className='gap-6' variant='ghost'>
-  //             <View>
-  //               <View className='flex items-center gap-3'>
-  //                 <Heading size='xl'>No transactions waiting onboard</Heading>
-  //                 <Button variant='link' onPress={() => router.back()}>
-  //                   <ArrowLeft />
-  //                   <ButtonText>Go back</ButtonText>
-  //                 </Button>
-  //               </View>
-  //             </View>
-  //           </Card>
-  //         </View>
-  //       );
-  //     }
-
-  //     return (
-  //       <View>
-  //         <Card className='gap-6'>
-  //           <View>
-  //             <Text>Ready to onboard</Text>
-  //             <View className='flex flex-row items-baseline gap-1'>
-  //               <Heading size='3xl'>
-  //                 {Intl.NumberFormat("it").format(
-  //                   get(balance?.boarding, "confirmed", 0)
-  //                 )}
-  //               </Heading>
-  //               <Text>SATS</Text>
-  //             </View>
-  //           </View>
-  //           <Divider />
-  //           <View>
-  //             <View>
-  //               {map(onboardingTransactions, (transaction) => (
-  //                 <TransactionRow
-  //                   key={transaction.key.boardingTxid}
-  //                   transaction={transaction}
-  //                 />
-  //               ))}
-  //             </View>
-  //           </View>
-
-  //           {match(onboardUtxos)
-  //             .with({ isSuccess: true }, () => <Text>Funds onboarded</Text>)
-  //             .with({ isPending: true }, () => <Spinner />)
-  //             .with({ isError: true }, () => (
-  //               <Text>Error onboarding funds</Text>
-  //             ))
-  //             .otherwise(({ mutate: onboardUtxos }) => (
-  //               <Button onPress={() => onboardUtxos()}>
-  //                 <ButtonText>Onboard all funds</ButtonText>
-  //               </Button>
-  //             ))}
-  //         </Card>
-  //       </View>
-  //     );
-  //   })
-
-  //   .with({ isPending: true }, () => <Spinner />)
-  //   .with({ isError: true }, () => (
-  //     <Text>Error fetching waiting onboard transactions</Text>
-  //   ))
-  //   .otherwise(() => null);
 }

@@ -11,7 +11,7 @@ import { Image, TouchableOpacity } from "react-native";
 import { match } from "ts-pattern";
 import { ArkaicProfile } from "../types/arkaic";
 import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
-import { Button, ButtonIcon, ButtonText } from "../ui/button";
+import { Button, ButtonIcon } from "../ui/button";
 import { Card } from "../ui/card";
 import { HStack } from "../ui/hstack";
 import { Text } from "../ui/text";
@@ -38,20 +38,18 @@ export function ProfilesList() {
   }
 
   return (
-    <>
-      <Heading>Account</Heading>
-
-      {match(profilesQuery)
-        .with({ isSuccess: true }, ({ data: profiles }) =>
-          map(profiles, (profile, idx) => {
-            return (
-              <TouchableOpacity
-                key={idx}
-                onPress={() => {
-                  onAccountSelect(profile);
-                }}
-              >
-                <Card>
+    <Card className='gap-6 w-full'>
+      <VStack space={"4xl"}>
+        {match(profilesQuery)
+          .with({ isSuccess: true }, ({ data: profiles }) =>
+            map(profiles, (profile, idx) => {
+              return (
+                <TouchableOpacity
+                  key={idx}
+                  onPress={() => {
+                    onAccountSelect(profile);
+                  }}
+                >
                   <HStack space={"sm"} className='items-center'>
                     <Avatar>
                       <AvatarImage source={{ uri: profile.avatar }} />
@@ -71,20 +69,14 @@ export function ProfilesList() {
                       <ButtonIcon as={Trash} />
                     </Button>
                   </HStack>
-                </Card>
-              </TouchableOpacity>
-            );
-          })
-        )
-        .otherwise(() => (
-          <Text>Error</Text>
-        ))}
-      <Button
-        onPress={() => router.replace("/create-profile")}
-        variant={"outline"}
-      >
-        <ButtonText>Create new profile</ButtonText>
-      </Button>
-    </>
+                </TouchableOpacity>
+              );
+            })
+          )
+          .otherwise(() => (
+            <Text>Error</Text>
+          ))}
+      </VStack>
+    </Card>
   );
 }

@@ -9,9 +9,9 @@ export default function AppLayout(props: PropsWithChildren) {
   const client = new QueryClient();
   return (
     <QueryClientProvider client={client}>
-      <ScrollView className='px-6 pt-20 pb-24'>
+      <ScrollView className='px-6 pt-20 pb-24 '>
         <VStack space={"xl"}>
-          <View className='mb-3 flex-row justify-between items-end w-full  '>
+          <View className='mb-3 flex-row justify-between items-end'>
             <LogoFull
               height={32}
               width={128}
