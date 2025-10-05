@@ -7,17 +7,32 @@ import { TxType } from "@arkade-os/sdk";
 import { useTheme } from "@react-navigation/native";
 
 import { useTransactionsHistory } from "@/hooks/use-transactions-history";
+import useProfileStore from "@/stores/wallet";
+import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { isEmpty, map } from "lodash";
 import { Minus, Plus } from "lucide-react-native";
+import { useEffect } from "react";
 import { match } from "ts-pattern";
 import { HStack } from "../ui/hstack";
 import { VStack } from "../ui/vstack";
 
 export function TransactionsHistory() {
   const { colors } = useTheme();
+  const { wallet } = useProfileStore();
+  const queryClient = useQueryClient();
 
   const transactionsHistoryQuery = useTransactionsHistory();
+
+  function refreshBalanceAndTransactions() {
+    queryClient.invalidateQueries({ queryKey: ["balance"] });
+    queryClient.invalidateQueries({ queryKey: ["transactions-history"] });
+  }
+
+  useEffect(() => {
+    if (!wallet) return;
+    wallet.notifyIncomingFunds(refreshBalanceAndTransactions);
+  }, []);
 
   return (
     <Card>
@@ -34,9 +49,15 @@ export function TransactionsHistory() {
               <HStack key={idx} className='items-start justify-between'>
                 <VStack>
                   <Heading size={"sm"}>
-                    {format(transaction.createdAt, "dd/MM/yyyy")}
+                    {transaction.createdAt ? (
+                      format(transaction.createdAt, "dd/MM/yyyy")
+                    ) : (
+                      <Spinner />
+                    )}
                   </Heading>
-                  <Text>{format(transaction.createdAt, "HH:mm")}</Text>
+                  {transaction.createdAt && (
+                    <Text>{format(transaction.createdAt, "HH:mm")}</Text>
+                  )}
                 </VStack>
                 <HStack space={"xs"} className='items-center justify-end '>
                   {transaction.type === TxType.TxReceived ? (
