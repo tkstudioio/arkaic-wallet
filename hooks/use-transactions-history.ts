@@ -7,7 +7,6 @@ export function useTransactionsHistory() {
     queryKey: ["transactions-history"],
     queryFn: () => {
       if (!wallet) throw new Error("missing wallet");
-      console.log("fetcho");
       return wallet?.getTransactionHistory();
     },
     refetchOnMount: true,
