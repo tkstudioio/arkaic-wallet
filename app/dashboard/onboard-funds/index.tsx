@@ -62,8 +62,6 @@ function WaitingOnboardTransactionsList() {
         (transaction: ArkTransaction) => !transaction.settled
       );
 
-      console.log(waitingConfirmation);
-
       return (
         <VStack space={"4xl"}>
           {!isEmpty(waitingOnboard) ? (
