@@ -1,9 +1,9 @@
+import LogoFull from "@/components/icons/logo";
+import { Button } from "@/components/ui/button";
+import { VStack } from "@/components/ui/vstack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { ScrollView, View } from "react-native";
-import LogoFull from "../icons/logo";
-import { Button } from "../ui/button";
-import { VStack } from "../ui/vstack";
 
 export default function AppLayout(props: PropsWithChildren) {
   const client = new QueryClient();

@@ -1,4 +1,4 @@
-import CreateProfileForm from "@/components/create-profile";
+import CreateProfileForm from "@/components/create-profile-form";
 import AppLayout from "@/components/layout/app";
 
 export default function CreateProfilePage() {

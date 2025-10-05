@@ -1,5 +1,5 @@
-import { ArkaicProfile } from "@/components/types/arkaic";
 import useProfileStore, { StorageKeys } from "@/stores/profile";
+import { ArkaicProfile } from "@/types/arkaic";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";

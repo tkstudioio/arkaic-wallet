@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { ExternalLink, PlaneTakeoff } from "lucide-react-native";
 import { View } from "react-native";
 import { match } from "ts-pattern";
+import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { Card } from "./ui/card";
 import { Heading } from "./ui/heading";
@@ -12,7 +13,7 @@ import { HStack } from "./ui/hstack";
 import { Spinner } from "./ui/spinner";
 import { VStack } from "./ui/vstack";
 
-export function OnchainBalanceComponent() {
+export function OnchainBalance() {
   const balanceQuery = useBalance();
   const router = useRouter();
   const onboardUtxos = useOnboardUtxos();
@@ -24,7 +25,9 @@ export function OnchainBalanceComponent() {
           <Card variant={"ghost"} className={"aspect-video"}>
             <VStack space={"lg"} className='items-center my-auto'>
               {data.boarding.confirmed && <Text>Onchain funds</Text>}
-
+              <Badge action={"info"}>
+                <BadgeText>Onchain wallet</BadgeText>
+              </Badge>
               <HStack className='items-baseline' space={"sm"}>
                 <Heading size='4xl'>
                   {data.boarding.confirmed

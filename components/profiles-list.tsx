@@ -1,21 +1,25 @@
 import { Heading } from "@/components/ui/heading";
 import useProfileStore from "@/stores/profile";
 
+import {
+  Avatar,
+  AvatarFallbackText,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { Button, ButtonIcon } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { HStack } from "@/components/ui/hstack";
+import { Text } from "@/components/ui/text";
+import { VStack } from "@/components/ui/vstack";
 import { useDeleteProfile } from "@/hooks/use-delete-profile";
 import { useProfiles } from "@/hooks/use-profiles";
+import { ArkaicProfile } from "@/types/arkaic";
 import { useRouter } from "expo-router";
 import { map } from "lodash";
 import { Trash } from "lucide-react-native";
 import { useEffect } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { match } from "ts-pattern";
-import { ArkaicProfile } from "../types/arkaic";
-import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
-import { Button, ButtonIcon } from "../ui/button";
-import { Card } from "../ui/card";
-import { HStack } from "../ui/hstack";
-import { Text } from "../ui/text";
-import { VStack } from "../ui/vstack";
 
 export function ProfilesList() {
   const router = useRouter();

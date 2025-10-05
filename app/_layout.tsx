@@ -19,7 +19,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <GluestackUIProvider mode='dark'>
+    <GluestackUIProvider mode='system'>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen
@@ -29,7 +29,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name='create-profile/index'
+            name='create-profile'
             options={{
               headerShown: false,
             }}
@@ -41,19 +41,19 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name='dashboard/onboard-funds/index'
+            name='dashboard/onchain'
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
-            name='dashboard/receive/index'
+            name='dashboard/receive'
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
-            name='dashboard/send/index'
+            name='dashboard/send'
             options={{
               headerShown: false,
             }}

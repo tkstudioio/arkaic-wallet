@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/app";
-import { ProfilesList } from "@/components/profiles/profile-list";
+import { ProfilesList } from "@/components/profiles-list";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { VStack } from "@/components/ui/vstack";

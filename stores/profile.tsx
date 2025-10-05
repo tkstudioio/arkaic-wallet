@@ -11,7 +11,7 @@ import {
   ExpoIndexerProvider,
 } from "@arkade-os/sdk/adapters/expo";
 
-import { ArkaicProfile } from "@/components/types/arkaic";
+import { ArkaicProfile } from "@/types/arkaic";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { filter, find } from "lodash";
 

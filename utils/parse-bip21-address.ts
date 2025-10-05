@@ -1,5 +1,5 @@
-import { ArkaicPayment } from "@/components/types/arkaic";
-import { BitcoinLayer } from "@/components/types/common";
+import { ArkaicPayment } from "@/types/arkaic";
+import { BitcoinLayer } from "@/types/common";
 import { get, replace, split, startsWith, toNumber, toString } from "lodash";
 import QueryString from "qs";
 

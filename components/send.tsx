@@ -1,5 +1,9 @@
-// import { Card } from "../ui/card";
+// import { Card } from "@/components/ui/card";
 
+import { Button, ButtonText } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Heading } from "@/components/ui/heading";
+import { Input, InputField } from "@/components/ui/input";
 import {
   Modal,
   ModalBackdrop,
@@ -8,15 +12,12 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@/components/ui/modal";
+import { Text } from "@/components/ui/text";
 import { useTheme } from "@react-navigation/native";
 import { Camera, QrCode, Send } from "lucide-react-native";
 import React, { useState } from "react";
-import { Button, ButtonText } from "../ui/button";
-import { Card } from "../ui/card";
-import { Heading } from "../ui/heading";
-import { Input, InputField } from "../ui/input";
-import { Text } from "../ui/text";
 
+import { Spinner } from "@/components/ui/spinner";
 import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
 import { parserBIP21Address } from "@/utils/parse-bip21-address";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -25,7 +26,6 @@ import { toNumber, toString } from "lodash";
 import { View } from "react-native";
 import { match } from "ts-pattern";
 import { ArkaicPayment } from "../types/arkaic";
-import { Spinner } from "../ui/spinner";
 
 export function SendComponent() {
   const { colors } = useTheme();

@@ -1,6 +1,6 @@
 import { HandCoins, LayoutDashboard, View } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Button, ButtonIcon, ButtonText } from "../ui/button";
+import { Button, ButtonIcon, ButtonText } from "./ui/button";
 
 import {
   Actionsheet,
@@ -17,11 +17,11 @@ import { useRouter } from "expo-router";
 import { map, toString } from "lodash";
 import QRCode from "react-native-qrcode-skia";
 import { match } from "ts-pattern";
-import { Heading } from "../ui/heading";
-import { Input, InputField } from "../ui/input";
-import { Spinner } from "../ui/spinner";
-import { Text } from "../ui/text";
-import { VStack } from "../ui/vstack";
+import { Heading } from "./ui/heading";
+import { Input, InputField } from "./ui/input";
+import { Spinner } from "./ui/spinner";
+import { Text } from "./ui/text";
+import { VStack } from "./ui/vstack";
 
 export default function QRActionSheet(props: { amount?: number }) {
   const { wallet } = useProfileStore();

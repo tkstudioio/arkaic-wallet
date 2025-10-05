@@ -6,7 +6,9 @@ import { Text } from "@/components/ui/text";
 import { TxType } from "@arkade-os/sdk";
 import { useTheme } from "@react-navigation/native";
 
-import { useTransactions } from "@/hooks/use-transactions/use-transactions";
+import { HStack } from "@/components/ui/hstack";
+import { VStack } from "@/components/ui/vstack";
+import { useTransactions } from "@/hooks/use-transactions";
 import useProfileStore from "@/stores/profile";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -14,8 +16,6 @@ import { isEmpty, map } from "lodash";
 import { Minus, Plus } from "lucide-react-native";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
-import { HStack } from "../ui/hstack";
-import { VStack } from "../ui/vstack";
 
 export function TransactionsHistory() {
   const { colors } = useTheme();
