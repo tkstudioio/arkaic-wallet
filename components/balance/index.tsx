@@ -1,13 +1,18 @@
 import { Text } from "@/components/ui/text";
 import { useBalance } from "@/hooks/use-balance";
 import useProfileStore from "@/stores/wallet";
-import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { CircleFadingArrowUp, Plus, Send } from "lucide-react-native";
+import { map } from "lodash";
+import {
+  ArrowLeftRight,
+  CircleFadingArrowUp,
+  Plus,
+  Send,
+} from "lucide-react-native";
 import { View } from "react-native";
 import { match } from "ts-pattern";
 import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
-import { Button, ButtonIcon } from "../ui/button";
+import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { Card } from "../ui/card";
 import { Heading } from "../ui/heading";
 import { HStack } from "../ui/hstack";
@@ -17,8 +22,25 @@ import { VStack } from "../ui/vstack";
 export function BalanceComponent() {
   const { profile, logout } = useProfileStore();
   const balanceQuery = useBalance();
-  const { colors } = useTheme();
   const router = useRouter();
+
+  const actions = [
+    {
+      onPress: () => router.push("/dashboard/receive"),
+      icon: Plus,
+      label: "Receive",
+    },
+    {
+      onPress: () => router.push("/dashboard/send"),
+      icon: Send,
+      label: "Send",
+    },
+    {
+      onPress: () => router.push("/dashboard/onboard-funds"),
+      icon: CircleFadingArrowUp,
+      label: "Onboard",
+    },
+  ];
 
   function handleChangeProfile() {
     logout();
@@ -28,8 +50,18 @@ export function BalanceComponent() {
     <View className='gap-6'>
       {match(balanceQuery)
         .with({ isSuccess: true }, ({ data }) => (
-          <Card variant={"ghost"} className='gap-12'>
-            <VStack space={"sm"} className='items-center'>
+          <Card
+            variant={"ghost"}
+            className='gap-12 aspect-square justify-between'
+          >
+            <VStack space={"lg"} className='items-center my-auto'>
+              <HStack space={"sm"} className='items-center'>
+                <Text>{profile?.name}</Text>
+                <Avatar size={"xs"}>
+                  <AvatarImage source={{ uri: profile?.avatar }} />
+                  <AvatarFallbackText>ND</AvatarFallbackText>
+                </Avatar>
+              </HStack>
               <HStack className='items-baseline' space={"sm"}>
                 <Heading size='4xl'>
                   {Intl.NumberFormat("it-IT").format(data.available || 0)}
@@ -43,47 +75,24 @@ export function BalanceComponent() {
                 size={"sm"}
                 className='rounded-full'
               >
-                <HStack space={"sm"} className='items-center'>
-                  <Text>{profile?.name}</Text>
-                  <Avatar size={"xs"}>
-                    <AvatarImage source={{ uri: profile?.avatar }} />
-                    <AvatarFallbackText>ND</AvatarFallbackText>
-                  </Avatar>
-                </HStack>
+                <ButtonText>Profiles</ButtonText>
+                <ButtonIcon as={ArrowLeftRight} />
               </Button>
             </VStack>
 
             <HStack className='justify-around'>
-              <VStack className='items-center'>
-                <Button
-                  action={"secondary"}
-                  className='flex-col h-max rounded-full size-14'
-                  onPress={() => router.push("/dashboard/receive")}
-                >
-                  <Plus color={colors.text} />
-                </Button>
-                <Text>Receive</Text>
-              </VStack>
-              <VStack className='items-center'>
-                <Button
-                  action={"secondary"}
-                  className='flex-col h-max rounded-full size-14'
-                  onPress={() => router.push("/dashboard/send")}
-                >
-                  <Send color={colors.text} />
-                </Button>
-                <Text>Send</Text>
-              </VStack>
-              <VStack className='items-center relative'>
-                <Button
-                  action={"secondary"}
-                  className='flex-col h-max rounded-full size-14'
-                  onPress={() => router.push("/dashboard/onboard-funds")}
-                >
-                  <ButtonIcon as={CircleFadingArrowUp} />
-                </Button>
-                <Text>Onboard</Text>
-              </VStack>
+              {map(actions, (action, idx) => (
+                <VStack key={idx} className='items-center'>
+                  <Button
+                    action={"secondary"}
+                    className='flex-col h-max rounded-full size-14'
+                    onPress={action.onPress}
+                  >
+                    <ButtonIcon as={action.icon} />
+                  </Button>
+                  <Text>{action.label}</Text>
+                </VStack>
+              ))}
             </HStack>
           </Card>
         ))

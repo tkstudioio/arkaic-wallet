@@ -44,7 +44,6 @@ export function ProfilesList() {
       {match(profilesQuery)
         .with({ isSuccess: true }, ({ data: profiles }) =>
           map(profiles, (profile, idx) => {
-            console.log(profile.avatar);
             return (
               <TouchableOpacity
                 key={idx}

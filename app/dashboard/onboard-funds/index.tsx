@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/app";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
@@ -7,16 +7,15 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useBalance } from "@/hooks/use-balance";
+import { useOnboardUtxos } from "@/hooks/use-onboard-utxos";
 import useProfileStore from "@/stores/wallet";
-import { ArkTransaction, Ramps } from "@arkade-os/sdk";
-import { useTheme } from "@react-navigation/native";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { ArkTransaction } from "@arkade-os/sdk";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 
 import { filter, get, isEmpty, map } from "lodash";
+import { ArrowLeft } from "lucide-react-native";
 import { match } from "ts-pattern";
-
 export default function OnboardFundsPage() {
   return (
     <AppLayout>
@@ -26,25 +25,11 @@ export default function OnboardFundsPage() {
 }
 
 function WaitingOnboardTransactionsList() {
-  const { colors } = useTheme();
   const router = useRouter();
   const { wallet } = useProfileStore();
   const { data: balance } = useBalance();
-  const queryClient = useQueryClient();
 
-  const onboardUtxos = useMutation({
-    mutationKey: ["onboard-utxos"],
-    mutationFn: async () => {
-      if (!wallet) throw new Error("Missing wallet");
-      const commitmentTxid = await new Ramps(wallet).onboard();
-      return commitmentTxid;
-    },
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["waiting-onboard-transactions"],
-      }),
-    onError: (e) => console.log(e),
-  });
+  const onboardUtxos = useOnboardUtxos();
 
   const waitingOnboardTransactions = useQuery({
     queryKey: ["waiting-onboard-transactions"],
@@ -77,10 +62,12 @@ function WaitingOnboardTransactionsList() {
         (transaction: ArkTransaction) => !transaction.settled
       );
 
+      console.log(waitingConfirmation);
+
       return (
         <VStack space={"4xl"}>
           {!isEmpty(waitingOnboard) ? (
-            <>
+            <VStack>
               <VStack
                 className='items-center aspect-video justify-center'
                 space={"sm"}
@@ -114,32 +101,41 @@ function WaitingOnboardTransactionsList() {
                     <ButtonText>Onboard all funds</ButtonText>
                   </Button>
                 ))}
-            </>
+            </VStack>
           ) : (
-            <VStack space={"md"}>
-              <Heading className='text-center'>All sats onboarded</Heading>
+            <VStack
+              space={"2xl"}
+              className='aspect-video justify-center items-center'
+            >
+              <VStack className='items-center'>
+                <Text>No sats confirmed onchain</Text>
+                <Heading className='text-center' size={"2xl"}>
+                  All sats onboarded
+                </Heading>
+              </VStack>
               <Button
                 onPress={() => router.replace("/dashboard")}
-                action={"secondary"}
+                variant={"outline"}
                 className='w-max rounded-full mx-auto'
               >
+                <ButtonIcon as={ArrowLeft} />
                 <ButtonText>Back to dashboard</ButtonText>
               </Button>
             </VStack>
           )}
 
-          {!isEmpty(waitingConfirmation) ? (
-            <Card className='gap-6'>
-              <Text>Waiting onchain confirmation</Text>
-
-              {map(waitingConfirmation, (transaction) => (
-                <HStack className='justify-between items-end'>
-                  <VStack>
-                    <Text>{format(transaction.createdAt, "HH:mm")}</Text>
-                    <Heading size={"xs"}>
-                      {format(transaction.createdAt, "dd/MM/yyyy")}
-                    </Heading>
-                  </VStack>
+          {!isEmpty(waitingConfirmation) && (
+            <Card variant={"ghost"}>
+              {map(waitingConfirmation, (transaction, idx) => (
+                <HStack
+                  key={idx}
+                  className='justify-between items-center'
+                  space={"xl"}
+                >
+                  <HStack space='sm'>
+                    <Spinner />
+                    <Text>waiting confirmations</Text>
+                  </HStack>
                   <HStack className='items-end' space='xs'>
                     <Heading>{transaction.amount}</Heading>
                     <Text size='sm'>SATS</Text>
@@ -147,7 +143,7 @@ function WaitingOnboardTransactionsList() {
                 </HStack>
               ))}
             </Card>
-          ) : null}
+          )}
         </VStack>
       );
     })
