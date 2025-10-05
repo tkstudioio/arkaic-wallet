@@ -1,21 +1,25 @@
 import { Heading } from "@/components/ui/heading";
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 
+import {
+  Avatar,
+  AvatarFallbackText,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { Button, ButtonIcon } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { HStack } from "@/components/ui/hstack";
+import { Text } from "@/components/ui/text";
+import { VStack } from "@/components/ui/vstack";
 import { useDeleteProfile } from "@/hooks/use-delete-profile";
 import { useProfiles } from "@/hooks/use-profiles";
+import { ArkaicProfile } from "@/types/arkaic";
 import { useRouter } from "expo-router";
 import { map } from "lodash";
 import { Trash } from "lucide-react-native";
 import { useEffect } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { match } from "ts-pattern";
-import { ArkaicProfile } from "../types/arkaic";
-import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
-import { Button, ButtonIcon, ButtonText } from "../ui/button";
-import { Card } from "../ui/card";
-import { HStack } from "../ui/hstack";
-import { Text } from "../ui/text";
-import { VStack } from "../ui/vstack";
 
 export function ProfilesList() {
   const router = useRouter();
@@ -30,7 +34,7 @@ export function ProfilesList() {
 
   async function onAccountSelect(profile: ArkaicProfile) {
     await profileStore.login(profile.name);
-    router.push("/dashboard");
+    router.replace("/dashboard");
   }
 
   function onAccountDelete(profileName: string) {
@@ -38,20 +42,18 @@ export function ProfilesList() {
   }
 
   return (
-    <>
-      <Heading>Account</Heading>
-
-      {match(profilesQuery)
-        .with({ isSuccess: true }, ({ data: profiles }) =>
-          map(profiles, (profile, idx) => {
-            return (
-              <TouchableOpacity
-                key={idx}
-                onPress={() => {
-                  onAccountSelect(profile);
-                }}
-              >
-                <Card>
+    <Card className='gap-6 w-full'>
+      <VStack space={"4xl"}>
+        {match(profilesQuery)
+          .with({ isSuccess: true }, ({ data: profiles }) =>
+            map(profiles, (profile, idx) => {
+              return (
+                <TouchableOpacity
+                  key={idx}
+                  onPress={() => {
+                    onAccountSelect(profile);
+                  }}
+                >
                   <HStack space={"sm"} className='items-center'>
                     <Avatar>
                       <AvatarImage source={{ uri: profile.avatar }} />
@@ -71,20 +73,14 @@ export function ProfilesList() {
                       <ButtonIcon as={Trash} />
                     </Button>
                   </HStack>
-                </Card>
-              </TouchableOpacity>
-            );
-          })
-        )
-        .otherwise(() => (
-          <Text>Error</Text>
-        ))}
-      <Button
-        onPress={() => router.push("/create-profile")}
-        variant={"outline"}
-      >
-        <ButtonText>Create new profile</ButtonText>
-      </Button>
-    </>
+                </TouchableOpacity>
+              );
+            })
+          )
+          .otherwise(() => (
+            <Text>Error</Text>
+          ))}
+      </VStack>
+    </Card>
   );
 }

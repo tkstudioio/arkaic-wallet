@@ -1,25 +1,21 @@
 import { Text } from "@/components/ui/text";
 import { useBalance } from "@/hooks/use-balance";
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { useRouter } from "expo-router";
 import { map } from "lodash";
-import {
-  ArrowLeftRight,
-  CircleFadingArrowUp,
-  Plus,
-  Send,
-} from "lucide-react-native";
+import { ArrowLeftRight, Link, Plus, Send } from "lucide-react-native";
 import { View } from "react-native";
 import { match } from "ts-pattern";
-import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
-import { Button, ButtonIcon, ButtonText } from "../ui/button";
-import { Card } from "../ui/card";
-import { Heading } from "../ui/heading";
-import { HStack } from "../ui/hstack";
-import { Spinner } from "../ui/spinner";
-import { VStack } from "../ui/vstack";
+import { Avatar, AvatarFallbackText, AvatarImage } from "./ui/avatar";
+import { Badge, BadgeText } from "./ui/badge";
+import { Button, ButtonIcon, ButtonText } from "./ui/button";
+import { Card } from "./ui/card";
+import { Heading } from "./ui/heading";
+import { HStack } from "./ui/hstack";
+import { Spinner } from "./ui/spinner";
+import { VStack } from "./ui/vstack";
 
-export function BalanceComponent() {
+export function ArkBalance() {
   const { profile, logout } = useProfileStore();
   const balanceQuery = useBalance();
   const router = useRouter();
@@ -36,9 +32,9 @@ export function BalanceComponent() {
       label: "Send",
     },
     {
-      onPress: () => router.push("/dashboard/onboard-funds"),
-      icon: CircleFadingArrowUp,
-      label: "Onboard",
+      onPress: () => router.push("/dashboard/onchain"),
+      icon: Link,
+      label: "Onchain",
     },
   ];
 
@@ -55,13 +51,15 @@ export function BalanceComponent() {
             className='gap-12 aspect-square justify-between'
           >
             <VStack space={"lg"} className='items-center my-auto'>
-              <HStack space={"sm"} className='items-center'>
-                <Text>{profile?.name}</Text>
-                <Avatar size={"xs"}>
-                  <AvatarImage source={{ uri: profile?.avatar }} />
-                  <AvatarFallbackText>ND</AvatarFallbackText>
-                </Avatar>
-              </HStack>
+              <Badge action='info'>
+                <HStack space={"sm"} className='items-center'>
+                  <BadgeText>{profile?.name}</BadgeText>
+                  <Avatar size={"xs"}>
+                    <AvatarImage source={{ uri: profile?.avatar }} />
+                    <AvatarFallbackText>ND</AvatarFallbackText>
+                  </Avatar>
+                </HStack>
+              </Badge>
               <HStack className='items-baseline' space={"sm"}>
                 <Heading size='4xl'>
                   {Intl.NumberFormat("it-IT").format(data.available || 0)}

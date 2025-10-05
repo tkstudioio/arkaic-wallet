@@ -1,17 +1,21 @@
-import { ArkaicProfile } from "@/components/types/arkaic";
+import {
+  Avatar,
+  AvatarFallbackText,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useCreateProfile } from "@/hooks/use-create-profile";
+import { ArkaicProfile } from "@/types/arkaic";
 import { faker } from "@faker-js/faker";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
 import { capitalize } from "lodash";
 import { View } from "react-native";
 import { match } from "ts-pattern";
-import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
-import { Spinner } from "../ui/spinner";
 import PrivateKeyInput from "./private-key-input";
 
 export default function CreateProfileForm() {

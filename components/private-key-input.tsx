@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { getRandomBytesAsync } from "expo-crypto";
 
+import { Input, InputField } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { join, map } from "lodash";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
-import { Input, InputField } from "../ui/input";
-import { Spinner } from "../ui/spinner";
 
 type PrivateKeyInputProps = {
   onChangeText: (field: string) => void;

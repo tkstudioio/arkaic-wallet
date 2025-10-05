@@ -1,10 +1,10 @@
+import QRActionSheet from "@/components/qr-action-sheet";
+import { Button, ButtonText } from "@/components/ui/button";
+import { HStack } from "@/components/ui/hstack";
+import { VStack } from "@/components/ui/vstack";
 import { map, range, toNumber } from "lodash";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { Button, ButtonText } from "../ui/button";
-import { HStack } from "../ui/hstack";
-import { VStack } from "../ui/vstack";
-import QRActionSheet from "./qr-action-sheet";
 
 export type PosComponentProps = {
   onChange: (digit: number | undefined) => void;
