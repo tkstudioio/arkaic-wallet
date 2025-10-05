@@ -4,7 +4,6 @@ import { get, replace, split, startsWith, toNumber, toString } from "lodash";
 import QueryString from "qs";
 
 export function parserBIP21Address(address: string): ArkaicPayment | undefined {
-  console.log(address);
   if (
     startsWith(address, "bc1") ||
     startsWith(address, "tb1") ||
