@@ -14,7 +14,7 @@ export function useOnboardUtxos() {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: ["waiting-onboard-transactions"],
+        queryKey: ["onchain-transactions", "balance"],
       }),
   });
 }

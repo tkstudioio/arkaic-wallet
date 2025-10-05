@@ -6,7 +6,7 @@ import { Text } from "@/components/ui/text";
 import { TxType } from "@arkade-os/sdk";
 import { useTheme } from "@react-navigation/native";
 
-import { useTransactionsHistory } from "@/hooks/use-transactions-history";
+import { useTransactions } from "@/hooks/use-transactions/use-transactions";
 import useProfileStore from "@/stores/wallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -22,7 +22,7 @@ export function TransactionsHistory() {
   const { wallet } = useProfileStore();
   const queryClient = useQueryClient();
 
-  const transactionsHistoryQuery = useTransactionsHistory();
+  const transactionsQuery = useTransactions();
 
   function refreshBalanceAndTransactions() {
     queryClient.invalidateQueries({ queryKey: ["balance"] });
@@ -37,7 +37,7 @@ export function TransactionsHistory() {
   return (
     <Card>
       <VStack space={"xl"}>
-        {match(transactionsHistoryQuery)
+        {match(transactionsQuery)
           .with({ isSuccess: true }, ({ data, isLoading }) => {
             if (isLoading) {
               return <Spinner />;

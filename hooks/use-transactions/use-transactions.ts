@@ -1,14 +1,13 @@
 import useProfileStore from "@/stores/wallet";
 import { useQuery } from "@tanstack/react-query";
 
-export function useTransactionsHistory() {
+export function useTransactions() {
   const { wallet } = useProfileStore();
   return useQuery({
-    queryKey: ["transactions-history"],
-    queryFn: () => {
+    queryKey: ["transactions"],
+    queryFn: async () => {
       if (!wallet) throw new Error("missing wallet");
-      return wallet?.getTransactionHistory();
+      return await wallet.getTransactionHistory();
     },
-    refetchOnMount: true,
   });
 }

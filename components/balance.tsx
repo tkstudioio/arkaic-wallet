@@ -3,21 +3,16 @@ import { useBalance } from "@/hooks/use-balance";
 import useProfileStore from "@/stores/wallet";
 import { useRouter } from "expo-router";
 import { map } from "lodash";
-import {
-  ArrowLeftRight,
-  CircleFadingArrowUp,
-  Plus,
-  Send,
-} from "lucide-react-native";
+import { ArrowLeftRight, Link, Plus, Send } from "lucide-react-native";
 import { View } from "react-native";
 import { match } from "ts-pattern";
-import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
-import { Button, ButtonIcon, ButtonText } from "../ui/button";
-import { Card } from "../ui/card";
-import { Heading } from "../ui/heading";
-import { HStack } from "../ui/hstack";
-import { Spinner } from "../ui/spinner";
-import { VStack } from "../ui/vstack";
+import { Avatar, AvatarFallbackText, AvatarImage } from "./ui/avatar";
+import { Button, ButtonIcon, ButtonText } from "./ui/button";
+import { Card } from "./ui/card";
+import { Heading } from "./ui/heading";
+import { HStack } from "./ui/hstack";
+import { Spinner } from "./ui/spinner";
+import { VStack } from "./ui/vstack";
 
 export function BalanceComponent() {
   const { profile, logout } = useProfileStore();
@@ -37,8 +32,8 @@ export function BalanceComponent() {
     },
     {
       onPress: () => router.push("/dashboard/onboard-funds"),
-      icon: CircleFadingArrowUp,
-      label: "Onboard",
+      icon: Link,
+      label: "Onchain",
     },
   ];
 
