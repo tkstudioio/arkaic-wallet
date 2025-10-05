@@ -1,9 +1,8 @@
 import useProfileStore from "@/stores/profile";
 import { Ramps } from "@arkade-os/sdk";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export function useOnboardUtxos() {
-  const queryClient = useQueryClient();
   const { wallet } = useProfileStore();
   return useMutation({
     mutationKey: ["onboard-utxos"],
@@ -12,9 +11,5 @@ export function useOnboardUtxos() {
       const commitmentTxid = await new Ramps(wallet).onboard();
       return commitmentTxid;
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["onchain-transactions", "balance"],
-      }),
   });
 }

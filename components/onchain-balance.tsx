@@ -1,6 +1,7 @@
 import { Text } from "@/components/ui/text";
 import { useBalance } from "@/hooks/use-balance";
 import { useOnboardUtxos } from "@/hooks/use-onboard-utxos";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { ExternalLink, PlaneTakeoff } from "lucide-react-native";
 import { View } from "react-native";
@@ -17,6 +18,7 @@ export function OnchainBalance() {
   const balanceQuery = useBalance();
   const router = useRouter();
   const onboardUtxos = useOnboardUtxos();
+  const queryClient = useQueryClient();
 
   return (
     <View className='gap-6'>
@@ -24,7 +26,6 @@ export function OnchainBalance() {
         .with({ isSuccess: true }, ({ data }) => (
           <Card variant={"ghost"} className={"aspect-video"}>
             <VStack space={"lg"} className='items-center my-auto'>
-              {data.boarding.confirmed ? <Text>Onchain funds</Text> : null}
               <Badge action={"info"}>
                 <BadgeText>Onchain wallet</BadgeText>
               </Badge>
@@ -52,10 +53,18 @@ export function OnchainBalance() {
                     <ButtonIcon as={ExternalLink} />
                   </Button>
                 ))
-                .with({ isIdle: true }, ({ mutate }) =>
+                .with({ isIdle: true }, ({ mutateAsync }) =>
                   data.boarding.confirmed ? (
                     <Button
-                      onPress={() => mutate()}
+                      onPress={async () => {
+                        await mutateAsync();
+                        queryClient.invalidateQueries({
+                          queryKey: ["onchain-transactions"],
+                        });
+                        queryClient.invalidateQueries({
+                          queryKey: ["balance"],
+                        });
+                      }}
                       action={"secondary"}
                       variant={"outline"}
                       size={"sm"}

@@ -11,6 +11,7 @@ import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
 
 import { ArkaicPayment } from "@/types/arkaic";
 import { BitcoinLayer } from "@/types/common";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { toNumber, toString } from "lodash";
 import { match } from "ts-pattern";
@@ -26,15 +27,21 @@ export function SendAmountModal(props: {
   onAmountChange?: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const sendBitcoinMutation = useSendBitcoin();
-  function handleSendBitcoins() {
+
+  async function handleSendBitcoins() {
     if (!props.arkaicPayment?.amount) return;
 
-    sendBitcoinMutation.mutate({
+    await sendBitcoinMutation.mutateAsync({
       ...props.arkaicPayment,
-      amount: props.arkaicPayment.amount!,
+      amount: props.arkaicPayment.amount || props.amount,
     });
+
+    queryClient.invalidateQueries({ queryKey: ["balance"] });
+    queryClient.invalidateQueries({ queryKey: ["onchain-transactions"] });
+    queryClient.invalidateQueries({ queryKey: ["ark-transactions"] });
   }
 
   function changeAmount(amount: string) {
