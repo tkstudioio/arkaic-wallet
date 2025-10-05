@@ -30,7 +30,6 @@ export function parserBIP21Address(address: string): ArkaicPayment | undefined {
   const amount = toNumber(replace(toString(parsedAmount), ".", ""));
   const arkAddress = get(parsedParams, "ark", undefined);
 
-  console.log(onchainAddress);
   if (!arkAddress) {
     return {
       layer: BitcoinLayer.Onchain,
