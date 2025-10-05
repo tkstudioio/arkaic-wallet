@@ -12,7 +12,7 @@ export default function AppLayout(props: PropsWithChildren) {
 
   const handleNotification = useCallback(
     function handleNotification(notification: IncomingFunds) {
-      console.log(notification);
+      console.log("Mi rompo qua");
       client.invalidateQueries({
         queryKey: ["balance"],
       });
@@ -27,7 +27,6 @@ export default function AppLayout(props: PropsWithChildren) {
   );
 
   useEffect(() => {
-    console.log(wallet?.arkAddress);
     wallet?.notifyIncomingFunds(handleNotification);
   }, [wallet, handleNotification]);
 

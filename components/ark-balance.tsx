@@ -55,8 +55,8 @@ export function ArkBalance() {
                 <HStack space={"sm"} className='items-center'>
                   <BadgeText>{profile?.name}</BadgeText>
                   <Avatar size={"xs"}>
+                    <AvatarFallbackText>-</AvatarFallbackText>
                     <AvatarImage source={{ uri: profile?.avatar }} />
-                    <AvatarFallbackText>ND</AvatarFallbackText>
                   </Avatar>
                 </HStack>
               </Badge>
@@ -97,10 +97,21 @@ export function ArkBalance() {
         .with({ isLoading: true }, () => <Spinner />)
         .otherwise(({ error }) => {
           return (
-            <View>
-              <Heading>Failed to load profile </Heading>
-              <Text>{error?.message}</Text>;
-            </View>
+            <VStack className='items-center' space={"md"}>
+              <VStack className='items-center'>
+                <Heading>Failed to load profile </Heading>
+                <Text>{error?.message}</Text>;
+              </VStack>
+              <Button
+                onPress={handleChangeProfile}
+                action='secondary'
+                className='rounded-full'
+                size={"sm"}
+              >
+                <ButtonText>Change profile</ButtonText>
+                <ButtonIcon as={ArrowLeftRight} />
+              </Button>
+            </VStack>
           );
         })}
     </View>

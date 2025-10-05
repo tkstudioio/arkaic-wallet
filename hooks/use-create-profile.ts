@@ -15,16 +15,21 @@ export function useCreateProfile() {
       const storedProfiles = await AsyncStorage.getItem("profiles");
       const currentProfiles = storedProfiles ? JSON.parse(storedProfiles) : [];
 
-      await AsyncStorage.setItem(
-        StorageKeys.Profiles,
-        JSON.stringify([...currentProfiles, profile])
-      );
+      try {
+        await login(profile.name);
+        await AsyncStorage.setItem(
+          StorageKeys.Profiles,
+          JSON.stringify([...currentProfiles, profile])
+        );
 
-      queryClient.invalidateQueries({ queryKey: ["profiles"] });
-      queryClient.invalidateQueries({ queryKey: ["balance"] });
-
-      await login(profile.name);
-      router.replace("/dashboard");
+        queryClient.invalidateQueries({ queryKey: ["profiles"] });
+        queryClient.invalidateQueries({ queryKey: ["balance"] });
+        router.replace("/dashboard");
+      } catch (e) {
+        throw new Error(
+          "Impossible to create profile. Maybe the server is unreachable?"
+        );
+      }
     },
   });
 }

@@ -40,8 +40,8 @@ export default function CreateProfileForm() {
       {({ handleChange, handleBlur, handleSubmit, values }) => (
         <VStack space={"4xl"}>
           <Avatar size={"2xl"} className='mx-auto'>
-            <AvatarImage source={{ uri: values.avatar }} />
-            <AvatarFallbackText>ND</AvatarFallbackText>
+            <AvatarFallbackText>-</AvatarFallbackText>
+            <AvatarImage source={{ uri: values.avatar }} src={values.avatar} />
           </Avatar>
           <View>
             <Text>Profile name</Text>
@@ -84,12 +84,7 @@ export default function CreateProfileForm() {
               ))
               .with({ isError: true }, () => (
                 <>
-                  <Button
-                    onPress={() => handleSubmit()}
-                    disabled={createProfileMutation.isPending}
-                  >
-                    <ButtonText>Retry</ButtonText>
-                  </Button>
+                  <Text className='text-center'>Error creating profile</Text>
                   <Button variant={"link"} action={"negative"} onPress={goBack}>
                     <ButtonText>Go back</ButtonText>
                   </Button>
