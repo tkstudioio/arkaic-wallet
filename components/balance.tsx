@@ -1,6 +1,6 @@
 import { Text } from "@/components/ui/text";
 import { useBalance } from "@/hooks/use-balance";
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { useRouter } from "expo-router";
 import { map } from "lodash";
 import { ArrowLeftRight, Link, Plus, Send } from "lucide-react-native";

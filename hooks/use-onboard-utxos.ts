@@ -1,4 +1,4 @@
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { Ramps } from "@arkade-os/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 

@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/heading";
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 
 import { useDeleteProfile } from "@/hooks/use-delete-profile";
 import { useProfiles } from "@/hooks/use-profiles";

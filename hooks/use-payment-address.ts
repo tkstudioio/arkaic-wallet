@@ -1,4 +1,4 @@
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { useMutation } from "@tanstack/react-query";
 
 export function usePaymentAddress() {

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/actionsheet";
 
 import { usePaymentAddress } from "@/hooks/use-payment-address";
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { IncomingFunds } from "@arkade-os/sdk";
 import { useTheme } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";

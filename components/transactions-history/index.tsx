@@ -7,7 +7,7 @@ import { TxType } from "@arkade-os/sdk";
 import { useTheme } from "@react-navigation/native";
 
 import { useTransactions } from "@/hooks/use-transactions/use-transactions";
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { isEmpty, map } from "lodash";

@@ -1,5 +1,5 @@
 import { ArkaicProfile } from "@/components/types/arkaic";
-import { StorageKeys } from "@/stores/wallet";
+import { StorageKeys } from "@/stores/profile";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { filter } from "lodash";

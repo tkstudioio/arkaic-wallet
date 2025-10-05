@@ -1,5 +1,5 @@
 import { ArkaicPayment } from "@/components/types/arkaic";
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useSendBitcoin() {

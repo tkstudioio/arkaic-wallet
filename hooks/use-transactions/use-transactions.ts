@@ -1,4 +1,4 @@
-import useProfileStore from "@/stores/wallet";
+import useProfileStore from "@/stores/profile";
 import { useQuery } from "@tanstack/react-query";
 
 export function useTransactions() {
