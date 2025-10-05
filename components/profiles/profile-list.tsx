@@ -30,7 +30,7 @@ export function ProfilesList() {
 
   async function onAccountSelect(profile: ArkaicProfile) {
     await profileStore.login(profile.name);
-    router.push("/dashboard");
+    router.replace("/dashboard");
   }
 
   function onAccountDelete(profileName: string) {
@@ -80,7 +80,7 @@ export function ProfilesList() {
           <Text>Error</Text>
         ))}
       <Button
-        onPress={() => router.push("/create-profile")}
+        onPress={() => router.replace("/create-profile")}
         variant={"outline"}
       >
         <ButtonText>Create new profile</ButtonText>
