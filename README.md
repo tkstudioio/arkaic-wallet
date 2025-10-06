@@ -111,8 +111,11 @@ Arkaic has **never been built for production** . You can test it in development 
 If you find **Arkaic** useful or want to support its development, consider making a donation.
 
 You can send a donation to the following **onchain Bitcoin address**:
+
 > bc1q8sv42d5afn959j8hqhn6s5l8mffzamcfr06nfk
+
 or lightning network
+
 > wearyjumper18@walletofsatoshi.com
 
 ## 📸 Screenshots
