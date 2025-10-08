@@ -9,6 +9,7 @@ import React from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
 
+import { useAspInfo } from "@/hooks/use-asp-info";
 import { ArkaicPayment } from "@/types/arkaic";
 import { BitcoinLayer } from "@/types/common";
 import { useQueryClient } from "@tanstack/react-query";
@@ -26,6 +27,7 @@ export function SendAmountModal(props: {
   amount: number;
   onAmountChange?: React.Dispatch<React.SetStateAction<number>>;
 }) {
+  const { data: aspInfo } = useAspInfo();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -98,28 +100,33 @@ export function SendAmountModal(props: {
                 )
               )}
 
-            {sendBitcoinMutation.isSuccess ? null : (
+            {sendBitcoinMutation.isSuccess || !aspInfo?.signerPubkey ? null : (
               <VStack className='items-center'>
-                {match(props.arkaicPayment?.layer)
-                  .with(BitcoinLayer.Onchain, () => (
-                    <Badge className='gap-1' action='warning'>
-                      <BadgeText>Onchain payment</BadgeText>
-                      <BadgeIcon as={TriangleAlert} />
-                    </Badge>
-                  ))
-                  .with(BitcoinLayer.Lightning, () => (
+                {match(props.arkaicPayment)
+                  .with(
+                    {
+                      layer: BitcoinLayer.Ark,
+                      signerPubkey: aspInfo.signerPubkey,
+                    },
+                    () => (
+                      <Badge action={"success"} className='gap-1'>
+                        <BadgeIcon as={Triangle} />
+                        <BadgeText>Ark payment</BadgeText>
+                      </Badge>
+                    )
+                  )
+                  .with({ layer: BitcoinLayer.Lightning }, () => (
                     <Badge action={"info"} className='gap-1'>
                       <BadgeIcon as={Zap} />
                       <BadgeText>Lightning payment</BadgeText>
                     </Badge>
                   ))
-                  .with(BitcoinLayer.Ark, () => (
-                    <Badge action={"success"} className='gap-1'>
-                      <BadgeIcon as={Triangle} />
-                      <BadgeText>Ark payment</BadgeText>
+                  .otherwise(() => (
+                    <Badge className='gap-1' action='warning'>
+                      <BadgeText>Onchain payment</BadgeText>
+                      <BadgeIcon as={TriangleAlert} />
                     </Badge>
-                  ))
-                  .otherwise(() => null)}
+                  ))}
               </VStack>
             )}
           </VStack>

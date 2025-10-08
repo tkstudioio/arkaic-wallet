@@ -10,5 +10,6 @@ export type ArkaicProfile = {
 export type ArkaicPayment = {
   layer: BitcoinLayer;
   address: string;
+  signerPubkey?: string;
   amount?: number;
 };

@@ -6,10 +6,12 @@ export function usePaymentAddress() {
   return useMutation({
     mutationKey: ["payment-address"],
     mutationFn: async (amount: number | undefined) => {
-      const boardingAddress = await wallet?.getBoardingAddress();
-      const arkAddress = await wallet?.getAddress();
+      if (!wallet) throw new Error("Missing wallet");
+      const boardingAddress = await wallet.getBoardingAddress();
+      const arkAddress = await wallet.getAddress();
+      const { signerPubkey } = await wallet.arkProvider.getInfo();
 
-      const paymentAddress = `bitcoin:${boardingAddress}?ark=${arkAddress}${
+      const paymentAddress = `bitcoin:${boardingAddress}?ark=${arkAddress}&signerPubkey=${signerPubkey}${
         amount
           ? `&amount=${Intl.NumberFormat("en", {
               minimumFractionDigits: 8,

@@ -3,9 +3,11 @@ import { ArkaicPayment } from "@/types/arkaic";
 import { BitcoinLayer } from "@/types/common";
 import { Ramps } from "@arkade-os/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAspInfo } from "./use-asp-info";
 
 export function useSendBitcoin() {
   const { wallet } = useProfileStore();
+  const { data: aspInfo } = useAspInfo();
   const queryClient = useQueryClient();
   return useMutation<string | undefined, Error, ArkaicPayment>({
     mutationKey: ["send"],
@@ -13,7 +15,10 @@ export function useSendBitcoin() {
       if (!wallet) throw new Error("No wallet set");
       if (!arkaicPayment.amount) throw new Error("Missing transaction amount");
 
-      if (arkaicPayment.layer === BitcoinLayer.Onchain) {
+      if (
+        arkaicPayment.layer === BitcoinLayer.Onchain ||
+        arkaicPayment.signerPubkey !== aspInfo?.signerPubkey
+      ) {
         return await new Ramps(wallet).offboard(
           arkaicPayment.address,
           BigInt(arkaicPayment.amount)

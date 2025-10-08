@@ -37,10 +37,12 @@ export function parserBIP21Address(address: string): ArkaicPayment | undefined {
       amount,
     };
   }
+  const parsedSignerPubkey = get(parsedParams, "signerPubkey", undefined);
 
   return {
     layer: BitcoinLayer.Ark,
     address: toString(arkAddress),
+    signerPubkey: parsedSignerPubkey ? toString(parsedSignerPubkey) : undefined,
     amount,
   };
 }
