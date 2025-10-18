@@ -1,8 +1,40 @@
 import { chunk, first, join, map, split, toString } from "lodash";
 import { match } from "ts-pattern";
-import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Text } from "./ui/text";
+
+export function AmountComponent(props: { amount?: number; size?: string }) {
+  return (
+    <HStack className='items-baseline'>
+      <HStack>
+        {match(props.amount)
+          .with(0, undefined, () => (
+            <>
+              <Text size={props.size} className='color-background-400'>
+                000.000.00
+              </Text>
+              <Text size={props.size}>0</Text>
+            </>
+          ))
+          .otherwise((amount) => {
+            const prefix = getPrefix(amount);
+            const formattedAmount = Intl.NumberFormat("en", {})
+              .format(amount)
+              .replaceAll(",", ".");
+            return (
+              <>
+                <Text size={props.size} className='color-background-400'>
+                  {prefix}
+                </Text>
+                <Text size={props.size}>{formattedAmount}</Text>
+              </>
+            );
+          })}
+      </HStack>
+      <Text>sats</Text>
+    </HStack>
+  );
+}
 
 function getPrefix(amount: number): string {
   const stringAmount = toString(amount);
@@ -13,36 +45,4 @@ function getPrefix(amount: number): string {
   );
   const [prefix] = split(fullAmount, first(stringAmount));
   return prefix;
-}
-
-export function AmountComponent(props: { amount: number; size?: string }) {
-  const prefix = getPrefix(props.amount);
-  const formattedAmount = Intl.NumberFormat("en", {})
-    .format(props.amount)
-    .replaceAll(",", ".");
-
-  return (
-    <HStack className='items-center' space={"xs"}>
-      <HStack>
-        {match(props.amount)
-          .with(0, () => (
-            <>
-              <Heading size={props.size} className='color-background-400'>
-                000.000.00
-              </Heading>
-              <Heading size={props.size}>0</Heading>
-            </>
-          ))
-          .otherwise(() => (
-            <>
-              <Heading size={props.size} className='color-background-400'>
-                {prefix}
-              </Heading>
-              <Heading size={props.size}>{formattedAmount}</Heading>
-            </>
-          ))}
-      </HStack>
-      <Text size={props.size}>sats</Text>
-    </HStack>
-  );
 }

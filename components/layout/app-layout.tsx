@@ -20,8 +20,8 @@ export default function AppLayout(props: PropsWithChildren) {
   }
   return (
     <QueryClientProvider client={client}>
-      <ScrollView className='px-6 pt-24 pb-24 border'>
-        <HStack className='justify-between items-center'>
+      <ScrollView className='pt-24 pb-24 border'>
+        <HStack className='justify-between items-center px-6'>
           <LogoFull height={24} width={100} className='flex-1' />
           <Button
             action='secondary'
