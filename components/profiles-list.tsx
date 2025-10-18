@@ -1,36 +1,37 @@
-import { Heading } from "@/components/ui/heading";
 import useProfileStore from "@/stores/profile";
 
-import {
-  Avatar,
-  AvatarFallbackText,
-  AvatarImage,
-} from "@/components/ui/avatar";
-import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { HStack } from "@/components/ui/hstack";
-import { Text } from "@/components/ui/text";
-import { VStack } from "@/components/ui/vstack";
 import { useDeleteProfile } from "@/hooks/use-delete-profile";
 import { useProfiles } from "@/hooks/use-profiles";
 import { ArkaicProfile } from "@/types/arkaic";
 import { useRouter } from "expo-router";
-import { isEmpty, map } from "lodash";
-import { Trash, UserPlus } from "lucide-react-native";
-import { useEffect } from "react";
-import { Image, TouchableOpacity } from "react-native";
+import { first, isEmpty, map } from "lodash";
+import { ArchiveRestore, Trash, UserPlus } from "lucide-react-native";
+import { useEffect, useState } from "react";
+
+import { TouchableOpacity } from "react-native";
 import { match } from "ts-pattern";
+import {
+  Actionsheet,
+  ActionsheetBackdrop,
+  ActionsheetContent,
+  ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper,
+} from "./ui/actionsheet";
+import { Avatar, AvatarFallbackText, AvatarImage } from "./ui/avatar";
+import { Button, ButtonIcon, ButtonText } from "./ui/button";
+import { Heading } from "./ui/heading";
+import { HStack } from "./ui/hstack";
+import { Text } from "./ui/text";
+import { VStack } from "./ui/vstack";
 
 export function ProfilesList() {
   const router = useRouter();
   const profileStore = useProfileStore();
-
   const profilesQuery = useProfiles();
   const deleteProfileMutation = useDeleteProfile();
 
-  useEffect(() => {
-    profilesQuery.refetch();
-  }, [profilesQuery]);
+  const [showActionsheet, setActionSheetOpen] = useState<boolean>(false);
 
   async function onAccountSelect(profile: ArkaicProfile) {
     await profileStore.login(profile.name);
@@ -41,68 +42,140 @@ export function ProfilesList() {
     deleteProfileMutation.mutate(profileName);
   }
 
+  function onCreateNewAccount() {
+    router.replace("/create-profile");
+  }
+
+  function onSheetclose() {
+    setActionSheetOpen(false);
+  }
+
+  function openSheet() {
+    setActionSheetOpen(true);
+  }
+
+  useEffect(() => {
+    profilesQuery.refetch();
+  }, [profilesQuery]);
+
+  if (isEmpty(profilesQuery.data)) {
+    return (
+      <Card className='w-full items-center gap-16'>
+        <VStack className='w-full items-center' space='2xl'>
+          <Heading>No profiles yet</Heading>
+          <Text className='text-center'>
+            You haven&apos;t created any profile yet. Get started by generating
+            one or restoring from a 24 words seed phrase
+          </Text>
+          <VStack space={"lg"} className='w-full'>
+            <Button onPress={onCreateNewAccount}>
+              <ButtonText>Create first profile</ButtonText>
+              <ButtonIcon as={UserPlus} />
+            </Button>
+            <Button
+              onPress={() => router.replace("/create-profile")}
+              variant={"link"}
+              action={"secondary"}
+            >
+              <ButtonText>Restore from seed phrase</ButtonText>
+              <ButtonIcon as={ArchiveRestore} />
+            </Button>
+          </VStack>
+        </VStack>
+      </Card>
+    );
+  }
+
   return (
     <>
-      {isEmpty(profilesQuery.data) ? (
-        <>
-          <Text>You have no profiles stored</Text>
-          <Button onPress={() => router.replace("/create-profile")}>
-            <ButtonText>Create first profile</ButtonText>
-            <ButtonIcon as={UserPlus} />
-          </Button>
-        </>
-      ) : (
-        <>
-          <Heading size='2xl'>Select profile</Heading>
-          <Card className='gap-6 w-full'>
-            <VStack space={"4xl"}>
-              {match(profilesQuery)
-                .with({ isSuccess: true }, ({ data: profiles }) =>
-                  map(profiles, (profile, idx) => {
-                    return (
-                      <TouchableOpacity
-                        key={idx}
-                        onPress={() => {
-                          onAccountSelect(profile);
-                        }}
-                      >
-                        <HStack space={"sm"} className='items-center'>
-                          <Avatar>
-                            <AvatarFallbackText>-</AvatarFallbackText>
-                            <AvatarImage source={{ uri: profile.avatar }} />
-                          </Avatar>
+      <Card className='w-full gap-8'>
+        <Heading>Profiles</Heading>
 
-                          <Image src={profile.avatar} />
-                          <VStack className='flex-1'>
-                            <Heading>{profile.name}</Heading>
-                            <Text>{profile.arkadeServerUrl}</Text>
+        <VStack className='w-full items-center' space='2xl'>
+          {match(profilesQuery)
+            .with({ isSuccess: true }, ({ data: profiles }) =>
+              map(profiles, (profile, idx) => {
+                const selectProfile = () => onAccountSelect(profile);
+                const deleteProfile = () => {
+                  onAccountDelete(profile.name);
+                  onSheetclose();
+                };
+                return (
+                  <TouchableOpacity
+                    key={idx}
+                    onPress={selectProfile}
+                    className='w-full'
+                  >
+                    <HStack space={"md"} className='items-center'>
+                      <Avatar size={"lg"}>
+                        <AvatarFallbackText>
+                          {first(profile.name)}
+                        </AvatarFallbackText>
+                        <AvatarImage source={{ uri: profile.avatar }} />
+                      </Avatar>
+
+                      <VStack className='flex-1'>
+                        <Heading size={"lg"}>{profile.name}</Heading>
+                        <Text>{profile.arkadeServerUrl}</Text>
+                      </VStack>
+
+                      <Button
+                        variant={"link"}
+                        action='negative'
+                        onPress={openSheet}
+                        className='w-max'
+                      >
+                        <ButtonIcon as={Trash} />
+                      </Button>
+                      <Actionsheet
+                        isOpen={showActionsheet}
+                        onClose={onSheetclose}
+                      >
+                        <ActionsheetBackdrop />
+                        <ActionsheetContent className='gap-8'>
+                          <ActionsheetDragIndicatorWrapper>
+                            <ActionsheetDragIndicator />
+                          </ActionsheetDragIndicatorWrapper>
+
+                          <VStack className='w-full items-center'>
+                            <Heading>Delete profile</Heading>
+                            <Text>
+                              Do you really want to delete this profile?
+                            </Text>
                           </VStack>
-                          <Button
-                            variant={"link"}
-                            action='negative'
-                            onPress={() => onAccountDelete(profile.name)}
-                          >
-                            <ButtonIcon as={Trash} />
-                          </Button>
-                        </HStack>
-                      </TouchableOpacity>
-                    );
-                  })
-                )
-                .otherwise(() => (
-                  <Text>Error</Text>
-                ))}
-            </VStack>
-          </Card>
-          <Button
-            onPress={() => router.replace("/create-profile")}
-            variant={"link"}
-          >
-            <ButtonText>Create new profile</ButtonText>
-            <ButtonIcon as={UserPlus} />
-          </Button>
-        </>
-      )}
+                          <VStack className='w-full items-center' space='md'>
+                            <Button
+                              onPress={deleteProfile}
+                              action='negative'
+                              variant={"link"}
+                            >
+                              <ButtonText>Delete profile</ButtonText>
+                              <ButtonIcon as={Trash} />
+                            </Button>
+                          </VStack>
+                        </ActionsheetContent>
+                      </Actionsheet>
+                    </HStack>
+                  </TouchableOpacity>
+                );
+              })
+            )
+            .otherwise(() => (
+              <Text>Error</Text>
+            ))}
+        </VStack>
+      </Card>
+      <VStack space={"md"}>
+        <Button onPress={() => router.replace("/create-profile")}>
+          <ButtonText>Create new profile</ButtonText>
+        </Button>
+        <Button
+          onPress={() => router.replace("/create-profile")}
+          variant={"link"}
+        >
+          <ButtonText>Restore from seed phrase</ButtonText>
+        </Button>
+      </VStack>
     </>
   );
 }

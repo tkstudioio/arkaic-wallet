@@ -1,16 +1,13 @@
-import AppLayout from "@/components/layout/app";
+import AuthLayout from "@/components/layout/auth-layout";
 import { ProfilesList } from "@/components/profiles-list";
-import { VStack } from "@/components/ui/vstack";
 
 import React from "react";
 
 const Home = () => {
   return (
-    <AppLayout>
-      <VStack space='4xl' className='items-center justify-center h-full'>
-        <ProfilesList />
-      </VStack>
-    </AppLayout>
+    <AuthLayout>
+      <ProfilesList />
+    </AuthLayout>
   );
 };
 
