@@ -8,6 +8,7 @@ import { ScrollView } from "react-native";
 import { Avatar, AvatarFallbackText, AvatarImage } from "../ui/avatar";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { HStack } from "../ui/hstack";
+import { VStack } from "../ui/vstack";
 
 export default function AppLayout(props: PropsWithChildren) {
   const client = useMemo(() => new QueryClient(), []);
@@ -20,27 +21,29 @@ export default function AppLayout(props: PropsWithChildren) {
   }
   return (
     <QueryClientProvider client={client}>
-      <ScrollView className='pt-24 pb-24 border'>
-        <HStack className='justify-between items-center px-6'>
-          <LogoFull height={24} width={100} className='flex-1' />
-          <Button
-            action='secondary'
-            className='w-max rounded-full'
-            size={"xs"}
-            onPress={onLogout}
-          >
-            <HStack space={"sm"} className='items-center'>
-              <ButtonIcon as={ArrowLeftRight} size={"sm"} />
-              <ButtonText>{profile?.name}</ButtonText>
-              <Avatar size={"xs"}>
-                <AvatarFallbackText>-</AvatarFallbackText>
-                <AvatarImage source={{ uri: profile?.avatar }} />
-              </Avatar>
-            </HStack>
-          </Button>
-        </HStack>
+      <ScrollView className='pt-24 pb-24'>
+        <VStack space={"4xl"}>
+          <HStack className='justify-between items-center px-6'>
+            <LogoFull height={24} width={100} className='flex-1' />
+            <Button
+              action='secondary'
+              className='w-max rounded-full'
+              size={"xs"}
+              onPress={onLogout}
+            >
+              <HStack space={"sm"} className='items-center'>
+                <ButtonIcon as={ArrowLeftRight} size={"sm"} />
+                <ButtonText>{profile?.name}</ButtonText>
+                <Avatar size={"xs"}>
+                  <AvatarFallbackText>-</AvatarFallbackText>
+                  <AvatarImage source={{ uri: profile?.avatar }} />
+                </Avatar>
+              </HStack>
+            </Button>
+          </HStack>
 
-        {props.children}
+          {props.children}
+        </VStack>
       </ScrollView>
     </QueryClientProvider>
   );

@@ -32,7 +32,7 @@ export default function DashboardPage() {
   return (
     <AppLayout>
       <BalanceCarousel />
-      <VStack className='px-6 border' space={"lg"}>
+      <VStack className='px-6' space={"lg"}>
         <HStack className='justify-around'>
           {map(actions, (action, idx) => (
             <VStack key={idx} className='items-center w-max'>
