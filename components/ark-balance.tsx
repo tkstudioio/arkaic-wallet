@@ -1,11 +1,12 @@
 import { Text } from "@/components/ui/text";
 import { useBalance } from "@/hooks/use-balance";
-import useProfileStore from "@/stores/profile";
+
 import { useRouter } from "expo-router";
 import { map } from "lodash";
-import { ArrowLeftRight, Link, Plus, Send } from "lucide-react-native";
+import { ArrowLeftRight, ChevronRight, Plus, Send } from "lucide-react-native";
 import { View } from "react-native";
 import { match } from "ts-pattern";
+import { Badge, BadgeIcon, BadgeText } from "./ui/badge";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { Card } from "./ui/card";
 import { Heading } from "./ui/heading";
@@ -14,7 +15,6 @@ import { Spinner } from "./ui/spinner";
 import { VStack } from "./ui/vstack";
 
 export function ArkBalance() {
-  const { profile, logout } = useProfileStore();
   const balanceQuery = useBalance();
   const router = useRouter();
 
@@ -29,17 +29,8 @@ export function ArkBalance() {
       icon: Send,
       label: "Send",
     },
-    {
-      onPress: () => router.push("/dashboard/onchain"),
-      icon: Link,
-      label: "Onchain",
-    },
   ];
 
-  function handleChangeProfile() {
-    logout();
-    router.replace("/");
-  }
   return (
     <View className='gap-6'>
       {match(balanceQuery)
@@ -55,24 +46,19 @@ export function ArkBalance() {
                 </Heading>
                 <Text>SATS</Text>
               </HStack>
-              <Button
-                onPress={handleChangeProfile}
-                action={"secondary"}
-                variant={"outline"}
-                size={"sm"}
-                className='rounded-full'
-              >
-                <ButtonText>Profiles</ButtonText>
-                <ButtonIcon as={ArrowLeftRight} />
-              </Button>
+
+              <Badge action={"success"}>
+                <BadgeText>Ark protocol</BadgeText>
+                <BadgeIcon as={ChevronRight} />
+              </Badge>
             </VStack>
 
             <HStack className='justify-around'>
               {map(actions, (action, idx) => (
-                <VStack key={idx} className='items-center'>
+                <VStack key={idx} className='items-center w-max'>
                   <Button
                     action={"secondary"}
-                    className='flex-col h-max rounded-full size-14'
+                    className='flex-col w-max h-max rounded-full size-14'
                     onPress={action.onPress}
                   >
                     <ButtonIcon as={action.icon} />
@@ -91,12 +77,7 @@ export function ArkBalance() {
                 <Heading>Failed to load profile </Heading>
                 <Text>{error?.message}</Text>;
               </VStack>
-              <Button
-                onPress={handleChangeProfile}
-                action='secondary'
-                className='rounded-full'
-                size={"sm"}
-              >
+              <Button action='secondary' className='rounded-full' size={"sm"}>
                 <ButtonText>Change profile</ButtonText>
                 <ButtonIcon as={ArrowLeftRight} />
               </Button>
