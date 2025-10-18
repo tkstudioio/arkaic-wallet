@@ -6,6 +6,7 @@ import { map } from "lodash";
 import { ArrowLeftRight, ChevronRight, Plus, Send } from "lucide-react-native";
 import { View } from "react-native";
 import { match } from "ts-pattern";
+import { AmountComponent } from "./amount";
 import { Badge, BadgeIcon, BadgeText } from "./ui/badge";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { Card } from "./ui/card";
@@ -40,12 +41,7 @@ export function ArkBalance() {
             className='gap-12 aspect-square justify-between'
           >
             <VStack space={"lg"} className='items-center my-auto'>
-              <HStack className='items-baseline' space={"sm"}>
-                <Heading size='4xl'>
-                  {Intl.NumberFormat("it-IT").format(data.available || 0)}
-                </Heading>
-                <Text>SATS</Text>
-              </HStack>
+              <AmountComponent amount={data.available} size='4xl' />
 
               <Badge action={"success"}>
                 <BadgeText>Ark protocol</BadgeText>
