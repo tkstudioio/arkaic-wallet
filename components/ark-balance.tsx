@@ -6,8 +6,6 @@ import { map } from "lodash";
 import { ArrowLeftRight, Link, Plus, Send } from "lucide-react-native";
 import { View } from "react-native";
 import { match } from "ts-pattern";
-import { Avatar, AvatarFallbackText, AvatarImage } from "./ui/avatar";
-import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { Card } from "./ui/card";
 import { Heading } from "./ui/heading";
@@ -51,15 +49,6 @@ export function ArkBalance() {
             className='gap-12 aspect-square justify-between'
           >
             <VStack space={"lg"} className='items-center my-auto'>
-              <Badge action='info'>
-                <HStack space={"sm"} className='items-center'>
-                  <BadgeText>{profile?.name}</BadgeText>
-                  <Avatar size={"xs"}>
-                    <AvatarFallbackText>-</AvatarFallbackText>
-                    <AvatarImage source={{ uri: profile?.avatar }} />
-                  </Avatar>
-                </HStack>
-              </Badge>
               <HStack className='items-baseline' space={"sm"}>
                 <Heading size='4xl'>
                   {Intl.NumberFormat("it-IT").format(data.available || 0)}
