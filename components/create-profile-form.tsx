@@ -4,7 +4,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { Button, ButtonText } from "@/components/ui/button";
-import { Input, InputField } from "@/components/ui/input";
+import { Input, InputField, InputIcon } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
@@ -14,64 +14,72 @@ import { faker } from "@faker-js/faker";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
 import { capitalize } from "lodash";
-import { View } from "react-native";
+import { Link2, User } from "lucide-react-native";
 import { match } from "ts-pattern";
 import PrivateKeyInput from "./private-key-input";
+import { Card } from "./ui/card";
 
-export default function CreateProfileForm() {
-  const router = useRouter();
-  const defaultValues: ArkaicProfile = {
+function generateProfile(): ArkaicProfile {
+  return {
     name: capitalize(faker.color.human()) + " " + faker.animal.petName(),
     privateKey: "",
     arkadeServerUrl: "",
     avatar: faker.image.avatarGitHub(),
   };
+}
 
+export default function CreateProfileForm() {
+  const router = useRouter();
   const createProfileMutation = useCreateProfile();
 
   function goBack() {
     router.replace("/");
   }
+
   return (
     <Formik
-      initialValues={defaultValues}
+      initialValues={generateProfile()}
       onSubmit={createProfileMutation.mutate}
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (
-        <VStack space={"4xl"}>
-          <Avatar size={"2xl"} className='mx-auto'>
+        <>
+          <Avatar size={"xl"} className='mx-auto'>
             <AvatarFallbackText>-</AvatarFallbackText>
             <AvatarImage source={{ uri: values.avatar }} src={values.avatar} />
           </Avatar>
-          <View>
-            <Text>Profile name</Text>
-            <Input size={"xl"}>
-              <InputField
-                onChangeText={handleChange("name")}
-                onBlur={handleBlur("name")}
-                value={values.name}
+          <Card className='w-full gap-4'>
+            <VStack space='xs'>
+              <Text>Profile name</Text>
+              <Input size={"xl"}>
+                <InputIcon as={User} />
+                <InputField
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                  value={values.name}
+                />
+              </Input>
+            </VStack>
+            <VStack space='xs'>
+              <Text>Private key</Text>
+              <PrivateKeyInput
+                onChangeText={handleChange("privateKey")}
+                onBlur={handleBlur("privateKey")}
+                value={values.privateKey}
               />
-            </Input>
-          </View>
-          <View>
-            <Text>Private key</Text>
-            <PrivateKeyInput
-              onChangeText={handleChange("privateKey")}
-              onBlur={handleBlur("privateKey")}
-              value={values.privateKey}
-            />
-          </View>
-          <View>
-            <Text>Arkade server URL</Text>
-            <Input>
-              <InputField
-                placeholder='inser ASP url'
-                onChangeText={handleChange("arkadeServerUrl")}
-                onBlur={handleBlur("arkadeServerUrl")}
-                value={values.arkadeServerUrl}
-              />
-            </Input>
-          </View>
+            </VStack>
+            <VStack space='xs'>
+              <Text>Arkade server URL</Text>
+              <Input>
+                <InputIcon as={Link2} />
+                <InputField
+                  placeholder='inser ASP url'
+                  onChangeText={handleChange("arkadeServerUrl")}
+                  onBlur={handleBlur("arkadeServerUrl")}
+                  value={values.arkadeServerUrl}
+                />
+              </Input>
+            </VStack>
+          </Card>
           <VStack space={"md"}>
             {match(createProfileMutation)
               .with({ isSuccess: true }, () => (
@@ -79,7 +87,7 @@ export default function CreateProfileForm() {
                   onPress={() => handleSubmit()}
                   disabled={createProfileMutation.isPending}
                 >
-                  <ButtonText>Create and open</ButtonText>
+                  <ButtonText>Create profile</ButtonText>
                 </Button>
               ))
               .with({ isError: true }, () => (
@@ -114,7 +122,7 @@ export default function CreateProfileForm() {
                 </>
               ))}
           </VStack>
-        </VStack>
+        </>
       )}
     </Formik>
   );

@@ -1,9 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { getRandomBytesAsync } from "expo-crypto";
 
-import { Input, InputField } from "@/components/ui/input";
+import { Input, InputField, InputIcon } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { join, map } from "lodash";
+import { KeyRound } from "lucide-react-native";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
 
@@ -41,6 +42,7 @@ export default function PrivateKeyInput(props: PrivateKeyInputProps) {
   return match(privateKeyMutation)
     .with({ isSuccess: true }, () => (
       <Input size={"xl"}>
+        <InputIcon as={KeyRound} />
         <InputField placeholder='insert private key' {...props} />
       </Input>
     ))

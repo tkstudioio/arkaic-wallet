@@ -1,10 +1,10 @@
 import CreateProfileForm from "@/components/create-profile-form";
-import AppLayout from "@/components/layout/app";
+import AuthLayout from "@/components/layout/auth-layout";
 
 export default function CreateProfilePage() {
   return (
-    <AppLayout>
+    <AuthLayout>
       <CreateProfileForm />
-    </AppLayout>
+    </AuthLayout>
   );
 }
