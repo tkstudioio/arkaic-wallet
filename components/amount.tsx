@@ -10,7 +10,7 @@ export function AmountComponent(props: { amount?: number; size?: string }) {
         {match(props.amount)
           .with(0, undefined, () => (
             <>
-              <Text size={props.size} className='color-background-400'>
+              <Text size={props.size} className='color-background-200'>
                 000.000.00
               </Text>
               <Text size={props.size}>0</Text>
@@ -23,7 +23,7 @@ export function AmountComponent(props: { amount?: number; size?: string }) {
               .replaceAll(",", ".");
             return (
               <>
-                <Text size={props.size} className='color-background-400'>
+                <Text size={props.size} className='color-background-200'>
                   {prefix}
                 </Text>
                 <Text size={props.size}>{formattedAmount}</Text>

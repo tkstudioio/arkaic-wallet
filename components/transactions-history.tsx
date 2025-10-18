@@ -11,6 +11,7 @@ import { isEmpty, map } from "lodash";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
 import { TransactionRow } from "./transaction-row";
+import { Heading } from "./ui/heading";
 
 export function TransactionsHistory() {
   const { wallet } = useProfileStore();
@@ -29,16 +30,23 @@ export function TransactionsHistory() {
   }, [wallet]);
 
   return (
-    <Card>
+    <Card variant={"ghost"}>
       <VStack space={"4xl"}>
         {match(transactionsQuery)
           .with({ isSuccess: true }, ({ data }) => {
-            if (isEmpty(data)) {
-              return <Text className='text-center'>No transactions</Text>;
+            if (!isEmpty(data)) {
+              return map(data, (transaction, idx) => (
+                <TransactionRow key={idx} transaction={transaction} />
+              ));
             }
-            return map(data, (transaction, idx) => (
-              <TransactionRow key={idx} transaction={transaction} />
-            ));
+            return (
+              <VStack>
+                <Heading className='text-center'>No transactions</Heading>
+                <Text className='text-center'>
+                  press &quot;receive&quot; to request a payment
+                </Text>
+              </VStack>
+            );
           })
           .with({ isLoading: true }, () => <Spinner />)
           .otherwise(() => (
