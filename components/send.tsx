@@ -1,5 +1,3 @@
-// import { Card } from "@/components/ui/card";
-
 import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
