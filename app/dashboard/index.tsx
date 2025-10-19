@@ -1,6 +1,6 @@
 import AppLayout from "@/components/layout/app-layout";
 
-import { TransactionsHistory } from "@/components/transactions-history";
+import { ArkaicOperationsList } from "@/components/arkaic-operations-list";
 
 import { useRouter } from "expo-router";
 import { Plus, Send } from "lucide-react-native";
@@ -49,7 +49,7 @@ export default function DashboardPage() {
       </HStack>
 
       <VStack className='px-6'>
-        <TransactionsHistory />
+        <ArkaicOperationsList />
       </VStack>
     </AppLayout>
   );

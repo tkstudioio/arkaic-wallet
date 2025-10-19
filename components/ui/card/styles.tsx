@@ -1,5 +1,7 @@
 import { isWeb, tva } from "@gluestack-ui/utils/nativewind-utils";
-const baseStyle = isWeb ? "flex flex-col relative z-0" : "";
+const baseStyle = isWeb
+  ? "flex flex-col relative z-0 rounded-xl"
+  : "rounded-xl";
 
 export const cardStyle = tva({
   base: baseStyle,

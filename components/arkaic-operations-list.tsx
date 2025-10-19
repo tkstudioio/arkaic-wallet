@@ -6,14 +6,19 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useTransactions } from "@/hooks/use-transactions";
 import useProfileStore from "@/stores/profile";
+import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { isEmpty, map } from "lodash";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
 import { TransactionRow } from "./transaction-row";
 import { Heading } from "./ui/heading";
+import { HStack } from "./ui/hstack";
+import { Switch } from "./ui/switch";
 
-export function TransactionsHistory() {
+export function ArkaicOperationsList() {
+  const { detailedTransactions, toggleDetailedTransactions } =
+    useSettingsStore();
   const transactionsQuery = useTransactions();
   const queryClient = useQueryClient();
   const { wallet } = useProfileStore();
@@ -29,8 +34,19 @@ export function TransactionsHistory() {
   }, [wallet]);
 
   return (
-    <Card variant={"ghost"}>
-      <VStack space={"4xl"}>
+    <Card size={"lg"} className='gap-8'>
+      <HStack className='justify-between items-center'>
+        <Heading>Arkaic operations</Heading>
+        <HStack className='items-center justify-end'>
+          <Text size='sm'>show details</Text>
+          <Switch
+            value={detailedTransactions}
+            onToggle={toggleDetailedTransactions}
+            size={"sm"}
+          />
+        </HStack>
+      </HStack>
+      <VStack space={detailedTransactions ? "2xl" : "lg"}>
         {match(transactionsQuery)
           .with({ isSuccess: true }, ({ data }) => {
             if (!isEmpty(data)) {
