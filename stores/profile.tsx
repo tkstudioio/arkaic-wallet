@@ -71,7 +71,6 @@ const useProfileStore = create<ProfileStore>((set) => ({
     const arkProvider = new ExpoArkProvider(profile.arkadeServerUrl);
     const indexerProvider = new ExpoIndexerProvider(profile.arkadeServerUrl);
 
-    // const identity = SingleKey.fromHex(profile.privateKey);
     const identity = SingleKey.fromHex(profile.privateKey);
     const wallet = await Wallet.create({
       identity,

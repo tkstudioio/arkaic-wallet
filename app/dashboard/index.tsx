@@ -48,7 +48,9 @@ export default function DashboardPage() {
         ))}
       </HStack>
 
-      <TransactionsHistory />
+      <VStack className='px-6'>
+        <TransactionsHistory />
+      </VStack>
     </AppLayout>
   );
 }

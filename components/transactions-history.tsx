@@ -14,10 +14,9 @@ import { TransactionRow } from "./transaction-row";
 import { Heading } from "./ui/heading";
 
 export function TransactionsHistory() {
-  const { wallet } = useProfileStore();
-  const queryClient = useQueryClient();
-
   const transactionsQuery = useTransactions();
+  const queryClient = useQueryClient();
+  const { wallet } = useProfileStore();
 
   function refreshBalanceAndTransactions() {
     queryClient.invalidateQueries({ queryKey: ["balance"] });
