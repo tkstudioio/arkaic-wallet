@@ -1,6 +1,4 @@
-import { Button, ButtonText } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/heading";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { useTheme } from "@react-navigation/native";
@@ -13,6 +11,7 @@ import { View } from "react-native";
 import { match } from "ts-pattern";
 import { ArkaicPayment } from "../types/arkaic";
 import { SendAmountModal } from "./send-amount-modal";
+import { VStack } from "./ui/vstack";
 
 export function SendComponent() {
   const { colors } = useTheme();
@@ -39,66 +38,68 @@ export function SendComponent() {
   }
 
   return (
-    <>
-      <Card size='md' variant='elevated' className='flex flex-col gap-6 mb-48'>
-        <Heading size='xl' className='mb-1 mt-3 text-center'>
-          Send funds
-        </Heading>
-
-        {permission?.granted ? (
-          open ? (
-            <View className='w-96 h-96 aspect-square  mx-auto'>
-              <CameraView
-                style={{ flex: 1 }}
-                facing='back'
-                onBarcodeScanned={({ data }) => onNewAddressInput(data)}
-              />
-            </View>
-          ) : (
-            <Button
-              variant='outline'
-              className='w-96 h-96 mx-auto border-dashed'
-              size={"xl"}
-              onPress={() => setOpen(true)}
-            >
-              <QrCode color={colors.text} />
-              <ButtonText>Scan</ButtonText>
-            </Button>
-          )
+    <VStack space={"4xl"}>
+      {permission?.granted ? (
+        open ? (
+          <View className='w-96 h-96 aspect-square mx-auto'>
+            <CameraView
+              style={{ flex: 1 }}
+              facing='back'
+              onBarcodeScanned={({ data }) => onNewAddressInput(data)}
+            />
+          </View>
         ) : (
-          <Button variant={"outline"} size={"xl"} onPress={requestPermission}>
-            <Camera color={colors.text} />
-            <ButtonText>Grant camera permissions</ButtonText>
+          <Button
+            variant='outline'
+            className='w-96 h-96 mx-auto rounded-xl border-dashed'
+            size={"xl"}
+            onPress={() => setOpen(true)}
+          >
+            <ButtonIcon as={QrCode} />
+            <ButtonText>Tap to scan</ButtonText>
           </Button>
-        )}
+        )
+      ) : (
+        <Button
+          variant={"outline"}
+          className='w-96 h-96 mx-auto rounded-xl border-dashed'
+          size={"xl"}
+          onPress={requestPermission}
+        >
+          <ButtonIcon as={Camera} />
+          <ButtonText>Grant camera permissions</ButtonText>
+        </Button>
+      )}
 
-        {match(open)
-          .with(true, () => (
+      {match(open)
+        .with(true, () => (
+          <Button
+            action='negative'
+            variant={"link"}
+            onPress={() => setOpen(false)}
+          >
+            <ButtonText>Cancel</ButtonText>
+          </Button>
+        ))
+        .otherwise(() => (
+          <VStack space={"xl"}>
+            <Text className='text-center'>or enter manually</Text>
+            <Input size={"xl"} variant={"underlined"}>
+              <InputField
+                multiline
+                placeholder='paste bp1... / tark1... / ln...'
+                value={inputAddress}
+                onChangeText={setInputAddress}
+              />
+            </Input>
             <Button
-              action='negative'
               variant={"outline"}
-              onPress={() => setOpen(false)}
+              onPress={() => onNewAddressInput(inputAddress)}
             >
-              <ButtonText>Cancel</ButtonText>
+              <ButtonText>Confirm address</ButtonText>
             </Button>
-          ))
-          .otherwise(() => (
-            <>
-              <Text className='text-center'>or enter manually</Text>
-              <Input size={"xl"} variant={"underlined"}>
-                <InputField
-                  multiline
-                  placeholder='paste bp1... / tark1... / ln...'
-                  value={inputAddress}
-                  onChangeText={setInputAddress}
-                />
-              </Input>
-              <Button onPress={() => onNewAddressInput(inputAddress)}>
-                <ButtonText>Send</ButtonText>
-              </Button>
-            </>
-          ))}
-      </Card>
+          </VStack>
+        ))}
 
       <SendAmountModal
         open={showModal}
@@ -107,6 +108,6 @@ export function SendComponent() {
         amount={amount}
         onAmountChange={setAmount}
       />
-    </>
+    </VStack>
   );
 }

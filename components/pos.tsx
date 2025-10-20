@@ -1,10 +1,9 @@
-import QRActionSheet from "@/components/qr-action-sheet";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
 import { VStack } from "@/components/ui/vstack";
-import { map, range, toNumber } from "lodash";
+import { isNaN, map, range, toNumber, toString } from "lodash";
+import { Delete } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
 
 export type PosComponentProps = {
   onChange: (digit: number | undefined) => void;
@@ -15,7 +14,7 @@ export default function PosComponent(props: PosComponentProps) {
   const columns: number[] = [1, 2, 3];
   const rows: number[] = range(3);
 
-  const [value, setValue] = useState<number>(props.value);
+  const [, setValue] = useState<number>(props.value);
 
   useEffect(() => {
     setValue(props.value);
@@ -38,6 +37,14 @@ export default function PosComponent(props: PosComponentProps) {
     props.onChange(undefined);
   }
 
+  function handleBackspace() {
+    const newValue = toNumber(toString(props.value).slice(0, -1));
+    console.log(props.value, newValue);
+    if (isNaN(newValue)) return;
+    setValue(newValue);
+    props.onChange(newValue);
+  }
+
   return (
     <VStack space={"md"}>
       {map(rows, (column) => (
@@ -47,6 +54,7 @@ export default function PosComponent(props: PosComponentProps) {
             return (
               <Button
                 key={row}
+                action='secondary'
                 className='flex-1 aspect-video'
                 onPress={() => onChange(digit)}
               >
@@ -56,21 +64,30 @@ export default function PosComponent(props: PosComponentProps) {
           })}
         </HStack>
       ))}
-      <View className='flex-row gap-0.5'>
-        <Button className='flex-1 h-20' onPress={() => onChange(0)}>
-          <ButtonText>{0}</ButtonText>
-        </Button>
-      </View>
-      <View className='flex-row gap-2'>
+      <HStack space={"md"}>
         <Button
+          className='w-max flex-1 aspect-video px-5'
           action={"negative"}
-          className=' aspect-square h-24'
+          variant={"link"}
           onPress={handleClear}
         >
           <ButtonText>C</ButtonText>
         </Button>
-        <QRActionSheet amount={value} />
-      </View>
+        <Button
+          action='secondary'
+          className='w-max flex-1 aspect-video  px-5'
+          onPress={() => onChange(0)}
+        >
+          <ButtonText>{0}</ButtonText>
+        </Button>
+        <Button
+          className='w-max flex-1 aspect-video  px-5'
+          action='secondary'
+          onPress={handleBackspace}
+        >
+          <ButtonIcon as={Delete} />
+        </Button>
+      </HStack>
     </VStack>
   );
 }

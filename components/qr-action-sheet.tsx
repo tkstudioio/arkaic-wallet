@@ -1,4 +1,4 @@
-import { HandCoins, LayoutDashboard, View } from "lucide-react-native";
+import { LayoutDashboard, View } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 
@@ -54,14 +54,8 @@ export default function QRActionSheet(props: { amount?: number }) {
 
   return (
     <>
-      <Button
-        action={"positive"}
-        className='flex-1 h-24'
-        size={"xl"}
-        onPress={() => setOpen(true)}
-      >
-        <HandCoins color={colors.background} />
-        <ButtonText>Receive</ButtonText>
+      <Button onPress={() => setOpen(true)}>
+        <ButtonText>Create payment request</ButtonText>
       </Button>
       <Actionsheet isOpen={open} onClose={() => setOpen(false)}>
         <ActionsheetBackdrop />
