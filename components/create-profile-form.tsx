@@ -9,36 +9,39 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useCreateProfile } from "@/hooks/use-create-profile";
-import { ArkaicProfile } from "@/types/arkaic";
 import { faker } from "@faker-js/faker";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
-import { capitalize } from "lodash";
+import { capitalize, merge } from "lodash";
 import { Link2, User } from "lucide-react-native";
 import { match } from "ts-pattern";
 import PrivateKeyInput from "./private-key-input";
 import { Card } from "./ui/card";
 
-function generateProfile(): ArkaicProfile {
-  return {
-    name: capitalize(faker.color.human()) + " " + faker.animal.petName(),
+function generateProfileName(): string {
+  return capitalize(faker.color.human()) + " " + faker.animal.petName();
+}
+
+export default function CreateOrRestoreProfileForm(props: {
+  restore?: boolean;
+}) {
+  const router = useRouter();
+  const createProfileMutation = useCreateProfile();
+
+  const defaultValues = {
+    name: "",
     privateKey: "",
     arkadeServerUrl: "",
     avatar: faker.image.avatarGitHub(),
   };
-}
-
-export default function CreateProfileForm() {
-  const router = useRouter();
-  const createProfileMutation = useCreateProfile();
-
-  function goBack() {
-    router.replace("/");
-  }
 
   return (
     <Formik
-      initialValues={generateProfile()}
+      initialValues={
+        props.restore
+          ? defaultValues
+          : merge(defaultValues, { name: generateProfileName() })
+      }
       onSubmit={createProfileMutation.mutate}
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (
@@ -47,12 +50,13 @@ export default function CreateProfileForm() {
             <AvatarFallbackText>-</AvatarFallbackText>
             <AvatarImage source={{ uri: values.avatar }} src={values.avatar} />
           </Avatar>
-          <Card className='w-full gap-4'>
+          <Card className='w-full gap-8'>
             <VStack space='xs'>
               <Text>Profile name</Text>
               <Input size={"xl"}>
                 <InputIcon as={User} />
                 <InputField
+                  placeholder='profile name'
                   onChangeText={handleChange("name")}
                   onBlur={handleBlur("name")}
                   value={values.name}
@@ -65,16 +69,17 @@ export default function CreateProfileForm() {
                 onChangeText={handleChange("privateKey")}
                 onBlur={handleBlur("privateKey")}
                 value={values.privateKey}
+                generateInitialKey={!props.restore}
               />
             </VStack>
             <VStack space='xs'>
               <Text>Arkade server URL</Text>
-              <Input>
+              <Input size={"xl"}>
                 <InputIcon as={Link2} />
                 <InputField
-                  placeholder='inser ASP url'
                   onChangeText={handleChange("arkadeServerUrl")}
                   onBlur={handleBlur("arkadeServerUrl")}
+                  placeholder='insert ASP url'
                   value={values.arkadeServerUrl}
                 />
               </Input>
@@ -93,7 +98,11 @@ export default function CreateProfileForm() {
               .with({ isError: true }, () => (
                 <>
                   <Text className='text-center'>Error creating profile</Text>
-                  <Button variant={"link"} action={"negative"} onPress={goBack}>
+                  <Button
+                    variant={"link"}
+                    action={"negative"}
+                    onPress={router.back}
+                  >
                     <ButtonText>Go back</ButtonText>
                   </Button>
                 </>
@@ -114,7 +123,7 @@ export default function CreateProfileForm() {
                     <Button
                       variant={"link"}
                       action={"negative"}
-                      onPress={goBack}
+                      onPress={router.back}
                     >
                       <ButtonText>Go back</ButtonText>
                     </Button>

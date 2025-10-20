@@ -2,16 +2,15 @@ import { useMutation } from "@tanstack/react-query";
 import { getRandomBytesAsync } from "expo-crypto";
 
 import { Input, InputField, InputIcon } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { join, map } from "lodash";
 import { KeyRound } from "lucide-react-native";
 import { useEffect } from "react";
-import { match } from "ts-pattern";
 
 type PrivateKeyInputProps = {
   onChangeText: (field: string) => void;
   onBlur: (e: any) => void;
   value: string;
+  generateInitialKey?: boolean;
 };
 
 export default function PrivateKeyInput(props: PrivateKeyInputProps) {
@@ -31,6 +30,7 @@ export default function PrivateKeyInput(props: PrivateKeyInputProps) {
   });
 
   useEffect(() => {
+    if (!props.generateInitialKey) return;
     async function generatePrivateKey() {
       const newPrivateKey = await privateKeyMutation.mutateAsync();
       props.onChangeText(newPrivateKey);
@@ -39,12 +39,10 @@ export default function PrivateKeyInput(props: PrivateKeyInputProps) {
     generatePrivateKey();
   }, []);
 
-  return match(privateKeyMutation)
-    .with({ isSuccess: true }, () => (
-      <Input size={"xl"}>
-        <InputIcon as={KeyRound} />
-        <InputField placeholder='insert private key' {...props} />
-      </Input>
-    ))
-    .otherwise(() => <Spinner />);
+  return (
+    <Input size={"xl"}>
+      <InputIcon as={KeyRound} />
+      <InputField placeholder='private key' {...props} />
+    </Input>
+  );
 }

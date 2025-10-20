@@ -42,8 +42,12 @@ export function ProfilesList() {
     deleteProfileMutation.mutate(profileName);
   }
 
-  function onCreateNewAccount() {
-    router.replace("/create-profile");
+  function onCreate() {
+    router.push("/profile/create");
+  }
+
+  function onRestoreFromSeedPhrase() {
+    router.push("/profile/restore");
   }
 
   function onSheetclose() {
@@ -68,12 +72,12 @@ export function ProfilesList() {
             one or restoring from a 24 words seed phrase
           </Text>
           <VStack space={"lg"} className='w-full'>
-            <Button onPress={onCreateNewAccount}>
+            <Button onPress={onCreate}>
               <ButtonText>Create first profile</ButtonText>
               <ButtonIcon as={UserPlus} />
             </Button>
             <Button
-              onPress={() => router.replace("/create-profile")}
+              onPress={onRestoreFromSeedPhrase}
               variant={"link"}
               action={"secondary"}
             >
@@ -166,13 +170,10 @@ export function ProfilesList() {
         </VStack>
       </Card>
       <VStack space={"md"}>
-        <Button onPress={() => router.replace("/create-profile")}>
+        <Button onPress={onCreate}>
           <ButtonText>Create new profile</ButtonText>
         </Button>
-        <Button
-          onPress={() => router.replace("/create-profile")}
-          variant={"link"}
-        >
+        <Button onPress={onRestoreFromSeedPhrase} variant={"link"}>
           <ButtonText>Restore from seed phrase</ButtonText>
         </Button>
       </VStack>

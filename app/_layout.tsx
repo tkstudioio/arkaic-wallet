@@ -29,7 +29,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name='create-profile'
+            name='profile/create'
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='profile/restore'
             options={{
               headerShown: false,
             }}
