@@ -12,13 +12,12 @@
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
-"@arkade-os/sdk@0.3.0-alpha.8":
-  version "0.3.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@arkade-os/sdk/-/sdk-0.3.0-alpha.8.tgz#df3d6f0f709fc7407180f38a0fa59b4ac711cb62"
-  integrity sha512-FrR71u/IEYxpfrYkR0uXNpbixjxDx1iG/ZtmSg2kAR/Hrft0ABtiWfsUzAj01nM+IYOFfox7mKgAZhyMB2YysA==
+"@arkade-os/sdk@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@arkade-os/sdk/-/sdk-0.3.0.tgz#698b46e2009f3f2ecda3e9727ab8b59442c229bb"
+  integrity sha512-PSW4O80un4fQm9WpCEi/Nf5HtxPRqiB7YaixY9QnQH6UImeqmTntNPVNENJl6cvgBVc02//XOBKju+qT0K3Nxg==
   dependencies:
     "@noble/curves" "2.0.0"
-    "@noble/hashes" "2.0.0"
     "@noble/secp256k1" "3.0.0"
     "@scure/base" "2.0.0"
     "@scure/btc-signer" "2.0.1"

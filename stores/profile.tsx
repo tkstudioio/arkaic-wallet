@@ -4,6 +4,7 @@ import {
   ArkProvider,
   IndexerProvider,
   SingleKey,
+  VtxoManager,
   Wallet,
 } from "@arkade-os/sdk";
 import {
@@ -19,6 +20,7 @@ type ProfileStore = {
   profile?: ArkaicProfile;
   arkProvider?: ArkProvider;
   indexerProvider?: IndexerProvider;
+  vtxoManager?: VtxoManager;
   wallet?: Wallet;
   login: (profileName: string) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -80,7 +82,12 @@ const useProfileStore = create<ProfileStore>((set) => ({
       indexerProvider,
     });
 
-    set({ wallet, arkProvider, indexerProvider, profile });
+    const vtxoManager = new VtxoManager(wallet, {
+      enabled: true,
+      thresholdPercentage: 10,
+    });
+
+    set({ wallet, arkProvider, indexerProvider, profile, vtxoManager });
 
     return true;
   },
