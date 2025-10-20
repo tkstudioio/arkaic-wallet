@@ -4,6 +4,7 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { OnchainBalance } from "@/components/onchain-balance";
 
 import { useBalance } from "@/hooks/use-balance";
+import useSettingsStore, { ChainSetting } from "@/stores/settings";
 import { ArrowLeftRight } from "lucide-react-native";
 import React from "react";
 import { match } from "ts-pattern";
@@ -15,6 +16,7 @@ import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
 export function BalanceCarousel() {
+  const { setChain } = useSettingsStore();
   const width = Dimensions.get("window").width;
   const ref = React.useRef<ICarouselInstance>(null);
   const balanceQuery = useBalance();
@@ -23,6 +25,15 @@ export function BalanceCarousel() {
     <ArkBalanceCard key={"ark"} />,
     <OnchainBalance key={"onchain"} />,
   ];
+
+  function onChainSnap(index: number) {
+    if (index === 0) {
+      setChain(ChainSetting.Ark);
+    }
+    if (index === 1) {
+      setChain(ChainSetting.Onchain);
+    }
+  }
 
   return match(balanceQuery)
     .with({ isLoading: true }, () => <Spinner />)
@@ -34,6 +45,7 @@ export function BalanceCarousel() {
         loop={false}
         data={slides}
         style={{ padding: 24 }}
+        onSnapToItem={onChainSnap}
         renderItem={({ item }) => item}
       />
     ))
