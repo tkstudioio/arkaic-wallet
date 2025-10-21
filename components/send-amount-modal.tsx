@@ -4,7 +4,7 @@ import { Input, InputField } from "@/components/ui/input";
 import { Modal, ModalBackdrop, ModalContent } from "@/components/ui/modal";
 import { Text } from "@/components/ui/text";
 import { Send, Triangle, TriangleAlert, Zap } from "lucide-react-native";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { Spinner } from "@/components/ui/spinner";
 import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
@@ -33,23 +33,32 @@ export function SendAmountModal(props: {
 
   const sendBitcoinMutation = useSendBitcoin();
 
-  async function handleSendBitcoins() {
-    if (!props.arkaicPayment?.amount) return;
+  const handleSendBitcoins = useCallback(
+    async function handleSendBitcoins() {
+      if (!props.arkaicPayment) return;
 
-    await sendBitcoinMutation.mutateAsync({
-      ...props.arkaicPayment,
-      amount: props.arkaicPayment.amount || props.amount,
-    });
+      console.log(
+        props.arkaicPayment.amount,
+        props.amount,
+        props.arkaicPayment.amount || props.amount
+      );
+      await sendBitcoinMutation.mutateAsync({
+        ...props.arkaicPayment,
+        amount: props.arkaicPayment.amount || props.amount,
+      });
 
-    queryClient.invalidateQueries({ queryKey: ["balance"] });
-    queryClient.invalidateQueries({ queryKey: ["onchain-transactions"] });
-    queryClient.invalidateQueries({ queryKey: ["ark-transactions"] });
-  }
+      queryClient.invalidateQueries({ queryKey: ["balance"] });
+      queryClient.invalidateQueries({ queryKey: ["onchain-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["ark-transactions"] });
+    },
+    [props.amount, props.arkaicPayment, queryClient, sendBitcoinMutation]
+  );
 
   function changeAmount(amount: string) {
     if (!props.onAmountChange) return;
     props.onAmountChange(toNumber(amount));
   }
+
   return (
     <Modal
       isOpen={props.open}
@@ -145,7 +154,10 @@ export function SendAmountModal(props: {
               <Button
                 variant='link'
                 action='negative'
-                onPress={() => props.setOpen(false)}
+                onPress={() => {
+                  props.setOpen(false);
+                  sendBitcoinMutation.reset();
+                }}
               >
                 <ButtonText>Cancel</ButtonText>
               </Button>

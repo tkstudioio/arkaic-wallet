@@ -7,7 +7,8 @@ export function useTransactions() {
     queryKey: ["transactions"],
     queryFn: async () => {
       if (!wallet) throw new Error("missing wallet");
-      return await wallet.getTransactionHistory();
+      const transactions = await wallet.getTransactionHistory();
+      return transactions;
     },
   });
 }

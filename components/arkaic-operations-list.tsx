@@ -4,14 +4,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 
 import { VStack } from "@/components/ui/vstack";
-import { useTransactions } from "@/hooks/use-transactions";
+import { useArkTransactions } from "@/hooks/use-ark-transactions";
 import useProfileStore from "@/stores/profile";
 import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { isEmpty, map } from "lodash";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
-import { TransactionRow } from "./transaction-row";
+import { ArkTransactionRow } from "./ark-transaction-row";
 import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Switch } from "./ui/switch";
@@ -19,7 +19,7 @@ import { Switch } from "./ui/switch";
 export function ArkaicOperationsList() {
   const { detailedTransactions, toggleDetailedTransactions } =
     useSettingsStore();
-  const transactionsQuery = useTransactions();
+  const transactionsQuery = useArkTransactions();
   const queryClient = useQueryClient();
   const { wallet } = useProfileStore();
 
@@ -51,7 +51,12 @@ export function ArkaicOperationsList() {
           .with({ isSuccess: true }, ({ data }) => {
             if (!isEmpty(data)) {
               return map(data, (transaction, idx) => (
-                <TransactionRow key={idx} transaction={transaction} />
+                <>
+                  <ArkTransactionRow
+                    key={idx + "1"}
+                    transaction={transaction}
+                  />
+                </>
               ));
             }
             return (

@@ -2,6 +2,7 @@ import { useBalance } from "@/hooks/use-balance";
 
 import { Link2 } from "lucide-react-native";
 import { AmountComponent } from "./amount";
+import { OnboardButton } from "./onboard-button";
 import { Badge, BadgeIcon, BadgeText } from "./ui/badge";
 import { Card } from "./ui/card";
 import { VStack } from "./ui/vstack";
@@ -27,6 +28,7 @@ export function OnchainBalance() {
           <BadgeText>Onchain</BadgeText>
         </Badge>
       </VStack>
+      <OnboardButton />
     </Card>
   );
 }

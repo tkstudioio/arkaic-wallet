@@ -11,7 +11,7 @@ export function useArkTransactions() {
       const transactions = await wallet.getTransactionHistory();
       return filter(
         transactions,
-        (transaction) => transaction.key.boardingTxid !== ""
+        (transaction) => transaction.key.boardingTxid === ""
       );
     },
   });
