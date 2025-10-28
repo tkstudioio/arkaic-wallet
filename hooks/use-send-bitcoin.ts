@@ -15,7 +15,6 @@ export function useSendBitcoin() {
       if (!wallet) throw new Error("No wallet set");
       if (!arkaicPayment.amount) throw new Error("Missing transaction amount");
 
-      console.log(arkaicPayment);
       if (
         arkaicPayment.layer === BitcoinLayer.Onchain ||
         arkaicPayment.signerPubkey !== aspInfo?.signerPubkey

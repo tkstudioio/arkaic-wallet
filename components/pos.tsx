@@ -39,7 +39,6 @@ export default function PosComponent(props: PosComponentProps) {
 
   function handleBackspace() {
     const newValue = toNumber(toString(props.value).slice(0, -1));
-    console.log(props.value, newValue);
     if (isNaN(newValue)) return;
     setValue(newValue);
     props.onChange(newValue);

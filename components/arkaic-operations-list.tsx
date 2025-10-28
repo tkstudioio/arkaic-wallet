@@ -4,14 +4,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 
 import { VStack } from "@/components/ui/vstack";
-import { useArkTransactions } from "@/hooks/use-ark-transactions";
+import { useTransactions } from "@/hooks/use-transactions";
 import useProfileStore from "@/stores/profile";
 import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { isEmpty, map } from "lodash";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
-import { ArkTransactionRow } from "./ark-transaction-row";
+import { Transaction } from "./transaction";
 import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Switch } from "./ui/switch";
@@ -19,7 +19,7 @@ import { Switch } from "./ui/switch";
 export function ArkaicOperationsList() {
   const { detailedTransactions, toggleDetailedTransactions } =
     useSettingsStore();
-  const transactionsQuery = useArkTransactions();
+  const transactionsQuery = useTransactions();
   const queryClient = useQueryClient();
   const { wallet } = useProfileStore();
 
@@ -36,7 +36,7 @@ export function ArkaicOperationsList() {
   return (
     <Card size={"lg"} className='gap-8'>
       <HStack className='justify-between items-center'>
-        <Heading>Arkaic operations</Heading>
+        <Heading>Transactions</Heading>
         <HStack className='items-center justify-end'>
           <Text size='sm'>show details</Text>
           <Switch
@@ -52,10 +52,7 @@ export function ArkaicOperationsList() {
             if (!isEmpty(data)) {
               return map(data, (transaction, idx) => (
                 <>
-                  <ArkTransactionRow
-                    key={idx + "1"}
-                    transaction={transaction}
-                  />
+                  <Transaction key={idx + "1"} transaction={transaction} />
                 </>
               ));
             }

@@ -37,11 +37,6 @@ export function SendAmountModal(props: {
     async function handleSendBitcoins() {
       if (!props.arkaicPayment) return;
 
-      console.log(
-        props.arkaicPayment.amount,
-        props.amount,
-        props.arkaicPayment.amount || props.amount
-      );
       await sendBitcoinMutation.mutateAsync({
         ...props.arkaicPayment,
         amount: props.arkaicPayment.amount || props.amount,

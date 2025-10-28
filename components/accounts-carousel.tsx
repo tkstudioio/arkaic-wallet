@@ -1,30 +1,25 @@
 import { Dimensions } from "react-native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
-import { OnchainBalance } from "@/components/onchain-balance";
-
 import { useBalance } from "@/hooks/use-balance";
 import useSettingsStore, { ChainSetting } from "@/stores/settings";
 import { ArrowLeftRight } from "lucide-react-native";
 import React from "react";
 import { match } from "ts-pattern";
-import { ArkBalanceCard } from "./ark-balance";
+import { AccountBalance } from "./account-balance";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { Heading } from "./ui/heading";
 import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
-export function BalanceCarousel() {
+export function AccountsCarousel() {
   const { setChain } = useSettingsStore();
   const width = Dimensions.get("window").width;
   const ref = React.useRef<ICarouselInstance>(null);
   const balanceQuery = useBalance();
 
-  const slides = [
-    <ArkBalanceCard key={"ark"} />,
-    <OnchainBalance key={"onchain"} />,
-  ];
+  const slides = [<AccountBalance key={"accountid"} />];
 
   function onChainSnap(index: number) {
     if (index === 0) {
@@ -41,7 +36,7 @@ export function BalanceCarousel() {
       <Carousel
         ref={ref}
         width={width}
-        height={width * (2 / 3)}
+        height={width * (4 / 5)}
         loop={false}
         data={slides}
         style={{ padding: 24 }}
