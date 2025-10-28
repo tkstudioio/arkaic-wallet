@@ -10,6 +10,7 @@ export function useProfiles() {
       const currentProfiles = storedProfiles ? JSON.parse(storedProfiles) : [];
       return currentProfiles as ArkaicProfile[];
     },
+
     refetchOnMount: true,
   });
 }

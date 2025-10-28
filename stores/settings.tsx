@@ -1,3 +1,4 @@
+import { CurrencySymbol } from "@/hooks/use-bitcoin-price";
 import { create } from "zustand";
 
 export enum ChainSetting {
@@ -7,8 +8,8 @@ export enum ChainSetting {
 type SettingsStore = {
   detailedTransactions: boolean;
   toggleDetailedTransactions: () => void;
-  chain: ChainSetting;
-  setChain: (chain: ChainSetting) => void;
+  symbol: CurrencySymbol;
+  setSymbol: (symbol: CurrencySymbol) => void;
 };
 
 const useSettingsStore = create<SettingsStore>((set) => ({
@@ -17,10 +18,10 @@ const useSettingsStore = create<SettingsStore>((set) => ({
     set(({ detailedTransactions }) => ({
       detailedTransactions: !detailedTransactions,
     })),
-  chain: ChainSetting.Ark,
-  setChain: (chain) =>
+  symbol: "EUR",
+  setSymbol: (symbol) =>
     set({
-      chain,
+      symbol,
     }),
 }));
 

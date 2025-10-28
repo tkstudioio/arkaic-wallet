@@ -8,6 +8,8 @@ import { find, some } from "lodash";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { Link2, Minus, Plus } from "lucide-react-native";
 
+import useBitcoinPrice from "@/hooks/use-bitcoin-price";
+import { useMemo } from "react";
 import { OnboardButton } from "./onboard-button";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
@@ -17,6 +19,9 @@ import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
 export function Transaction({ transaction }: { transaction: ArkTransaction }) {
+  const { symbol } = useSettingsStore();
+  const { data: exchangeRate } = useBitcoinPrice(symbol);
+
   const { detailedTransactions } = useSettingsStore();
   const { data: transactions, isPending: isOnboardingFunds } =
     useTransactions();
@@ -40,6 +45,11 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
   const isExternalTransaction = !arkTransaction && !onchainTransaction;
   const shouldOnboard = !transaction.settled && hasOnboardableTransactions;
 
+  const amount = useMemo(() => {
+    if (!exchangeRate) return 0;
+    return (exchangeRate.last / 100000000) * transaction.amount;
+  }, [exchangeRate, transaction.amount]);
+
   return (
     <HStack className='justify-between'>
       <VStack className='items-start w-max' space='xs'>
@@ -54,7 +64,10 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
             >
               <ButtonIcon as={Minus} size={"sm"} />
               <ButtonText>
-                {Intl.NumberFormat("it").format(transaction.amount)} sats
+                {Intl.NumberFormat("it", { maximumFractionDigits: 2 }).format(
+                  amount
+                )}{" "}
+                {symbol}
               </ButtonText>
             </Button>
           ) : (
@@ -69,7 +82,10 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
                 <ButtonIcon as={Plus} size={"sm"} />
                 {isOnboardingFunds ? <Spinner /> : null}
                 <ButtonText>
-                  {Intl.NumberFormat("it").format(transaction.amount)} sats
+                  {Intl.NumberFormat("it", { maximumFractionDigits: 2 }).format(
+                    amount
+                  )}{" "}
+                  {symbol}
                 </ButtonText>
                 {shouldOnboard ? <ButtonIcon as={Link2} size={"sm"} /> : null}
               </Button>

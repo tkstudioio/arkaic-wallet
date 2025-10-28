@@ -40,26 +40,15 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+
           <Stack.Screen
-            name='dashboard/index'
+            name='receive'
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
-            name='dashboard/onchain'
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name='dashboard/receive'
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name='dashboard/send'
+            name='send'
             options={{
               headerShown: false,
             }}
