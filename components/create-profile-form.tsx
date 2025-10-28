@@ -1,8 +1,3 @@
-import {
-  Avatar,
-  AvatarFallbackText,
-  AvatarImage,
-} from "@/components/ui/avatar";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -19,7 +14,7 @@ import PrivateKeyInput from "./private-key-input";
 import { Card } from "./ui/card";
 
 function generateProfileName(): string {
-  return capitalize(faker.color.human()) + " " + faker.animal.petName();
+  return capitalize(faker.finance.accountName());
 }
 
 export default function CreateOrRestoreProfileForm(props: {
@@ -31,8 +26,7 @@ export default function CreateOrRestoreProfileForm(props: {
   const defaultValues = {
     name: "",
     privateKey: "",
-    arkadeServerUrl: "",
-    avatar: faker.image.avatarGitHub(),
+    arkadeServerUrl: "https://arkade.computer",
   };
 
   return (
@@ -42,21 +36,24 @@ export default function CreateOrRestoreProfileForm(props: {
           ? defaultValues
           : merge(defaultValues, { name: generateProfileName() })
       }
-      onSubmit={createProfileMutation.mutate}
+      onSubmit={(values) =>
+        createProfileMutation.mutate(values, {
+          onSuccess: () => {
+            console.log("GG");
+            router.replace("/dashboard");
+          },
+        })
+      }
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (
         <>
-          <Avatar size={"xl"} className='mx-auto'>
-            <AvatarFallbackText>-</AvatarFallbackText>
-            <AvatarImage source={{ uri: values.avatar }} src={values.avatar} />
-          </Avatar>
           <Card className='w-full gap-8'>
             <VStack space='xs'>
-              <Text>Profile name</Text>
+              <Text>Account name</Text>
               <Input size={"xl"}>
                 <InputIcon as={User} />
                 <InputField
-                  placeholder='profile name'
+                  placeholder='account name'
                   onChangeText={handleChange("name")}
                   onBlur={handleBlur("name")}
                   value={values.name}

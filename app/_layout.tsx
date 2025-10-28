@@ -29,6 +29,12 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name='dashboard'
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name='profile/create'
             options={{
               headerShown: false,

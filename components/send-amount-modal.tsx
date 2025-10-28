@@ -141,12 +141,20 @@ export function SendAmountModal(props: {
           )}
 
           {sendBitcoinMutation.isSuccess ? (
-            <Button onPress={() => router.replace("/dashboard")}>
+            <Button
+              className='w-max'
+              onPress={() => router.replace("/dashboard")}
+            >
               <ButtonText>Back to dashbooard</ButtonText>
             </Button>
           ) : (
-            <HStack className='justify-around'>
+            <VStack className='justify-around'>
+              <Button className='w-max' onPress={handleSendBitcoins}>
+                <ButtonText>Send</ButtonText>
+                <ButtonIcon as={Send} />
+              </Button>
               <Button
+                className='w-full'
                 variant='link'
                 action='negative'
                 onPress={() => {
@@ -156,11 +164,7 @@ export function SendAmountModal(props: {
               >
                 <ButtonText>Cancel</ButtonText>
               </Button>
-              <Button onPress={handleSendBitcoins}>
-                <ButtonText>Send</ButtonText>
-                <ButtonIcon as={Send} />
-              </Button>
-            </HStack>
+            </VStack>
           )}
         </VStack>
       </ModalContent>

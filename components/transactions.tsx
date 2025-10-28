@@ -8,7 +8,7 @@ import { useTransactions } from "@/hooks/use-transactions";
 import useProfileStore from "@/stores/profile";
 import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
-import { isEmpty, map } from "lodash";
+import { isEmpty, join, map, values } from "lodash";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
 import { Transaction } from "./transaction";
@@ -16,7 +16,7 @@ import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Switch } from "./ui/switch";
 
-export function ArkaicOperationsList() {
+export function Transactions() {
   const { detailedTransactions, toggleDetailedTransactions } =
     useSettingsStore();
   const transactionsQuery = useTransactions();
@@ -50,9 +50,12 @@ export function ArkaicOperationsList() {
         {match(transactionsQuery)
           .with({ isSuccess: true }, ({ data }) => {
             if (!isEmpty(data)) {
-              return map(data, (transaction, idx) => (
+              return map(data, (transaction) => (
                 <>
-                  <Transaction key={idx + "1"} transaction={transaction} />
+                  <Transaction
+                    key={join(values(transaction.key))}
+                    transaction={transaction}
+                  />
                 </>
               ));
             }

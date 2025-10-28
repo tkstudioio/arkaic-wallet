@@ -1,20 +1,14 @@
-import { AccountsCarousel } from "@/components/accounts-carousel";
-import { ArkaicOperationsList } from "@/components/arkaic-operations-list";
+import { Home } from "@/components/homepage";
 import AppLayout from "@/components/layout/app-layout";
-import { VStack } from "@/components/ui/vstack";
 
 import React from "react";
 
-const Home = () => {
+const HomePage = () => {
   return (
     <AppLayout>
-      <AccountsCarousel />
-
-      <VStack className='px-6'>
-        <ArkaicOperationsList />
-      </VStack>
+      <Home />
     </AppLayout>
   );
 };
 
-export default Home;
+export default HomePage;

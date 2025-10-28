@@ -17,7 +17,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { filter, find } from "lodash";
 
 type ProfileStore = {
-  profile?: ArkaicProfile;
   arkProvider?: ArkProvider;
   indexerProvider?: IndexerProvider;
   vtxoManager?: VtxoManager;
@@ -34,7 +33,6 @@ export enum StorageKeys {
 const useProfileStore = create<ProfileStore>((set) => ({
   logout: async () => {
     set({
-      profile: undefined,
       arkProvider: undefined,
       indexerProvider: undefined,
       wallet: undefined,
@@ -85,7 +83,7 @@ const useProfileStore = create<ProfileStore>((set) => ({
       thresholdPercentage: 10,
     });
 
-    set({ wallet, arkProvider, indexerProvider, profile, vtxoManager });
+    set({ wallet, arkProvider, indexerProvider, vtxoManager });
 
     return true;
   },
