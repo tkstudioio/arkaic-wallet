@@ -64,9 +64,10 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
             >
               <ButtonIcon as={Minus} size={"sm"} />
               <ButtonText>
-                {Intl.NumberFormat("it", { maximumFractionDigits: 2 }).format(
-                  amount
-                )}{" "}
+                {Intl.NumberFormat("it", {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2,
+                }).format(amount)}{" "}
                 {symbol}
               </ButtonText>
             </Button>
@@ -82,9 +83,10 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
                 <ButtonIcon as={Plus} size={"sm"} />
                 {isOnboardingFunds ? <Spinner /> : null}
                 <ButtonText>
-                  {Intl.NumberFormat("it", { maximumFractionDigits: 2 }).format(
-                    amount
-                  )}{" "}
+                  {Intl.NumberFormat("it", {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2,
+                  }).format(amount)}{" "}
                   {symbol}
                 </ButtonText>
                 {shouldOnboard ? <ButtonIcon as={Link2} size={"sm"} /> : null}
