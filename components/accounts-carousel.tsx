@@ -2,7 +2,9 @@ import { Dimensions } from "react-native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
 import { useBalance } from "@/hooks/use-balance";
-import useSettingsStore, { ChainSetting } from "@/stores/settings";
+import { useProfiles } from "@/hooks/use-profiles";
+import useProfileStore from "@/stores/profile";
+import { get, map } from "lodash";
 import { ArrowLeftRight } from "lucide-react-native";
 import React from "react";
 import { match } from "ts-pattern";
@@ -14,20 +16,23 @@ import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
 export function AccountsCarousel() {
-  const { setChain } = useSettingsStore();
+  const { login } = useProfileStore();
   const width = Dimensions.get("window").width;
   const ref = React.useRef<ICarouselInstance>(null);
   const balanceQuery = useBalance();
+  const profilesQuery = useProfiles();
 
-  const slides = [<AccountBalance key={"accountid"} />];
+  if (!profilesQuery.data) return;
 
-  function onChainSnap(index: number) {
-    if (index === 0) {
-      setChain(ChainSetting.Ark);
-    }
-    if (index === 1) {
-      setChain(ChainSetting.Onchain);
-    }
+  const slides = map(profilesQuery.data, (profile) => (
+    <AccountBalance key={profile.privateKey} profile={profile} />
+  ));
+
+  async function onChainSnap(index: number) {
+    const profile = get(profilesQuery.data, index, undefined);
+    if (!profile) return;
+    const hasAccountChanged = login(profile.name);
+    if (!hasAccountChanged) return;
   }
 
   return match(balanceQuery)

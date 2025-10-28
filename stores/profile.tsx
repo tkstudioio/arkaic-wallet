@@ -69,7 +69,7 @@ const useProfileStore = create<ProfileStore>((set) => ({
     );
 
     if (!profile) return false;
-    console.log(profile);
+
     const arkProvider = new ExpoArkProvider(profile.arkadeServerUrl);
     const indexerProvider = new ExpoIndexerProvider(profile.arkadeServerUrl);
 

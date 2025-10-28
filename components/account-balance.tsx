@@ -1,19 +1,22 @@
 import { useBalance } from "@/hooks/use-balance";
 
+import { useWallet } from "@/hooks/use-wallet";
+import { ArkaicProfile } from "@/types/arkaic";
 import { useRouter } from "expo-router";
 import { map } from "lodash";
-import { Plus, Send, Triangle } from "lucide-react-native";
+import { Plus, Send } from "lucide-react-native";
 import { AmountComponent } from "./amount";
-import { Badge, BadgeIcon, BadgeText } from "./ui/badge";
+import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonIcon } from "./ui/button";
 import { Card } from "./ui/card";
 import { HStack } from "./ui/hstack";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
-export function AccountBalance() {
+export function AccountBalance(props: { profile: ArkaicProfile }) {
   const router = useRouter();
-  const { data } = useBalance();
+  const wallet = useWallet(props.profile);
+  const { data } = useBalance(wallet.data);
 
   const actions = [
     {
@@ -32,11 +35,10 @@ export function AccountBalance() {
     <VStack className='h-full'>
       <Card variant={"ghost"} className='flex-1'>
         <VStack className='items-center my-auto' space={"sm"}>
-          <AmountComponent amount={data?.available} size='5xl' />
-          <Badge action={"success"} className='w-max'>
-            <BadgeIcon as={Triangle} />
-            <BadgeText>Ark</BadgeText>
+          <Badge className='w-max'>
+            <BadgeText>{props.profile.name}</BadgeText>
           </Badge>
+          <AmountComponent amount={data?.available} size='5xl' />
         </VStack>
       </Card>
 
