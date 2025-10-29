@@ -1,5 +1,3 @@
-import { BitcoinLayer } from "./common";
-
 export type ArkaicProfile = {
   name: string;
   privateKey: string;
@@ -8,8 +6,8 @@ export type ArkaicProfile = {
 };
 
 export type ArkaicPayment = {
-  layer: BitcoinLayer;
-  address: string;
+  onchainAddress?: string;
+  arkAddress?: string;
   signerPubkey?: string;
   amount?: number;
 };

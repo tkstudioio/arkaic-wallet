@@ -1,6 +1,5 @@
 import useProfileStore from "@/stores/profile";
 import { ArkaicPayment } from "@/types/arkaic";
-import { BitcoinLayer } from "@/types/common";
 import { Ramps } from "@arkade-os/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAspInfo } from "./use-asp-info";
@@ -15,18 +14,22 @@ export function useSendBitcoin() {
       if (!wallet) throw new Error("No wallet set");
       if (!arkaicPayment.amount) throw new Error("Missing transaction amount");
 
+      if (!arkaicPayment.onchainAddress)
+        throw new Error("Wrong address parsing");
+
       if (
-        arkaicPayment.layer === BitcoinLayer.Onchain ||
+        !arkaicPayment.signerPubkey ||
+        !arkaicPayment.arkAddress ||
         arkaicPayment.signerPubkey !== aspInfo?.signerPubkey
       ) {
         return await new Ramps(wallet).offboard(
-          arkaicPayment.address,
+          arkaicPayment.onchainAddress,
           BigInt(arkaicPayment.amount)
         );
       }
 
       return await wallet?.sendBitcoin({
-        address: arkaicPayment.address,
+        address: arkaicPayment.arkAddress,
         amount: arkaicPayment.amount,
       });
     },

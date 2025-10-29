@@ -7,13 +7,13 @@ import useProfileStore from "@/stores/profile";
 import React from "react";
 
 const DashboardPage = () => {
-  const { wallet } = useProfileStore();
+  const { wallet, showTransactionsList } = useProfileStore();
 
   return (
     <AppLayout>
       {wallet ? <AccountsCarousel /> : null}
 
-      {wallet ? (
+      {showTransactionsList && wallet ? (
         <VStack className='px-6'>
           <Transactions />
         </VStack>

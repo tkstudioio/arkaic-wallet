@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useTransactions() {
   const { wallet } = useProfileStore();
+
   return useQuery({
     queryKey: ["transactions", wallet?.arkAddress],
     queryFn: async () => {

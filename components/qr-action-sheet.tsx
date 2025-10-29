@@ -1,4 +1,4 @@
-import { LayoutDashboard, View } from "lucide-react-native";
+import { LayoutDashboard } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 
@@ -41,13 +41,12 @@ export default function QRActionSheet(props: { amount?: number }) {
 
   useEffect(() => {
     if (!wallet) return;
-
     wallet.notifyIncomingFunds(setTransaction);
   }, []);
 
   function backToDashboard() {
     queryClient.invalidateQueries({ queryKey: ["balance"] });
-    queryClient.invalidateQueries({ queryKey: ["transactions-history"] });
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
     router.replace("/dashboard");
     setOpen(false);
   }
@@ -64,7 +63,7 @@ export default function QRActionSheet(props: { amount?: number }) {
             {transaction ? (
               <>
                 <Heading>Payment fulfilled</Heading>
-                <Text>You have an ark transaction incoming</Text>
+                <Text>You have an incoming transaction</Text>
               </>
             ) : (
               <>
@@ -113,39 +112,43 @@ export default function QRActionSheet(props: { amount?: number }) {
                         </Button>
                       </>
                     ))
-                    .with(
-                      {
-                        type: "utxo",
-                      },
-                      ({ coins }) => {
-                        return map(coins, (coin) => <View></View>); // to-do: show onchain infos
-                      }
+                    .with({ type: "utxo" }, (coin) =>
+                      map(coin.coins, (newCoin) => {
+                        return (
+                          <Input
+                            key={newCoin.txid}
+                            isDisabled
+                            size={"sm"}
+                            className='h-max py-3'
+                            variant={"underlined"}
+                          >
+                            <InputField
+                              value={toString(newCoin.txid)}
+                              multiline
+                            />
+                          </Input>
+                        );
+                      })
                     )
-                    .otherwise(({ newVtxos }) => (
-                      <>
-                        {map(newVtxos, (vtxo) => {
-                          return (
-                            <Input
-                              key={vtxo.txid}
-                              isDisabled
-                              size={"sm"}
-                              className='h-max py-3'
-                              variant={"underlined"}
-                            >
-                              <InputField
-                                value={toString(vtxo.txid)}
-                                multiline
-                              />
-                            </Input>
-                          );
-                        })}
-
-                        <Button onPress={backToDashboard}>
-                          <ButtonText>Back to dashboard</ButtonText>
-                          <ButtonIcon as={LayoutDashboard} />
-                        </Button>
-                      </>
-                    ))}
+                    .otherwise((coin) =>
+                      map(coin.newVtxos, (vtxo) => {
+                        return (
+                          <Input
+                            key={vtxo.txid}
+                            isDisabled
+                            size={"sm"}
+                            className='h-max py-3'
+                            variant={"underlined"}
+                          >
+                            <InputField value={toString(vtxo.txid)} multiline />
+                          </Input>
+                        );
+                      })
+                    )}
+                  <Button onPress={backToDashboard}>
+                    <ButtonText>Back to dashboard</ButtonText>
+                    <ButtonIcon as={LayoutDashboard} />
+                  </Button>
                 </VStack>
               );
             })

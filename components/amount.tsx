@@ -14,9 +14,15 @@ export function AmountComponent(props: { amount?: number; size?: string }) {
       </HStack>
     );
 
-  const formattedAmount = Intl.NumberFormat("it", {
+  let formattedAmount = "";
+
+  if (!exchangeRate?.last) {
+    formattedAmount = Intl.NumberFormat("it", {}).format(props.amount);
+  }
+
+  formattedAmount = Intl.NumberFormat("it", {
     maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
+    minimumFractionDigits: exchangeRate ? 2 : 0,
   }).format(
     exchangeRate ? (exchangeRate.last / 100000000) * props.amount : props.amount
   );
@@ -24,7 +30,7 @@ export function AmountComponent(props: { amount?: number; size?: string }) {
   return (
     <HStack className='items-center' space={"sm"}>
       <Text size={props.size}>{formattedAmount}</Text>
-      <Text className='text-primary-500 font-thin text-4xl'>
+      <Text size={props.size} className='text-primary-500 font-thin'>
         {exchangeRate ? symbol : "SATS"}
       </Text>
     </HStack>

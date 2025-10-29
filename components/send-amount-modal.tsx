@@ -3,7 +3,7 @@ import { Heading } from "@/components/ui/heading";
 import { Input, InputField } from "@/components/ui/input";
 import { Modal, ModalBackdrop, ModalContent } from "@/components/ui/modal";
 import { Text } from "@/components/ui/text";
-import { Send, Triangle, TriangleAlert, Zap } from "lucide-react-native";
+import { Send, Triangle } from "lucide-react-native";
 import React, { useCallback } from "react";
 
 import { Spinner } from "@/components/ui/spinner";
@@ -11,7 +11,6 @@ import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
 
 import { useAspInfo } from "@/hooks/use-asp-info";
 import { ArkaicPayment } from "@/types/arkaic";
-import { BitcoinLayer } from "@/types/common";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { toNumber, toString } from "lodash";
@@ -30,21 +29,23 @@ export function SendAmountModal(props: {
   const { data: aspInfo } = useAspInfo();
   const router = useRouter();
   const queryClient = useQueryClient();
-
   const sendBitcoinMutation = useSendBitcoin();
-
   const handleSendBitcoins = useCallback(
     async function handleSendBitcoins() {
       if (!props.arkaicPayment) return;
 
-      await sendBitcoinMutation.mutateAsync({
-        ...props.arkaicPayment,
-        amount: props.arkaicPayment.amount || props.amount,
-      });
-
-      queryClient.invalidateQueries({ queryKey: ["balance"] });
-      queryClient.invalidateQueries({ queryKey: ["onchain-transactions"] });
-      queryClient.invalidateQueries({ queryKey: ["ark-transactions"] });
+      await sendBitcoinMutation.mutateAsync(
+        {
+          ...props.arkaicPayment,
+          amount: props.arkaicPayment.amount || props.amount,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["balance"] });
+            queryClient.invalidateQueries({ queryKey: ["transactions"] });
+          },
+        }
+      );
     },
     [props.amount, props.arkaicPayment, queryClient, sendBitcoinMutation]
   );
@@ -103,42 +104,31 @@ export function SendAmountModal(props: {
                   </Input>
                 )
               )}
-
-            {sendBitcoinMutation.isSuccess || !aspInfo?.signerPubkey ? null : (
-              <VStack className='items-center'>
-                {match(props.arkaicPayment)
-                  .with(
-                    {
-                      layer: BitcoinLayer.Ark,
-                      signerPubkey: aspInfo.signerPubkey,
-                    },
-                    () => (
-                      <Badge action={"success"} className='gap-1'>
-                        <BadgeIcon as={Triangle} />
-                        <BadgeText>Ark payment</BadgeText>
-                      </Badge>
-                    )
-                  )
-                  .with({ layer: BitcoinLayer.Lightning }, () => (
-                    <Badge action={"info"} className='gap-1'>
-                      <BadgeIcon as={Zap} />
-                      <BadgeText>Lightning payment</BadgeText>
-                    </Badge>
-                  ))
-                  .otherwise(() => (
-                    <Badge className='gap-1' action='warning'>
-                      <BadgeText>Onchain payment</BadgeText>
-                      <BadgeIcon as={TriangleAlert} />
-                    </Badge>
-                  ))}
-              </VStack>
-            )}
+            <VStack className='items-center' space={"sm"}>
+              {aspInfo?.signerPubkey === props.arkaicPayment?.signerPubkey &&
+              props.arkaicPayment?.arkAddress ? (
+                <>
+                  <Badge action={"success"} className='gap-1'>
+                    <BadgeIcon as={Triangle} />
+                    <BadgeText>Ark payment</BadgeText>
+                  </Badge>
+                  <Text className='text-center' size={"sm"}>
+                    {props.arkaicPayment?.arkAddress}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Badge action={"warning"} className='gap-1'>
+                    <BadgeIcon as={Triangle} />
+                    <BadgeText>Onchain payment</BadgeText>
+                  </Badge>
+                  <Text className='text-center' size={"sm"}>
+                    {props.arkaicPayment?.onchainAddress}
+                  </Text>
+                </>
+              )}
+            </VStack>
           </VStack>
-          {sendBitcoinMutation.isSuccess ? null : (
-            <Text className='text-center' size={"sm"}>
-              {props.arkaicPayment?.address}
-            </Text>
-          )}
 
           {sendBitcoinMutation.isSuccess ? (
             <Button

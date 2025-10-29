@@ -55,7 +55,6 @@ export default function useBitcoinPrice(symbol: CurrencySymbol) {
 
       const priceInSelectedCurrency = get(exchangeRates, symbol);
       if (!priceInSelectedCurrency) throw new Error("Exchange rate not found");
-
       return priceInSelectedCurrency;
     },
   });

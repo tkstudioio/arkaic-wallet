@@ -1,7 +1,6 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
-import { useTheme } from "@react-navigation/native";
 import { Camera, QrCode } from "lucide-react-native";
 import React, { useState } from "react";
 
@@ -14,7 +13,6 @@ import { SendAmountModal } from "./send-amount-modal";
 import { VStack } from "./ui/vstack";
 
 export function SendComponent() {
-  const { colors } = useTheme();
   const [permission, requestPermission] = useCameraPermissions();
   const [open, setOpen] = useState<boolean>(false);
   const [amount, setAmount] = useState(0);

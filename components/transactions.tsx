@@ -19,19 +19,21 @@ import { Switch } from "./ui/switch";
 export function Transactions() {
   const { detailedTransactions, toggleDetailedTransactions } =
     useSettingsStore();
+  const { wallet, account } = useProfileStore();
   const transactionsQuery = useTransactions();
   const queryClient = useQueryClient();
-  const { wallet } = useProfileStore();
 
   function refreshBalanceAndTransactions() {
     queryClient.invalidateQueries({ queryKey: ["balance"] });
-    queryClient.invalidateQueries({ queryKey: ["transactions-history"] });
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
   }
 
   useEffect(() => {
+    console.log(account?.name);
+    transactionsQuery.refetch();
     if (!wallet) return;
     wallet.notifyIncomingFunds(refreshBalanceAndTransactions);
-  }, [wallet]);
+  }, [wallet, account]);
 
   return (
     <Card size={"lg"} className='gap-8'>
@@ -51,12 +53,10 @@ export function Transactions() {
           .with({ isSuccess: true }, ({ data }) => {
             if (!isEmpty(data)) {
               return map(data, (transaction) => (
-                <>
-                  <Transaction
-                    key={join(values(transaction.key))}
-                    transaction={transaction}
-                  />
-                </>
+                <Transaction
+                  key={join(values(transaction.key)) + transaction.createdAt}
+                  transaction={transaction}
+                />
               ));
             }
             return (
@@ -68,7 +68,12 @@ export function Transactions() {
               </VStack>
             );
           })
-          .with({ isLoading: true }, () => <Spinner />)
+          .with(
+            { isLoading: true },
+            { isFetching: true },
+            { isPending: true },
+            () => <Spinner />
+          )
           .otherwise(() => (
             <Text>Something went wrong</Text>
           ))}
