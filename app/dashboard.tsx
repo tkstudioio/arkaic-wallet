@@ -12,7 +12,6 @@ const DashboardPage = () => {
   return (
     <AppLayout>
       {wallet ? <AccountsCarousel /> : null}
-
       {showTransactionsList && wallet ? (
         <VStack className='px-6'>
           <Transactions />

@@ -13,10 +13,10 @@ export function useSendBitcoin() {
     mutationFn: async (arkaicPayment) => {
       if (!wallet) throw new Error("No wallet set");
       if (!arkaicPayment.amount) throw new Error("Missing transaction amount");
-
       if (!arkaicPayment.onchainAddress)
         throw new Error("Wrong address parsing");
 
+      // onchain payment (asp is different or no ark address is provided)
       if (
         !arkaicPayment.signerPubkey ||
         !arkaicPayment.arkAddress ||
@@ -28,6 +28,7 @@ export function useSendBitcoin() {
         );
       }
 
+      // ark payment (asp is the same and ark address is provided)
       return await wallet?.sendBitcoin({
         address: arkaicPayment.arkAddress,
         amount: arkaicPayment.amount,

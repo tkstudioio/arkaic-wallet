@@ -7,14 +7,14 @@ import { useEffect, useState } from "react";
 
 export type PosComponentProps = {
   onChange: (digit: number | undefined) => void;
-  value: number;
+  value?: number;
 };
 
 export default function PosComponent(props: PosComponentProps) {
   const columns: number[] = [1, 2, 3];
   const rows: number[] = range(3);
 
-  const [, setValue] = useState<number>(props.value);
+  const [, setValue] = useState<number | undefined>(props.value);
 
   useEffect(() => {
     setValue(props.value);

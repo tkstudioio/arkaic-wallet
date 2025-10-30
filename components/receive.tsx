@@ -1,7 +1,7 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { LayoutDashboard, Plus } from "lucide-react-native";
-import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import {
   Actionsheet,
@@ -31,7 +31,7 @@ import { useTheme } from "@react-navigation/native";
 import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 
-export function ReceiveComponent(props: PropsWithChildren) {
+export function ReceiveComponent() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const walletAddressMutation = usePaymentAddress();
@@ -169,7 +169,7 @@ export function ReceiveComponent(props: PropsWithChildren) {
               .with({ isError: true }, () => <Text>Error</Text>)
               .with({ isSuccess: true }, ({ data }) => {
                 if (!data) return <Text>No wallet generated</Text>;
-
+                console.log(data);
                 return (
                   <VStack space={"xl"} className='w-full'>
                     {!transaction ? (
