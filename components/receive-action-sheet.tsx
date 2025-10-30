@@ -169,7 +169,6 @@ export function ReceiveActionSheet() {
               .with({ isError: true }, () => <Text>Error</Text>)
               .with({ isSuccess: true }, ({ data }) => {
                 if (!data) return <Text>No wallet generated</Text>;
-                console.log(data);
                 return (
                   <VStack space={"xl"} className='w-full'>
                     {!transaction ? (
