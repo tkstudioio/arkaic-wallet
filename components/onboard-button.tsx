@@ -1,7 +1,7 @@
 import { useOnboardUtxos } from "@/hooks/use-onboard-utxos";
 import { useQueryClient } from "@tanstack/react-query";
 import { ExternalLink, PlaneTakeoff } from "lucide-react-native";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { Linking, TouchableOpacity } from "react-native";
 import { match } from "ts-pattern";
 import {
@@ -25,9 +25,6 @@ export function OnboardButton(
 
   const [open, setOpen] = useState<boolean>();
 
-  useEffect(() => {
-    console.log("onboardUtxos.error", onboardUtxos.error?.message);
-  }, [onboardUtxos.error]);
   return (
     <>
       {

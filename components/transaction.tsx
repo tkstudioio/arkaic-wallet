@@ -8,6 +8,7 @@ import { find, some } from "lodash";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { Link2, Minus, Plus } from "lucide-react-native";
 
+import useBitcoinPrice from "@/hooks/use-bitcoin-price";
 import { Linking, TouchableOpacity } from "react-native";
 import { AmountComponent } from "./amount";
 import { OnboardButton } from "./onboard-button";
@@ -20,6 +21,8 @@ import { VStack } from "./ui/vstack";
 
 export function Transaction({ transaction }: { transaction: ArkTransaction }) {
   const { detailedTransactions } = useSettingsStore();
+  const { symbol } = useSettingsStore();
+  const { data: exchangeData } = useBitcoinPrice(symbol);
   const { data: transactions, isPending: isOnboardingFunds } =
     useTransactions();
   const { commitmentTxid, arkTxid, boardingTxid } = transaction.key;
@@ -69,7 +72,11 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
               >
                 <ButtonIcon as={Minus} size={"sm"} />
                 <ButtonText>
-                  <AmountComponent amount={transaction.amount} size='2xl' />
+                  <AmountComponent
+                    amount={transaction.amount}
+                    size='2xl'
+                    exchangeRate={exchangeData}
+                  />
                 </ButtonText>
               </Button>
             ) : (
@@ -84,7 +91,11 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
                   <ButtonIcon as={Plus} size={"sm"} />
                   {isOnboardingFunds ? <Spinner /> : null}
                   <ButtonText>
-                    <AmountComponent amount={transaction.amount} size='2xl' />
+                    <AmountComponent
+                      amount={transaction.amount}
+                      size='2xl'
+                      exchangeRate={exchangeData}
+                    />
                   </ButtonText>
                   {shouldOnboard ? <ButtonIcon as={Link2} size={"sm"} /> : null}
                 </Button>

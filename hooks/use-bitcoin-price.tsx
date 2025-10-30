@@ -33,25 +33,22 @@ export type CurrencySymbol =
   | "TWD"
   | "USD";
 
-type ExchangeRates = Record<
-  CurrencySymbol,
-  {
-    "15m": number;
-    last: number;
-    buy: number;
-    sell: number;
-    symbol: CurrencySymbol;
-  }
->;
+export type ExchangeRate = {
+  "15m": number;
+  last: number;
+  buy: number;
+  sell: number;
+  symbol: CurrencySymbol;
+};
 
 export default function useBitcoinPrice(symbol: CurrencySymbol) {
   return useQuery({
     queryKey: ["bitcoin-price", symbol],
     refetchInterval: 15 * 60 * 1000, // refetch every 15 minutes
     queryFn: async () => {
-      const { data: exchangeRates } = await axios.get<ExchangeRates>(
-        "https://blockchain.info/ticker"
-      );
+      const { data: exchangeRates } = await axios.get<
+        Record<CurrencySymbol, ExchangeRate>
+      >("https://blockchain.info/ticker");
 
       const priceInSelectedCurrency = get(exchangeRates, symbol);
       if (!priceInSelectedCurrency) throw new Error("Exchange rate not found");

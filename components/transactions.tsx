@@ -29,7 +29,6 @@ export function Transactions() {
   }
 
   useEffect(() => {
-    console.log(account?.name);
     transactionsQuery.refetch();
     if (!wallet) return;
     wallet.notifyIncomingFunds(refreshBalanceAndTransactions);

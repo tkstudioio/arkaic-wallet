@@ -39,7 +39,6 @@ export default function CreateOrRestoreProfileForm(props: {
       onSubmit={(values) =>
         createProfileMutation.mutate(values, {
           onSuccess: () => {
-            console.log("GG");
             router.replace("/dashboard");
           },
         })

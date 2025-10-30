@@ -4,13 +4,12 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { useProfiles } from "@/hooks/use-profiles";
 import useProfileStore from "@/stores/profile";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
 import { get, map, range } from "lodash";
-import { Plus, Send } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { AccountBalance } from "./account-balance";
 import { CreateProfile } from "./create-profile";
+import { ReceiveComponent } from "./receive";
 import { SendComponent } from "./send";
 import { Badge, BadgeText } from "./ui/badge";
 import { Card } from "./ui/card";
@@ -19,8 +18,6 @@ import { VStack } from "./ui/vstack";
 
 export function AccountsCarousel() {
   const { setShowTransactionsList, setAccount, account } = useProfileStore();
-
-  const router = useRouter();
 
   const width = Dimensions.get("window").width;
   const ref = React.useRef<ICarouselInstance>(null);
@@ -50,7 +47,6 @@ export function AccountsCarousel() {
   async function onAccountSnap(index: number) {
     setSelectedIndex(index);
     const profile = get(profilesQuery.data, index, undefined);
-    console.log(profile);
     if (!profile) return;
     setAccount(profile);
     setShowTransactionsList(true);
@@ -69,21 +65,6 @@ export function AccountsCarousel() {
 
     setAccount(profile);
   }
-
-  const actions = [
-    {
-      children: () => <></>,
-      onPress: () => router.push("/receive"),
-      icon: Plus,
-      label: "Receive",
-    },
-    {
-      children: () => <></>,
-      onPress: () => router.push("/send"),
-      icon: Send,
-      label: "Send",
-    },
-  ];
 
   return (
     <Carousel
@@ -118,18 +99,7 @@ export function AccountsCarousel() {
             {index !== slides.length - 1 && (
               <HStack className='justify-around'>
                 <SendComponent />
-                {/* {map(actions, (action, idx) => (
-                  <VStack key={idx} className='items-center w-max'>
-                    <Button
-                      action={"secondary"}
-                      className='flex-col w-max h-max rounded-full size-14'
-                      onPress={action.onPress}
-                    >
-                      <ButtonIcon as={action.icon} />
-                    </Button>
-                    <Text>{action.label}</Text>
-                  </VStack>
-                ))} */}
+                <ReceiveComponent />
               </HStack>
             )}
           </VStack>
