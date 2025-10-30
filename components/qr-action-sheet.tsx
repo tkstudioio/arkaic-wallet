@@ -112,9 +112,9 @@ export default function QRActionSheet(props: { amount?: number }) {
                         </Button>
                       </>
                     ))
-                    .with({ type: "utxo" }, (coin) =>
-                      map(coin.coins, (newCoin) => {
-                        return (
+                    .with({ type: "utxo" }, (coin) => (
+                      <>
+                        {map(coin.coins, (newCoin) => (
                           <Input
                             key={newCoin.txid}
                             isDisabled
@@ -127,12 +127,16 @@ export default function QRActionSheet(props: { amount?: number }) {
                               multiline
                             />
                           </Input>
-                        );
-                      })
-                    )
-                    .otherwise((coin) =>
-                      map(coin.newVtxos, (vtxo) => {
-                        return (
+                        ))}
+                        <Button onPress={backToDashboard}>
+                          <ButtonText>Back to dashboard</ButtonText>
+                          <ButtonIcon as={LayoutDashboard} />
+                        </Button>
+                      </>
+                    ))
+                    .otherwise((coin) => (
+                      <>
+                        {map(coin.newVtxos, (vtxo) => (
                           <Input
                             key={vtxo.txid}
                             isDisabled
@@ -142,13 +146,13 @@ export default function QRActionSheet(props: { amount?: number }) {
                           >
                             <InputField value={toString(vtxo.txid)} multiline />
                           </Input>
-                        );
-                      })
-                    )}
-                  <Button onPress={backToDashboard}>
-                    <ButtonText>Back to dashboard</ButtonText>
-                    <ButtonIcon as={LayoutDashboard} />
-                  </Button>
+                        ))}
+                        <Button onPress={backToDashboard}>
+                          <ButtonText>Back to dashboard</ButtonText>
+                          <ButtonIcon as={LayoutDashboard} />
+                        </Button>
+                      </>
+                    ))}
                 </VStack>
               );
             })
