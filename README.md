@@ -6,33 +6,29 @@ Built with **React Native** and **TypeScript**, Arkaic runs on both **iOS** and 
 
 > ⚠️ **Warning** : Arkaic is **not** production-ready. There is currently **no data encryption** . Use on **mainnet at your own risk** .
 
-> ℹ️ Arkaic uses [arkade-os/ts-sdk@v0.3.0-alpha.8](https://github.com/arkade-os/ts-sdk/tree/v0.3.0-alpha.8)
+> ℹ️ Arkaic uses [arkade-os/ts-sdk@v0.3.0](https://github.com/arkade-os/ts-sdk)
 
 ### 🧭 Getting Started
 
-When you first open the Arkaic app, you can log in to one of the profiles you've created.
+When you first open the Arkaic app, you will be asked to create a first account
 
-If no profiles exist, you can generate a new one.
-
-A **profile** works like a **bank account** :
+An arkaic account works like a **bank account** :
 
 - You connect to an **ASP (Ark Service Provider)**, a mathematically trusted third party.
 - A mathematically random private key is generated and stored locally on your device.
 
-Once the profile is created or selected, you'll be redirected to the **profile dashboard** .
+Once the account is created, you'll be redirected to the **account dashboard** .
 
 ### 📊 Dashboard
 
-After logging into a profile, you are taken to the **dashboard** , which acts as your main control panel.
+The **dashboard** acts as your main control panel.
 
 From the dashboard, you can:
 
 - View your total ark balance
-- Switch profiles
-- See your transaction history , with a clear distinction between Ark (green) and onchain (orange) transactions
-- Open the Receive screen to receive a payment
-- Open the Send screen to send a payment
-- Access the Onchain page to manage onboarding (convert onchain funds into Ark)
+- Swipe between accounts
+- See your transaction history
+- Send and receive payments
 
 ### 💰 Receiving Funds
 
@@ -44,15 +40,15 @@ Arkaic generates a BIP21 URI address like this:
 
 `bitcoin:<onchain_address>?ark=<ark_address>&amount=<amount_in_btc>`
 
-> Arkaic does not listen for onchain mempool events. An onchain payment will not be notified until confirmed on the blockchain.
+> For onchain payments Arkaic will give a feedback as soon as the transaction is in the mempool.
 
 ### 📤 Sending Funds
 
 You can scan a QR code with your camera or insert an address manually.
 
-The address is then parsed using the BIP21 URI standard. If an ark value is parsed, Arkaic will send an ark payment. Otherwise an onchain transactions will be sent.
+The address is then parsed using the BIP21 URI standard. If an ark value is parsed and the signerPubkey matches our asp's signerPubkey, Arkaic will send an ark payment. Otherwise an onchain transactions will be sent.
 
-### 🏦 Ark vs Onchain: A Simple Analogy
+### 🏦 Ark vs Onchain
 
 The concepts of **Ark payment** and **onchain payment** can be compared to:
 
@@ -60,32 +56,6 @@ The concepts of **Ark payment** and **onchain payment** can be compared to:
 - **Traditional Bank Transfer** (Onchain): slower and more expensive, occurs between different onchain addresses (like transferring between different banks)
 
 Arkaic uses colored badges to distinguish an ark payment, rapresented with a green badge, and an onchain payment, rapresented with an orange badge.
-
-### 🔄 Onboarding & Offboarding
-
-> 📘 **Note** : To understand this section, it's useful to know what **UTXOs** and **VTXOs** are.
->
-> For simplicity, think of:
->
-> - **UTXOs (Unspent Transaction Outputs)** as **"gold"**
-> - **VTXOs (Virtual Transaction Outputs)** as **"cash backed by gold"**
-
-#### Onboarding: From Onchain to Ark (Gold → Cash)
-
-If you have onchain funds (UTXOs) and want to convert them into VTXOs:
-
-- From the dashboard go to the **"Onchain"** page
-- Tap **onboard**
-- All available UTXOs will be converted to VTXOs
-
-> ⚠️ You **cannot** select a specific amount to onboard. **All UTXOs** will be converted.
-
-#### Offboarding: From Ark to Onchain (Cash → Gold)
-
-If you want to move your VTXOs back onchain:
-
-- Simply make an onchain payment
-- Wait for blockchain confirmation
 
 ### ✅ That’s It for Now
 
@@ -110,52 +80,32 @@ Arkaic has **never been built for production** . You can test it in development 
 
 If you find **Arkaic** useful or want to support its development, consider making a donation.
 
-You can send a donation to the following **onchain Bitcoin address**:
-
-> bc1q8sv42d5afn959j8hqhn6s5l8mffzamcfr06nfk
-
-or lightning network
+You can send a donation to the following lightning network address
 
 > wearyjumper18@walletofsatoshi.com
 
 ## 📸 Screenshots
 
-### Profiles
-
-![alt text](docs/images/profiles-page-no-profiles.png)
-
-### Create profile
-
-![alt text](docs/images/create-profile-page.png)
-
 ### Dashboard
 
 ![alt text](docs/images/dashboard.png)
 
-### Receive page
+### Receive action sheet
 
-![alt text](docs/images/receive-page.png)
+![alt text](docs/images/receive-action-sheet.png)
 
-### Receive page - waiting for ark payment
+### Waiting payment
 
-![alt text](docs/images/waiting-transaction-payment.png)
+![alt text](docs/images/waiting-payment.png)
 
-### Receive page - ark payment received
+### Payment
 
 ![alt text](docs/images/payment-received.png)
 
-### Send page - ark payment (vtxo spending)
+### Send action sheet
 
-![alt text](docs/images/pay-ark-transaction.png)
+![alt text](docs/images/send-action-sheet.png)
 
-### Send page - onchain payment (swap vtxo to utxo)
+### Confirm payment
 
-![alt text](docs/images/offboarding.png)
-
-### Onchain page - onchain transaactions pending
-
-![alt text](docs/images/onchain-page.png)
-
-### Onchain page - confirmed onchain funds
-
-![alt text](docs/images/onchain-page-onboard-funds.png)
+![alt text](docs/images/confirm-payment.png)
