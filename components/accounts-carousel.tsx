@@ -9,8 +9,9 @@ import React, { useEffect, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { AccountBalance } from "./account-balance";
 import { CreateProfile } from "./create-profile";
-import { ReceiveComponent } from "./receive";
-import { SendComponent } from "./send";
+
+import { ReceiveActionSheet } from "./receive-action-sheet";
+import { SendActionSheet } from "./send-action-sheet";
 import { Badge, BadgeText } from "./ui/badge";
 import { Card } from "./ui/card";
 import { HStack } from "./ui/hstack";
@@ -98,8 +99,8 @@ export function AccountsCarousel() {
           <VStack>
             {index !== slides.length - 1 && (
               <HStack className='justify-around'>
-                <SendComponent />
-                <ReceiveComponent />
+                <SendActionSheet />
+                <ReceiveActionSheet />
               </HStack>
             )}
           </VStack>

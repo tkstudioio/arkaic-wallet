@@ -1,13 +1,7 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { Camera, QrCode, Send } from "lucide-react-native";
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   Actionsheet,
@@ -21,6 +15,7 @@ import useBitcoinPrice from "@/hooks/use-bitcoin-price";
 import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
 import useSettingsStore from "@/stores/settings";
 import { parserBIP21Address } from "@/utils/parse-bip21-address";
+import { shortenAddress } from "@/utils/shorten-address";
 import { useQueryClient } from "@tanstack/react-query";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { toNumber } from "lodash";
@@ -36,15 +31,7 @@ import { HStack } from "./ui/hstack";
 import { Spinner } from "./ui/spinner";
 import { VStack } from "./ui/vstack";
 
-function shortenAddress(address?: string): string {
-  if (!address) return "";
-  const firstPart = address.substring(0, 8);
-  const lastPart = address.substring(address.length - 9, address.length - 1);
-
-  return `${firstPart}...${lastPart}`;
-}
-
-export function SendComponent(props: PropsWithChildren) {
+export function SendActionSheet() {
   const queryClient = useQueryClient();
   const sendBitcoinMutation = useSendBitcoin();
   const { symbol } = useSettingsStore();
@@ -53,7 +40,6 @@ export function SendComponent(props: PropsWithChildren) {
 
   const [permission, requestPermission] = useCameraPermissions();
   const [scanning, setScanning] = useState<boolean>(false);
-  const [inputAddress, setInputAddress] = useState("");
   const [open, setOpen] = useState<boolean>(false);
   const [manualInputDialogOpen, setManualInputDialogOpen] =
     useState<boolean>(false);
@@ -119,7 +105,6 @@ export function SendComponent(props: PropsWithChildren) {
 
   function clean() {
     setArkaicPayment(undefined);
-    setInputAddress("");
     setPosValue(0);
     setAmountInFiat(undefined);
     sendBitcoinMutation.reset();

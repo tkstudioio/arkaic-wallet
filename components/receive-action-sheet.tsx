@@ -31,7 +31,7 @@ import { useTheme } from "@react-navigation/native";
 import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 
-export function ReceiveComponent() {
+export function ReceiveActionSheet() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const walletAddressMutation = usePaymentAddress();

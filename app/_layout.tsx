@@ -46,19 +46,6 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
-
-          <Stack.Screen
-            name='receive'
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name='send'
-            options={{
-              headerShown: false,
-            }}
-          />
         </Stack>
         <StatusBar style='auto' />
       </ThemeProvider>
