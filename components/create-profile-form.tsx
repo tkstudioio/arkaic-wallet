@@ -1,77 +1,86 @@
-import {
-  Avatar,
-  AvatarFallbackText,
-  AvatarImage,
-} from "@/components/ui/avatar";
 import { Button, ButtonText } from "@/components/ui/button";
-import { Input, InputField } from "@/components/ui/input";
+import { Input, InputField, InputIcon } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useCreateProfile } from "@/hooks/use-create-profile";
-import { ArkaicProfile } from "@/types/arkaic";
 import { faker } from "@faker-js/faker";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
-import { capitalize } from "lodash";
-import { View } from "react-native";
+import { capitalize, merge } from "lodash";
+import { Link2, User } from "lucide-react-native";
 import { match } from "ts-pattern";
 import PrivateKeyInput from "./private-key-input";
+import { Card } from "./ui/card";
 
-export default function CreateProfileForm() {
+function generateProfileName(): string {
+  return capitalize(faker.finance.accountName());
+}
+
+export default function CreateOrRestoreProfileForm(props: {
+  restore?: boolean;
+}) {
   const router = useRouter();
-  const defaultValues: ArkaicProfile = {
-    name: capitalize(faker.color.human()) + " " + faker.animal.petName(),
-    privateKey: "",
-    arkadeServerUrl: "",
-    avatar: faker.image.avatarGitHub(),
-  };
-
   const createProfileMutation = useCreateProfile();
 
-  function goBack() {
-    router.replace("/");
-  }
+  const defaultValues = {
+    name: "",
+    privateKey: "",
+    arkadeServerUrl: "https://arkade.computer",
+  };
+
   return (
     <Formik
-      initialValues={defaultValues}
-      onSubmit={createProfileMutation.mutate}
+      initialValues={
+        props.restore
+          ? defaultValues
+          : merge(defaultValues, { name: generateProfileName() })
+      }
+      onSubmit={(values) =>
+        createProfileMutation.mutate(values, {
+          onSuccess: () => {
+            router.replace("/dashboard");
+          },
+        })
+      }
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (
-        <VStack space={"4xl"}>
-          <Avatar size={"2xl"} className='mx-auto'>
-            <AvatarFallbackText>-</AvatarFallbackText>
-            <AvatarImage source={{ uri: values.avatar }} src={values.avatar} />
-          </Avatar>
-          <View>
-            <Text>Profile name</Text>
-            <Input size={"xl"}>
-              <InputField
-                onChangeText={handleChange("name")}
-                onBlur={handleBlur("name")}
-                value={values.name}
+        <>
+          <Card className='w-full gap-8'>
+            <VStack space='xs'>
+              <Text>Account name</Text>
+              <Input size={"xl"}>
+                <InputIcon as={User} />
+                <InputField
+                  placeholder='account name'
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                  value={values.name}
+                />
+              </Input>
+            </VStack>
+            <VStack space='xs'>
+              <Text>Private key</Text>
+              <PrivateKeyInput
+                onChangeText={handleChange("privateKey")}
+                onBlur={handleBlur("privateKey")}
+                value={values.privateKey}
+                generateInitialKey={!props.restore}
               />
-            </Input>
-          </View>
-          <View>
-            <Text>Private key</Text>
-            <PrivateKeyInput
-              onChangeText={handleChange("privateKey")}
-              onBlur={handleBlur("privateKey")}
-              value={values.privateKey}
-            />
-          </View>
-          <View>
-            <Text>Arkade server URL</Text>
-            <Input>
-              <InputField
-                placeholder='inser ASP url'
-                onChangeText={handleChange("arkadeServerUrl")}
-                onBlur={handleBlur("arkadeServerUrl")}
-                value={values.arkadeServerUrl}
-              />
-            </Input>
-          </View>
+            </VStack>
+            <VStack space='xs'>
+              <Text>Arkade server URL</Text>
+              <Input size={"xl"}>
+                <InputIcon as={Link2} />
+                <InputField
+                  onChangeText={handleChange("arkadeServerUrl")}
+                  onBlur={handleBlur("arkadeServerUrl")}
+                  placeholder='insert ASP url'
+                  value={values.arkadeServerUrl}
+                />
+              </Input>
+            </VStack>
+          </Card>
           <VStack space={"md"}>
             {match(createProfileMutation)
               .with({ isSuccess: true }, () => (
@@ -79,13 +88,17 @@ export default function CreateProfileForm() {
                   onPress={() => handleSubmit()}
                   disabled={createProfileMutation.isPending}
                 >
-                  <ButtonText>Create and open</ButtonText>
+                  <ButtonText>Create profile</ButtonText>
                 </Button>
               ))
               .with({ isError: true }, () => (
                 <>
                   <Text className='text-center'>Error creating profile</Text>
-                  <Button variant={"link"} action={"negative"} onPress={goBack}>
+                  <Button
+                    variant={"link"}
+                    action={"negative"}
+                    onPress={router.back}
+                  >
                     <ButtonText>Go back</ButtonText>
                   </Button>
                 </>
@@ -106,7 +119,7 @@ export default function CreateProfileForm() {
                     <Button
                       variant={"link"}
                       action={"negative"}
-                      onPress={goBack}
+                      onPress={router.back}
                     >
                       <ButtonText>Go back</ButtonText>
                     </Button>
@@ -114,7 +127,7 @@ export default function CreateProfileForm() {
                 </>
               ))}
           </VStack>
-        </VStack>
+        </>
       )}
     </Formik>
   );

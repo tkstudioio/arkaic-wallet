@@ -4,6 +4,7 @@ import {
   ArkProvider,
   IndexerProvider,
   SingleKey,
+  VtxoManager,
   Wallet,
 } from "@arkade-os/sdk";
 import {
@@ -13,16 +14,18 @@ import {
 
 import { ArkaicProfile } from "@/types/arkaic";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { filter, find } from "lodash";
+import { filter } from "lodash";
 
 type ProfileStore = {
-  profile?: ArkaicProfile;
   arkProvider?: ArkProvider;
   indexerProvider?: IndexerProvider;
+  vtxoManager?: VtxoManager;
   wallet?: Wallet;
-  login: (profileName: string) => Promise<boolean>;
-  logout: () => Promise<void>;
+  showTransactionsList: boolean;
+  setShowTransactionsList: (showTransactionsList: boolean) => void;
   removeProfile: (profileName: string) => Promise<void>;
+  setAccount: (account: ArkaicProfile) => void;
+  account?: ArkaicProfile;
 };
 
 export enum StorageKeys {
@@ -30,12 +33,10 @@ export enum StorageKeys {
 }
 
 const useProfileStore = create<ProfileStore>((set) => ({
-  logout: async () => {
+  showTransactionsList: true,
+  setShowTransactionsList: (showTransactionsList) => {
     set({
-      profile: undefined,
-      arkProvider: undefined,
-      indexerProvider: undefined,
-      wallet: undefined,
+      showTransactionsList,
     });
   },
   removeProfile: async (profileName: string) => {
@@ -55,33 +56,23 @@ const useProfileStore = create<ProfileStore>((set) => ({
       JSON.stringify(newStoredProfiles)
     );
   },
-  login: async (profileName: string) => {
-    const storedProfiles = await AsyncStorage.getItem(StorageKeys.Profiles);
-    const currentProfiles = storedProfiles
-      ? (JSON.parse(storedProfiles) as ArkaicProfile[])
-      : [];
 
-    const profile = find(
-      currentProfiles,
-      (profile) => profile.name === profileName
-    );
+  setAccount: async (account) => {
+    const arkProvider = new ExpoArkProvider(account.arkadeServerUrl);
+    const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
 
-    if (!profile) return false;
-
-    const arkProvider = new ExpoArkProvider(profile.arkadeServerUrl);
-    const indexerProvider = new ExpoIndexerProvider(profile.arkadeServerUrl);
-
-    // const identity = SingleKey.fromHex(profile.privateKey);
-    const identity = SingleKey.fromHex(profile.privateKey);
+    const identity = SingleKey.fromHex(account.privateKey);
     const wallet = await Wallet.create({
       identity,
       arkProvider,
       indexerProvider,
     });
 
-    set({ wallet, arkProvider, indexerProvider, profile });
-
-    return true;
+    const vtxoManager = new VtxoManager(wallet, {
+      enabled: true,
+      thresholdPercentage: 10,
+    });
+    set({ account, wallet, arkProvider, indexerProvider, vtxoManager });
   },
 }));
 

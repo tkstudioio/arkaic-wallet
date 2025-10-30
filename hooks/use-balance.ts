@@ -1,14 +1,18 @@
 import useProfileStore from "@/stores/profile";
+import { Wallet } from "@arkade-os/sdk";
 import { useQuery } from "@tanstack/react-query";
 
-export function useBalance() {
-  const { wallet } = useProfileStore();
+export function useBalance(passedWallet?: Wallet) {
+  const { wallet: storedWallet } = useProfileStore();
+  const wallet = passedWallet || storedWallet;
 
   return useQuery({
-    queryKey: ["balance"],
+    refetchInterval: 30 * 1000,
+    queryKey: ["balance", wallet?.arkAddress],
     queryFn: () => {
       if (!wallet) throw new Error("missing wallet");
       return wallet?.getBalance();
     },
+    throwOnError: true,
   });
 }

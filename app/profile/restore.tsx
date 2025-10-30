@@ -1,10 +1,12 @@
 import CreateOrRestoreProfileForm from "@/components/create-profile-form";
 import AuthLayout from "@/components/layout/auth-layout";
 
-export default function CreateProfilePage() {
+import React from "react";
+
+export default function ProfileRestorePage() {
   return (
     <AuthLayout>
-      <CreateOrRestoreProfileForm />
+      <CreateOrRestoreProfileForm restore />
     </AuthLayout>
   );
 }

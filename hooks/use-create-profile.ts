@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 
 export function useCreateProfile() {
-  const { login } = useProfileStore();
+  const { setAccount } = useProfileStore();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -16,7 +16,7 @@ export function useCreateProfile() {
       const currentProfiles = storedProfiles ? JSON.parse(storedProfiles) : [];
 
       try {
-        await login(profile.name);
+        await setAccount(profile);
         await AsyncStorage.setItem(
           StorageKeys.Profiles,
           JSON.stringify([...currentProfiles, profile])
@@ -27,7 +27,7 @@ export function useCreateProfile() {
         router.replace("/dashboard");
       } catch (e) {
         throw new Error(
-          "Impossible to create profile. Maybe the server is unreachable?"
+          "Unable to create profile. Maybe the server is unreachable?"
         );
       }
     },

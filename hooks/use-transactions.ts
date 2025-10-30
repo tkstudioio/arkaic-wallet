@@ -3,11 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useTransactions() {
   const { wallet } = useProfileStore();
+
   return useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", wallet?.arkAddress],
     queryFn: async () => {
       if (!wallet) throw new Error("missing wallet");
-      return await wallet.getTransactionHistory();
+      const transactions = await wallet.getTransactionHistory();
+      return transactions;
     },
   });
 }
