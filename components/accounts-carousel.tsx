@@ -11,11 +11,10 @@ import React, { useEffect, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { AccountBalance } from "./account-balance";
 import { CreateProfile } from "./create-profile";
+import { SendComponent } from "./send";
 import { Badge, BadgeText } from "./ui/badge";
-import { Button, ButtonIcon } from "./ui/button";
 import { Card } from "./ui/card";
 import { HStack } from "./ui/hstack";
-import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
 export function AccountsCarousel() {
@@ -73,11 +72,13 @@ export function AccountsCarousel() {
 
   const actions = [
     {
+      children: () => <></>,
       onPress: () => router.push("/receive"),
       icon: Plus,
       label: "Receive",
     },
     {
+      children: () => <></>,
       onPress: () => router.push("/send"),
       icon: Send,
       label: "Send",
@@ -116,7 +117,8 @@ export function AccountsCarousel() {
           <VStack>
             {index !== slides.length - 1 && (
               <HStack className='justify-around'>
-                {map(actions, (action, idx) => (
+                <SendComponent />
+                {/* {map(actions, (action, idx) => (
                   <VStack key={idx} className='items-center w-max'>
                     <Button
                       action={"secondary"}
@@ -127,7 +129,7 @@ export function AccountsCarousel() {
                     </Button>
                     <Text>{action.label}</Text>
                   </VStack>
-                ))}
+                ))} */}
               </HStack>
             )}
           </VStack>

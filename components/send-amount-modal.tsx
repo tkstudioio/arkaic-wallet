@@ -1,6 +1,5 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
-import { Input, InputField } from "@/components/ui/input";
 import { Modal, ModalBackdrop, ModalContent } from "@/components/ui/modal";
 import { Text } from "@/components/ui/text";
 import { Send, Triangle } from "lucide-react-native";
@@ -13,10 +12,11 @@ import { useAspInfo } from "@/hooks/use-asp-info";
 import { ArkaicPayment } from "@/types/arkaic";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { toNumber, toString } from "lodash";
+import { toNumber } from "lodash";
 import { match } from "ts-pattern";
+import { AmountComponent } from "./amount";
+import PosComponent from "./pos";
 import { Badge, BadgeIcon, BadgeText } from "./ui/badge";
-import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
 
 export function SendAmountModal(props: {
@@ -50,7 +50,7 @@ export function SendAmountModal(props: {
     [props.amount, props.arkaicPayment, queryClient, sendBitcoinMutation]
   );
 
-  function changeAmount(amount: string) {
+  function changeAmount(amount?: number) {
     if (!props.onAmountChange) return;
     props.onAmountChange(toNumber(amount));
   }
@@ -77,31 +77,12 @@ export function SendAmountModal(props: {
               ))
               .otherwise(() =>
                 props.arkaicPayment?.amount ? (
-                  <HStack
-                    className='items-baseline justify-center'
-                    space={"sm"}
-                  >
-                    <Heading size='2xl'>
-                      {Intl.NumberFormat("it").format(
-                        props.arkaicPayment.amount
-                      )}
-                    </Heading>
-                    <Text>SATS</Text>
-                  </HStack>
+                  <AmountComponent amount={props.arkaicPayment.amount} />
                 ) : (
-                  <Input size={"xl"} variant={"underlined"} className='gap-2'>
-                    <InputField
-                      value={toString(
-                        props.arkaicPayment?.amount
-                          ? props.arkaicPayment.amount
-                          : props.amount
-                      )}
-                      onChangeText={changeAmount}
-                      className='text-right'
-                      placeholder='--,00'
-                    />
-                    <Text>SATS</Text>
-                  </Input>
+                  <PosComponent
+                    onChange={changeAmount}
+                    value={props.arkaicPayment?.amount || props.amount}
+                  />
                 )
               )}
             <VStack className='items-center' space={"sm"}>
