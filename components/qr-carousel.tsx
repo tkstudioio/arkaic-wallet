@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { filter, isUndefined, map } from "lodash";
-import { Dimensions } from "react-native";
+import { Dimensions, useColorScheme } from "react-native";
 import QRCode from "react-native-qrcode-skia";
 import { useSharedValue } from "react-native-reanimated";
 
@@ -21,6 +21,7 @@ export function QrCarousel(props: {
   const [index, setIndex] = useState<number>(0);
   const ref = React.useRef<ICarouselInstance>(null);
   const { colors } = useTheme();
+  const theme = useColorScheme();
 
   const progress = useSharedValue<number>(0);
   const width = Dimensions.get("window").width;
@@ -43,38 +44,38 @@ export function QrCarousel(props: {
       }}
       data={map(props.paymentOptions, (option) => (
         <VStack space={"xl"} className='items-center'>
-          <>
-            <Badge action={option.type === "normal" ? "success" : "info"}>
-              <BadgeText>
-                {option.type === "normal" ? "arkaic payment" : "lightning swap"}
-              </BadgeText>
-            </Badge>
-            <QRCode
-              key={option.address}
-              value={option.address || ""}
-              size={256}
-              color={colors.text}
-              shapeOptions={{
-                shape: "square",
-                eyePatternShape: "square",
-                eyePatternGap: 0,
-                gap: 0,
-              }}
-            />
-            <CarouselPagination
-              totalSlides={addresses.length}
-              selectedIndex={index}
-            />
-            {option.address && (
-              <Button
-                variant={"link"}
-                action={"secondary"}
-                onPress={() => props.copyToClipboard(option.address!)}
-              >
-                <ButtonText>Copy to clipboard</ButtonText>
-              </Button>
-            )}
-          </>
+          <Badge action={option.type === "normal" ? "success" : "info"}>
+            <BadgeText>
+              {option.type === "normal" ? "arkaic payment" : "lightning swap"}
+            </BadgeText>
+          </Badge>
+
+          <QRCode
+            key={option.address}
+            value={option.address || ""}
+            size={256}
+            color={theme === "dark" ? colors.background : colors.text}
+            shapeOptions={{
+              shape: "square",
+              eyePatternShape: "square",
+              eyePatternGap: 0,
+              gap: 0,
+            }}
+          />
+
+          <CarouselPagination
+            totalSlides={addresses.length}
+            selectedIndex={index}
+          />
+          {option.address && (
+            <Button
+              variant={"link"}
+              action={"secondary"}
+              onPress={() => props.copyToClipboard(option.address!)}
+            >
+              <ButtonText>Copy to clipboard</ButtonText>
+            </Button>
+          )}
         </VStack>
       ))}
       style={{ padding: 24 }}
