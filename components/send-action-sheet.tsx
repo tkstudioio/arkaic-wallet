@@ -141,6 +141,7 @@ export function SendActionSheet() {
           <ActionsheetDragIndicatorWrapper>
             <ActionsheetDragIndicator />
           </ActionsheetDragIndicatorWrapper>
+
           {match(sendBitcoinMutation)
             .with({ isSuccess: true }, () => (
               <>
@@ -258,11 +259,25 @@ export function SendActionSheet() {
                       <Text className='text-center'>
                         {isIntrapayment
                           ? shortenAddress(arkaicPayment.arkAddress)
+                          : arkaicPayment.lightningInvoice
+                          ? shortenAddress(arkaicPayment.lightningInvoice)
                           : shortenAddress(arkaicPayment.onchainAddress)}
                       </Text>
-                      <Badge action={isIntrapayment ? "success" : "warning"}>
+                      <Badge
+                        action={
+                          isIntrapayment
+                            ? "success"
+                            : arkaicPayment.lightningInvoice
+                            ? "info"
+                            : "warning"
+                        }
+                      >
                         <BadgeText>
-                          {isIntrapayment ? "Ark payment" : "Onchain payment"}
+                          {isIntrapayment
+                            ? "Ark payment"
+                            : arkaicPayment.lightningInvoice
+                            ? "Lightning Swap"
+                            : "Onchain payment"}
                         </BadgeText>
                       </Badge>
                     </VStack>

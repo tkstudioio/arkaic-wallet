@@ -8,6 +8,7 @@ export type ArkaicProfile = {
 export type ArkaicPayment = {
   onchainAddress?: string;
   arkAddress?: string;
+  lightningInvoice?: string;
   signerPubkey?: string;
   amount?: number;
 };

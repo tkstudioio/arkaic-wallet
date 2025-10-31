@@ -19,14 +19,12 @@ import { usePaymentAddress } from "@/hooks/use-payment-address";
 import useProfileStore from "@/stores/profile";
 import { IncomingFunds } from "@arkade-os/sdk";
 import { useQueryClient } from "@tanstack/react-query";
-import { map, toString } from "lodash";
+import { map, toNumber, toString } from "lodash";
 import { match } from "ts-pattern";
 import { Heading } from "./ui/heading";
 import { Input, InputField } from "./ui/input";
 import { Spinner } from "./ui/spinner";
 import { VStack } from "./ui/vstack";
-
-import { useTheme } from "@react-navigation/native";
 
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { Toast } from "toastify-react-native";
@@ -40,7 +38,6 @@ export function ReceiveActionSheet() {
   const queryClient = useQueryClient();
   const walletAddressMutation = usePaymentAddress();
   const { mutate: copyToClipboard } = useCopyToClipboard();
-  const { colors } = useTheme();
   const { wallet } = useProfileStore();
   const { symbol } = useSettingsStore();
 
@@ -59,7 +56,9 @@ export function ReceiveActionSheet() {
   const amountInSats = useMemo(() => {
     return exchangeRate?.last
       ? amountInFiat
-        ? ((amountInFiat / 100) * 100000000) / exchangeRate.last
+        ? toNumber(
+            (((amountInFiat / 100) * 100000000) / exchangeRate.last).toFixed(0)
+          )
         : 0
       : 0;
   }, [amountInFiat, exchangeRate?.last]);

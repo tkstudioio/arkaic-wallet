@@ -26,7 +26,7 @@ export function usePaymentAddress() {
       let lnInvoice: CreateLightningInvoiceResponse | undefined;
       if (normalizedAmount) {
         lnInvoice = await arkadeLightning?.createLightningInvoice({
-          amount: normalizedAmount,
+          amount: toNumber(normalizedAmount.toFixed(0)),
           description: "",
         });
       }

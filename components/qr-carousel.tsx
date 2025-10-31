@@ -8,7 +8,8 @@ import { filter, isUndefined, map } from "lodash";
 import { Dimensions } from "react-native";
 import QRCode from "react-native-qrcode-skia";
 import { useSharedValue } from "react-native-reanimated";
-import { CarouselPagination } from "./accounts-carousel";
+
+import { CarouselPagination } from "./carousel-pagination";
 import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonText } from "./ui/button";
 import { VStack } from "./ui/vstack";

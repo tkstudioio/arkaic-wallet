@@ -5,13 +5,25 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAspInfo } from "./use-asp-info";
 
 export function useSendBitcoin() {
-  const { wallet } = useProfileStore();
+  const { wallet, arkadeLightning } = useProfileStore();
   const { data: aspInfo } = useAspInfo();
   const queryClient = useQueryClient();
   return useMutation<string | undefined, Error, ArkaicPayment>({
     mutationKey: ["send"],
     mutationFn: async (arkaicPayment) => {
       if (!wallet) throw new Error("No wallet set");
+
+      console.log(arkaicPayment);
+      if (arkaicPayment.lightningInvoice) {
+        console.log(arkaicPayment.lightningInvoice);
+        if (!arkadeLightning) throw new Error("No arkade lightning provider");
+        const paymentResult = await arkadeLightning.sendLightningPayment({
+          invoice: arkaicPayment.lightningInvoice,
+        });
+
+        return paymentResult.txid;
+      }
+
       if (!arkaicPayment.amount) throw new Error("Missing transaction amount");
       if (!arkaicPayment.onchainAddress)
         throw new Error("Wrong address parsing");
