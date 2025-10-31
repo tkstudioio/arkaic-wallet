@@ -94,11 +94,13 @@ You can send a donation to the following lightning network address
 
 ![alt text](docs/images/receive-action-sheet.png)
 
-### Waiting payment
+### Waiting ln swap payment
 
-![alt text](docs/images/waiting-payment.png)
+![alt text](docs/images/lnswap-qr.png)
 
-### Payment
+### Waiting arkaic payment
+
+![alt text](docs/images/arkaic-qr.png)
 
 ![alt text](docs/images/payment-received.png)
 
@@ -109,3 +111,7 @@ You can send a donation to the following lightning network address
 ### Confirm payment
 
 ![alt text](docs/images/confirm-payment.png)
+
+### Confirm payment
+
+![alt text](docs/images/lnswap-payment.png)
