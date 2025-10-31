@@ -102,6 +102,7 @@ export function ReceiveActionSheet() {
     walletAddressMutation.reset();
     setShowQrCode(false);
     setAmountInFiat(0);
+    setTransaction(undefined);
   }, [open]);
 
   return (
