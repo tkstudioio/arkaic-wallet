@@ -28,6 +28,8 @@ import { Spinner } from "./ui/spinner";
 import { VStack } from "./ui/vstack";
 
 import { useTheme } from "@react-navigation/native";
+
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 
@@ -35,9 +37,12 @@ export function ReceiveActionSheet() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const walletAddressMutation = usePaymentAddress();
+
   const { colors } = useTheme();
   const { wallet } = useProfileStore();
   const { symbol } = useSettingsStore();
+  const { mutate: copyToClipboard } = useCopyToClipboard();
+
   const { data: exchangeRate } = useBitcoinPrice(symbol);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -184,14 +189,15 @@ export function ReceiveActionSheet() {
                             gap: 0,
                           }}
                         />
-                        <Input
-                          isDisabled
-                          size={"sm"}
-                          className='h-max py-3'
-                          variant={"underlined"}
+                        <Button
+                          variant={"link"}
+                          action={"secondary"}
+                          onPress={() => copyToClipboard(data)}
                         >
-                          <InputField value={data} multiline />
-                        </Input>
+                          <ButtonText>Copy to clipboard</ButtonText>
+                        </Button>
+
+                        <Divider />
                         <Button disabled={true} variant={"link"}>
                           <Spinner />
                           <ButtonText>Waiting payment notification</ButtonText>

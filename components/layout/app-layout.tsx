@@ -2,8 +2,8 @@ import LogoFull from "@/components/icons/logo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren, useMemo } from "react";
 import { ScrollView } from "react-native";
+import ToastManager from "toastify-react-native";
 import { VStack } from "../ui/vstack";
-
 export default function AppLayout(props: PropsWithChildren) {
   const client = useMemo(() => new QueryClient(), []);
 
@@ -15,6 +15,7 @@ export default function AppLayout(props: PropsWithChildren) {
           {props.children}
         </VStack>
       </ScrollView>
+      <ToastManager />
     </QueryClientProvider>
   );
 }
