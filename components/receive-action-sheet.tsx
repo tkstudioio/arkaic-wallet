@@ -20,7 +20,6 @@ import useProfileStore from "@/stores/profile";
 import { IncomingFunds } from "@arkade-os/sdk";
 import { useQueryClient } from "@tanstack/react-query";
 import { map, toString } from "lodash";
-import QRCode from "react-native-qrcode-skia";
 import { match } from "ts-pattern";
 import { Heading } from "./ui/heading";
 import { Input, InputField } from "./ui/input";
@@ -30,18 +29,20 @@ import { VStack } from "./ui/vstack";
 import { useTheme } from "@react-navigation/native";
 
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
+import { Toast } from "toastify-react-native";
+import { QrCarousel } from "./qr-carousel";
 import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 
 export function ReceiveActionSheet() {
+  const { arkadeLightning } = useProfileStore();
   const router = useRouter();
   const queryClient = useQueryClient();
   const walletAddressMutation = usePaymentAddress();
-
+  const { mutate: copyToClipboard } = useCopyToClipboard();
   const { colors } = useTheme();
   const { wallet } = useProfileStore();
   const { symbol } = useSettingsStore();
-  const { mutate: copyToClipboard } = useCopyToClipboard();
 
   const { data: exchangeRate } = useBitcoinPrice(symbol);
 
@@ -80,7 +81,21 @@ export function ReceiveActionSheet() {
   }, [wallet]);
 
   useEffect(() => {
-    walletAddressMutation.mutate(amountInSats);
+    walletAddressMutation.mutate(amountInSats, {
+      onSuccess: async (data) => {
+        if (!data.lnInvoice || !arkadeLightning) return;
+        try {
+          const receivalResult = await arkadeLightning.waitAndClaim(
+            data.lnInvoice?.pendingSwap
+          );
+          if (!receivalResult) throw new Error("no receival result");
+          Toast.success("LN Swap received");
+        } catch (e) {
+          console.log(e);
+          Toast.error("Error listening for ln swap");
+        }
+      },
+    });
   }, [amountInSats, showQrCode]);
 
   useEffect(() => {
@@ -178,24 +193,19 @@ export function ReceiveActionSheet() {
                   <VStack space={"xl"} className='w-full'>
                     {!transaction ? (
                       <>
-                        <QRCode
-                          value={data}
-                          size={256}
-                          color={colors.text}
-                          shapeOptions={{
-                            shape: "square",
-                            eyePatternShape: "square",
-                            eyePatternGap: 0,
-                            gap: 0,
-                          }}
+                        <QrCarousel
+                          copyToClipboard={copyToClipboard}
+                          paymentOptions={[
+                            {
+                              type: "normal",
+                              address: data.paymentAddress,
+                            },
+                            {
+                              type: "ln invoice",
+                              address: data.lnInvoice?.invoice,
+                            },
+                          ]}
                         />
-                        <Button
-                          variant={"link"}
-                          action={"secondary"}
-                          onPress={() => copyToClipboard(data)}
-                        >
-                          <ButtonText>Copy to clipboard</ButtonText>
-                        </Button>
 
                         <Divider />
                         <Button disabled={true} variant={"link"}>
@@ -244,16 +254,7 @@ export function ReceiveActionSheet() {
                               </Input>
                             ))
                           )
-                          .otherwise(() => (
-                            <Input
-                              isDisabled
-                              size={"sm"}
-                              className='h-max py-3'
-                              variant={"underlined"}
-                            >
-                              <InputField value={data} multiline />
-                            </Input>
-                          ))}
+                          .otherwise(() => null)}
                         <Button onPress={backToDashboard}>
                           <ButtonText>Back to dashboard</ButtonText>
                           <ButtonIcon as={LayoutDashboard} />

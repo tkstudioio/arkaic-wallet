@@ -1,8 +1,10 @@
 import useProfileStore from "@/stores/profile";
+import { CreateLightningInvoiceResponse } from "@arkade-os/boltz-swap";
 import { useMutation } from "@tanstack/react-query";
+import { toNumber } from "lodash";
 
 export function usePaymentAddress() {
-  const { wallet } = useProfileStore();
+  const { wallet, arkadeLightning } = useProfileStore();
   return useMutation({
     mutationKey: ["payment-address"],
     mutationFn: async (amount: number | undefined) => {
@@ -11,15 +13,26 @@ export function usePaymentAddress() {
       const arkAddress = await wallet.getAddress();
       const { signerPubkey } = await wallet.arkProvider.getInfo();
 
+      const normalizedAmount = toNumber(amount?.toFixed(0));
+
       const paymentAddress = `bitcoin:${boardingAddress}?ark=${arkAddress}&signerPubkey=${signerPubkey}${
-        amount
+        normalizedAmount
           ? `&amount=${Intl.NumberFormat("en", {
               minimumFractionDigits: 8,
-            }).format(amount / 100000000)}`
+            }).format(normalizedAmount / 100000000)}`
           : ""
       }`;
 
-      return paymentAddress;
+      let lnInvoice: CreateLightningInvoiceResponse | undefined;
+      if (normalizedAmount) {
+        lnInvoice = await arkadeLightning?.createLightningInvoice({
+          amount: normalizedAmount,
+          description: "",
+        });
+      }
+
+      return { paymentAddress, lnInvoice };
     },
+    onError: console.log,
   });
 }

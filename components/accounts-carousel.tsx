@@ -110,7 +110,7 @@ export function AccountsCarousel() {
   );
 }
 
-function CarouselPagination(props: {
+export function CarouselPagination(props: {
   totalSlides: number;
   selectedIndex: number;
 }) {
