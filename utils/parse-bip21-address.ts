@@ -1,4 +1,5 @@
 import { ArkaicPayment } from "@/types/arkaic";
+import { decodeInvoice } from "@arkade-os/boltz-swap";
 import { get, replace, split, startsWith, toNumber, toString } from "lodash";
 import QueryString from "qs";
 
@@ -19,6 +20,10 @@ export function parserBIP21Address(address: string): ArkaicPayment | undefined {
     };
   }
 
+  if (startsWith(address, "ln")) {
+    const invoiceDetails = decodeInvoice(address);
+    return { lightningInvoice: address, amount: invoiceDetails.amountSats };
+  }
   if (!startsWith(address, "bitcoin:")) return;
 
   const [onchainAddress, params] = split(replace(address, "bitcoin:", ""), "?");

@@ -4,12 +4,13 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { useProfiles } from "@/hooks/use-profiles";
 import useProfileStore from "@/stores/profile";
 import { useQueryClient } from "@tanstack/react-query";
-import { get, map, range } from "lodash";
+import { get, map } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { AccountBalance } from "./account-balance";
 import { CreateProfile } from "./create-profile";
 
+import { CarouselPagination } from "./carousel-pagination";
 import { ReceiveActionSheet } from "./receive-action-sheet";
 import { SendActionSheet } from "./send-action-sheet";
 import { Badge, BadgeText } from "./ui/badge";
@@ -107,23 +108,5 @@ export function AccountsCarousel() {
         </VStack>
       )}
     />
-  );
-}
-
-function CarouselPagination(props: {
-  totalSlides: number;
-  selectedIndex: number;
-}) {
-  return (
-    <HStack className='justify-center' space={"xs"}>
-      {map(range(props.totalSlides), (index) => (
-        <Badge
-          key={index}
-          className='rounded-full size-2! w-1 h-1 p-0! aspect-square'
-          variant={"outline"}
-          action={index === props.selectedIndex ? "info" : "muted"}
-        />
-      ))}
-    </HStack>
   );
 }

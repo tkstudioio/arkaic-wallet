@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import {
   ArkProvider,
   IndexerProvider,
@@ -17,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { filter } from "lodash";
 
 type ProfileStore = {
+  arkadeLightning?: ArkadeLightning;
   arkProvider?: ArkProvider;
   indexerProvider?: IndexerProvider;
   vtxoManager?: VtxoManager;
@@ -68,11 +70,30 @@ const useProfileStore = create<ProfileStore>((set) => ({
       indexerProvider,
     });
 
+    const swapProvider = new BoltzSwapProvider({
+      apiUrl: "https://api.ark.boltz.exchange",
+      network: "bitcoin",
+    });
+
+    const arkadeLightning = new ArkadeLightning({
+      // @ts-expect-error some strange type error.
+      wallet,
+      swapProvider,
+    });
+
     const vtxoManager = new VtxoManager(wallet, {
       enabled: true,
       thresholdPercentage: 10,
     });
-    set({ account, wallet, arkProvider, indexerProvider, vtxoManager });
+
+    set({
+      account,
+      wallet,
+      arkProvider,
+      indexerProvider,
+      vtxoManager,
+      arkadeLightning,
+    });
   },
 }));
 
