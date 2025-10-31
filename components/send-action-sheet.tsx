@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/actionsheet";
 import { useAspInfo } from "@/hooks/use-asp-info";
 import useBitcoinPrice from "@/hooks/use-bitcoin-price";
+import { usePasteFromClipboard } from "@/hooks/use-clipboard";
 import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
 import useSettingsStore from "@/stores/settings";
 import { parserBIP21Address } from "@/utils/parse-bip21-address";
@@ -37,6 +38,8 @@ export function SendActionSheet() {
   const { symbol } = useSettingsStore();
   const { data: aspInfo } = useAspInfo();
   const { data: exchangeRate } = useBitcoinPrice(symbol);
+  const { data: pastedData, mutate: pasteFromClipboard } =
+    usePasteFromClipboard();
 
   const [permission, requestPermission] = useCameraPermissions();
   const [scanning, setScanning] = useState<boolean>(false);
@@ -237,9 +240,13 @@ export function SendActionSheet() {
                     />
                     <Button
                       variant={"link"}
-                      onPress={() => setManualInputDialogOpen(true)}
+                      onPress={() =>
+                        pasteFromClipboard(undefined, {
+                          onSuccess: onNewAddressInput,
+                        })
+                      }
                     >
-                      <ButtonText>Enter manually</ButtonText>
+                      <ButtonText>Paste from clipboard</ButtonText>
                     </Button>
                   </VStack>
                 ) : null}

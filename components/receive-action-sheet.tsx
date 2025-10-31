@@ -29,7 +29,7 @@ import { VStack } from "./ui/vstack";
 
 import { useTheme } from "@react-navigation/native";
 
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 

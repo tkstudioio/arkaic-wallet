@@ -9,3 +9,11 @@ export function useCopyToClipboard() {
     onSuccess: () => Toast.success("Copied to clipboard"),
   });
 }
+
+export function usePasteFromClipboard() {
+  return useMutation({
+    mutationKey: ["paste-from-clipboard"],
+    mutationFn: () => Clipboard.getStringAsync(),
+    onSuccess: () => Toast.success("Pasted from clipboard"),
+  });
+}
