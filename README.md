@@ -82,7 +82,7 @@ If you find **Arkaic** useful or want to support its development, consider makin
 
 You can send a donation to the following lightning network address
 
-> wearyjumper18@walletofsatoshi.com
+> littlestaff444@walletofsatoshi.com
 
 ## 📸 Screenshots
 
