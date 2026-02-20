@@ -153,6 +153,19 @@ export const config = {
     '--color-indicator-primary': '55 55 55',
     '--color-indicator-info': '83 153 236',
     '--color-indicator-error': '185 28 28',
+
+    /* Arkaic Tokens */
+    '--color-arkaic-background': '15 23 42',
+    '--color-arkaic-foreground': '248 250 252',
+    '--color-arkaic-muted': '148 148 148',
+    '--color-arkaic-primary': '136 39 138',
+    '--color-arkaic-primary-foreground': '226 226 226',
+    '--color-arkaic-fill': '26 35 56',
+    '--color-arkaic-border': '198 185 197',
+    '--color-arkaic-shadow': '116 59 116',
+    '--color-arkaic-positive': '85 170 88',
+    '--color-arkaic-negative': '170 85 87',
+    '--color-arkaic-warning': '226 164 111',
   }),
   dark: vars({
     '--color-primary-0': '166 166 166',
@@ -305,5 +318,18 @@ export const config = {
     '--color-indicator-primary': '247 247 247',
     '--color-indicator-info': '161 199 245',
     '--color-indicator-error': '232 70 69',
+
+    /* Arkaic Tokens */
+    '--color-arkaic-background': '15 23 42',
+    '--color-arkaic-foreground': '248 250 252',
+    '--color-arkaic-muted': '148 148 148',
+    '--color-arkaic-primary': '136 39 138',
+    '--color-arkaic-primary-foreground': '226 226 226',
+    '--color-arkaic-fill': '26 35 56',
+    '--color-arkaic-border': '198 185 197',
+    '--color-arkaic-shadow': '116 59 116',
+    '--color-arkaic-positive': '85 170 88',
+    '--color-arkaic-negative': '170 85 87',
+    '--color-arkaic-warning': '226 164 111',
   }),
 };
