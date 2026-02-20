@@ -17,11 +17,11 @@ export const badgeStyle = tva({
   base: "flex-row rounded-full items-center data-[disabled=true]:opacity-50 px-2 py-1 gap-1",
   variants: {
     action: {
-      error: "bg-background-error border-error-300",
-      warning: "bg-background-warning border-warning-300",
-      success: "bg-background-success border-success-300",
+      error: "bg-arkaic-negative/15 border-arkaic-negative/50",
+      warning: "bg-arkaic-warning/15 border-arkaic-warning/50",
+      success: "bg-arkaic-positive/15 border-arkaic-positive/50",
       info: "bg-background-info border-info-300",
-      muted: "bg-background-muted border-background-300",
+      muted: "bg-arkaic-muted/15 border-arkaic-border",
     },
     variant: {
       solid: "",
@@ -36,15 +36,15 @@ export const badgeStyle = tva({
 });
 
 const badgeTextStyle = tva({
-  base: "text-typography-700 font-body font-normal tracking-normal uppercase",
+  base: "text-arkaic-foreground font-body font-normal tracking-normal uppercase",
 
   parentVariants: {
     action: {
-      error: "text-error-600",
-      warning: "text-warning-600",
-      success: "text-success-600",
+      error: "text-arkaic-negative",
+      warning: "text-arkaic-warning",
+      success: "text-arkaic-positive",
       info: "text-info-600",
-      muted: "text-background-800",
+      muted: "text-arkaic-muted",
     },
     size: {
       sm: "text-2xs",
@@ -72,7 +72,7 @@ const badgeTextStyle = tva({
       true: "italic",
     },
     highlight: {
-      true: "bg-yellow-500",
+      true: "bg-arkaic-warning",
     },
   },
 });
@@ -81,11 +81,11 @@ const badgeIconStyle = tva({
   base: "fill-none",
   parentVariants: {
     action: {
-      error: "text-error-600",
-      warning: "text-warning-600",
-      success: "text-success-600",
+      error: "text-arkaic-negative",
+      warning: "text-arkaic-warning",
+      success: "text-arkaic-positive",
       info: "text-info-600",
-      muted: "text-background-800",
+      muted: "text-arkaic-muted",
     },
     size: {
       sm: "h-3 w-3",

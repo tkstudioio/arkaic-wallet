@@ -15,21 +15,15 @@ export function CreateProfile() {
   }
 
   return (
-    <VStack className='my-auto'>
-      <Button
-        variant={"link"}
-        onPress={onCreate}
-        size={"xl"}
-        className='w-full'
-      >
+    <VStack className='my-auto px-4' space={"xl"}>
+      <Button onPress={onCreate} action={"primary"} className='mx-auto w-2/3'>
         <ButtonText>Create new account</ButtonText>
         <ButtonIcon as={UserPlus} />
       </Button>
       <Button
         onPress={onRestoreFromSeedPhrase}
-        action={"secondary"}
         variant={"link"}
-        size={"sm"}
+        className='mx-auto w-2/3'
       >
         <ButtonText>Restore from seed phrase</ButtonText>
         <ButtonIcon as={ArchiveRestore} />

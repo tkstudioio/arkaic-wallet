@@ -35,7 +35,7 @@ export function AmountComponent(props: {
   return (
     <HStack className='items-center' space={"sm"}>
       <Text size={props.size}>{formattedAmount}</Text>
-      <Text size={props.size} className='text-primary-500 font-thin'>
+      <Text size={props.size} className='text-arkaic-primary font-thin'>
         {props.exchangeRate ? symbol : "SATS"}
       </Text>
     </HStack>

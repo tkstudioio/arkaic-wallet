@@ -57,11 +57,11 @@ const modalStyle = tva({
 });
 
 const modalBackdropStyle = tva({
-  base: 'absolute left-0 top-0 right-0 bottom-0 bg-background-dark web:cursor-default',
+  base: 'absolute left-0 top-0 right-0 bottom-0 bg-black/70 web:cursor-default',
 });
 
 const modalContentStyle = tva({
-  base: 'bg-background-0 rounded-md overflow-hidden border border-outline-100 shadow-hard-2 p-6',
+  base: 'bg-arkaic-fill rounded-md overflow-hidden border border-arkaic-border shadow-hard-2 p-6',
   parentVariants: {
     size: {
       xs: 'w-[60%] max-w-[360px]',
@@ -78,7 +78,7 @@ const modalBodyStyle = tva({
 });
 
 const modalCloseButtonStyle = tva({
-  base: 'group/modal-close-button z-10 rounded data-[focus-visible=true]:web:bg-background-100 web:outline-0 cursor-pointer',
+  base: 'group/modal-close-button z-10 rounded data-[focus-visible=true]:web:bg-arkaic-fill web:outline-0 cursor-pointer',
 });
 
 const modalHeaderStyle = tva({

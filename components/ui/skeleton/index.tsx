@@ -25,7 +25,7 @@ const Skeleton = forwardRef<
     className,
     variant,
     children,
-    startColor = 'bg-background-200',
+    startColor = 'bg-arkaic-border',
     isLoaded = false,
     speed = 2,
     ...props
@@ -86,7 +86,7 @@ const SkeletonText = forwardRef<
     className,
     _lines,
     isLoaded = false,
-    startColor = 'bg-background-200',
+    startColor = 'bg-arkaic-border',
     gap = 2,
     children,
     ...props

@@ -3,6 +3,7 @@ export const colors = {
   foreground: "#F8FAFC",
   muted: "#949494",
   primary: "#88278A",
+  accent: "#F7931A",
   primaryForeground: "#E2E2E2",
   fill: "#1A2338",
   border: "rgba(198,185,197,0.66)",

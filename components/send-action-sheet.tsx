@@ -160,7 +160,7 @@ export function SendActionSheet() {
                       minimumFractionDigits: 2,
                     }).format(amountInFiat || 0)}
                   </Text>
-                  <Text className='text-primary-500 font-thin text-4xl'>
+                  <Text className='text-arkaic-primary font-thin text-4xl'>
                     {exchangeRate ? symbol : "SATS"}
                   </Text>
                 </HStack>
@@ -290,7 +290,7 @@ export function SendActionSheet() {
                           minimumFractionDigits: 2,
                         }).format(amountInFiat || 0)}
                       </Text>
-                      <Text className='text-primary-500 font-thin text-4xl'>
+                      <Text className='text-arkaic-primary font-thin text-4xl'>
                         {exchangeRate ? symbol : "SATS"}
                       </Text>
                     </HStack>

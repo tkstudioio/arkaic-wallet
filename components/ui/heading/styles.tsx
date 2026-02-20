@@ -5,7 +5,7 @@ const baseStyle = isWeb
   : '';
 
 export const headingStyle = tva({
-  base: `text-typography-900 font-bold font-heading tracking-sm my-0 ${baseStyle}`,
+  base: `text-arkaic-foreground font-bold font-heading tracking-sm my-0 ${baseStyle}`,
   variants: {
     isTruncated: {
       true: 'truncate',
@@ -26,7 +26,7 @@ export const headingStyle = tva({
       true: 'italic',
     },
     highlight: {
-      true: 'bg-yellow-500',
+      true: 'bg-arkaic-warning',
     },
     size: {
       '5xl': 'text-6xl',

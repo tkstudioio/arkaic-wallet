@@ -25,7 +25,7 @@ const formControlStyle = tva({
 });
 
 const formControlErrorIconStyle = tva({
-  base: 'text-error-700 fill-none',
+  base: 'text-arkaic-negative fill-none',
   variants: {
     size: {
       '2xs': 'h-3 w-3',
@@ -43,7 +43,7 @@ const formControlErrorStyle = tva({
 });
 
 const formControlErrorTextStyle = tva({
-  base: 'text-error-700',
+  base: 'text-arkaic-negative',
   variants: {
     isTruncated: {
       true: 'web:truncate',
@@ -77,7 +77,7 @@ const formControlErrorTextStyle = tva({
       true: 'italic',
     },
     highlight: {
-      true: 'bg-yellow-500',
+      true: 'bg-arkaic-warning',
     },
   },
 });
@@ -87,7 +87,7 @@ const formControlHelperStyle = tva({
 });
 
 const formControlHelperTextStyle = tva({
-  base: 'text-typography-500',
+  base: 'text-arkaic-muted',
   variants: {
     isTruncated: {
       true: 'web:truncate',
@@ -121,7 +121,7 @@ const formControlHelperTextStyle = tva({
       true: 'italic',
     },
     highlight: {
-      true: 'bg-yellow-500',
+      true: 'bg-arkaic-warning',
     },
   },
 });
@@ -131,7 +131,7 @@ const formControlLabelStyle = tva({
 });
 
 const formControlLabelTextStyle = tva({
-  base: 'font-medium text-typography-900',
+  base: 'font-medium text-arkaic-foreground',
   variants: {
     isTruncated: {
       true: 'web:truncate',
@@ -165,13 +165,13 @@ const formControlLabelTextStyle = tva({
       true: 'italic',
     },
     highlight: {
-      true: 'bg-yellow-500',
+      true: 'bg-arkaic-warning',
     },
   },
 });
 
 const formControlLabelAstrickStyle = tva({
-  base: 'font-medium text-typography-900',
+  base: 'font-medium text-arkaic-foreground',
   variants: {
     isTruncated: {
       true: 'web:truncate',
@@ -205,7 +205,7 @@ const formControlLabelAstrickStyle = tva({
       true: 'italic',
     },
     highlight: {
-      true: 'bg-yellow-500',
+      true: 'bg-arkaic-warning',
     },
   },
 });

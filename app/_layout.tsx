@@ -11,7 +11,7 @@ global.crypto.getRandomValues = Crypto.getRandomValues;
 
 export default function RootLayout() {
   return (
-    <GluestackUIProvider mode='dark'>
+    <GluestackUIProvider mode='light'>
       <Stack>
         <Stack.Screen
           name='index'

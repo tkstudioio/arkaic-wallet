@@ -9,7 +9,7 @@ export default function AppLayout(props: PropsWithChildren) {
 
   return (
     <QueryClientProvider client={client}>
-      <ScrollView className='pt-24 pb-24'>
+      <ScrollView className='pt-24 pb-24 bg-arkaic-background'>
         <VStack space={"4xl"} className='items-center'>
           <LogoFull height={24} width={100} className='flex-1' />
           {props.children}

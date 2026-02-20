@@ -71,7 +71,7 @@ export function Transactions() {
             { isLoading: true },
             { isFetching: true },
             { isPending: true },
-            () => <Spinner />
+            () => <Spinner />,
           )
           .otherwise(() => (
             <Text>Something went wrong</Text>

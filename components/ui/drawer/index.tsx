@@ -77,11 +77,11 @@ const drawerStyle = tva({
 });
 
 const drawerBackdropStyle = tva({
-  base: 'absolute left-0 top-0 right-0 bottom-0 bg-background-dark web:cursor-default',
+  base: 'absolute left-0 top-0 right-0 bottom-0 bg-black/70 web:cursor-default',
 });
 
 const drawerContentStyle = tva({
-  base: 'bg-background-0 overflow-scroll border-outline-100 p-6 absolute',
+  base: 'bg-arkaic-fill overflow-scroll border-arkaic-border p-6 absolute',
   parentVariants: {
     size: {
       sm: 'w-1/4',
@@ -141,7 +141,7 @@ const drawerContentStyle = tva({
 });
 
 const drawerCloseButtonStyle = tva({
-  base: 'z-10 rounded data-[focus-visible=true]:web:bg-background-100 web:outline-0 cursor-pointer',
+  base: 'z-10 rounded data-[focus-visible=true]:web:bg-arkaic-fill web:outline-0 cursor-pointer',
 });
 
 const drawerHeaderStyle = tva({

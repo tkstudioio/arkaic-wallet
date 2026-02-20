@@ -34,7 +34,7 @@ const SelectTriggerWrapper = React.forwardRef<
 });
 
 const selectIconStyle = tva({
-  base: 'text-background-500 fill-none',
+  base: 'text-arkaic-muted fill-none',
   parentVariants: {
     size: {
       '2xs': 'h-3 w-3',
@@ -52,7 +52,7 @@ const selectStyle = tva({
 });
 
 const selectTriggerStyle = tva({
-  base: 'border border-background-300 rounded flex-row items-center overflow-hidden data-[hover=true]:border-outline-400 data-[focus=true]:border-primary-700 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-background-300',
+  base: 'border border-arkaic-border rounded flex-row items-center overflow-hidden data-[hover=true]:border-arkaic-primary/60 data-[focus=true]:border-arkaic-primary data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-arkaic-border',
   variants: {
     size: {
       xl: 'h-12',
@@ -62,17 +62,17 @@ const selectTriggerStyle = tva({
     },
     variant: {
       underlined:
-        'border-0 border-b rounded-none data-[hover=true]:border-primary-700 data-[focus=true]:border-primary-700 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-primary-700 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
+        'border-0 border-b rounded-none data-[hover=true]:border-arkaic-primary data-[focus=true]:border-arkaic-primary data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-primary-700 data-[invalid=true]:border-arkaic-negative data-[invalid=true]:web:shadow-error-700',
       outline:
-        'data-[focus=true]:border-primary-700 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:data-[hover=true]:web:shadow-primary-600 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700 data-[invalid=true]:data-[hover=true]:border-error-700',
+        'data-[focus=true]:border-arkaic-primary data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:data-[hover=true]:web:shadow-primary-600 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:border-arkaic-negative data-[invalid=true]:web:shadow-error-700 data-[invalid=true]:data-[hover=true]:border-arkaic-negative',
       rounded:
-        'rounded-full data-[focus=true]:border-primary-700 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-primary-700 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
+        'rounded-full data-[focus=true]:border-arkaic-primary data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-primary-700 data-[invalid=true]:border-arkaic-negative data-[invalid=true]:web:shadow-error-700',
     },
   },
 });
 
 const selectInputStyle = tva({
-  base: 'px-3 placeholder:text-typography-500 web:w-full h-full text-typography-900 pointer-events-none web:outline-none ios:leading-[0px] py-0',
+  base: 'px-3 placeholder:text-arkaic-muted web:w-full h-full text-arkaic-foreground pointer-events-none web:outline-none ios:leading-[0px] py-0',
   parentVariants: {
     size: {
       xl: 'text-xl',

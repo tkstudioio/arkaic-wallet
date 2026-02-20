@@ -152,7 +152,7 @@ export function ReceiveActionSheet() {
                       minimumFractionDigits: 2,
                     }).format(amountInFiat ? amountInFiat / 100 : 0)}
                   </Text>
-                  <Text className='text-primary-500 font-thin text-4xl'>
+                  <Text className='text-arkaic-primary font-thin text-4xl'>
                     {exchangeRate ? symbol : "SATS"}
                   </Text>
                 </HStack>

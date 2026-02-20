@@ -12,10 +12,10 @@ export const cardStyle = tva({
       lg: "p-6",
     },
     variant: {
-      elevated: "bg-background-0",
-      outline: "border border-outline-200 ",
+      elevated: "bg-arkaic-fill",
+      outline: "border border-arkaic-border ",
       ghost: "rounded-none",
-      filled: "bg-background-50",
+      filled: "bg-arkaic-fill",
     },
   },
 });
