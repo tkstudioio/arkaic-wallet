@@ -1,13 +1,13 @@
 import { Home } from "@/components/homepage";
-import AppLayout from "@/components/layout/app-layout";
+import AuthLayout from "@/components/layout/auth-layout";
 
 import React from "react";
 
 const HomePage = () => {
   return (
-    <AppLayout>
+    <AuthLayout>
       <Home />
-    </AppLayout>
+    </AuthLayout>
   );
 };
 
