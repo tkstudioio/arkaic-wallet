@@ -89,6 +89,8 @@ fix: correct balance rounding in sats display
 refactor: extract payment parsing to utility
 ```
 
+**Important**: Never add "Co-Authored-By: Claude" or any AI attribution to commit messages.
+
 ## Language
 
 All code, comments, and content in this repository — including future updates to this file — must be written in **English**.
