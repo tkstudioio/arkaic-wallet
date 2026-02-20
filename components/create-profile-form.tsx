@@ -1,5 +1,17 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
@@ -8,7 +20,7 @@ import { faker } from "@faker-js/faker";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
 import { capitalize, merge } from "lodash";
-import { Link2, User } from "lucide-react-native";
+import { ChevronDown, User } from "lucide-react-native";
 import { match } from "ts-pattern";
 import PrivateKeyInput from "./private-key-input";
 import { Card } from "./ui/card";
@@ -70,15 +82,31 @@ export default function CreateOrRestoreProfileForm(props: {
             </VStack>
             <VStack space='xs'>
               <Text>Arkade server URL</Text>
-              <Input size={"xl"}>
-                <InputIcon as={Link2} />
-                <InputField
-                  onChangeText={handleChange("arkadeServerUrl")}
-                  onBlur={handleBlur("arkadeServerUrl")}
-                  placeholder='insert ASP url'
-                  value={values.arkadeServerUrl}
-                />
-              </Input>
+              <Select
+                selectedValue={values.arkadeServerUrl}
+                onValueChange={handleChange("arkadeServerUrl")}
+              >
+                <SelectTrigger size='xl'>
+                  <SelectInput placeholder='Select ASP server' />
+                  <SelectIcon as={ChevronDown} />
+                </SelectTrigger>
+                <SelectPortal>
+                  <SelectBackdrop />
+                  <SelectContent>
+                    <SelectDragIndicatorWrapper>
+                      <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem
+                      label='Bitcoin (mainnet) — arkade.computer'
+                      value='https://arkade.computer'
+                    />
+                    <SelectItem
+                      label='Mutinynet — mutinynet.arkade.sh'
+                      value='https://mutinynet.arkade.sh'
+                    />
+                  </SelectContent>
+                </SelectPortal>
+              </Select>
             </VStack>
           </Card>
           <VStack space={"md"}>
