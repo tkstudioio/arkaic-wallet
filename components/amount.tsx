@@ -29,7 +29,7 @@ export function AmountComponent(props: {
   }).format(
     props.exchangeRate
       ? (props.exchangeRate.last / 100000000) * props.amount
-      : props.amount
+      : props.amount,
   );
 
   return (
