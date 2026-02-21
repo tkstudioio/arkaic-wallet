@@ -60,7 +60,6 @@ export function AccountsCarousel() {
     const nextIndex = shouldGetPrevious ? Math.floor(value) : Math.ceil(value);
 
     setSelectedIndex(nextIndex);
-    setShowTransactionsList(false);
 
     const profile = get(profilesQuery.data, nextIndex, undefined);
     if (!profile) return;
@@ -73,7 +72,9 @@ export function AccountsCarousel() {
       ref={ref}
       width={width}
       height={width * (4 / 5)}
-      onScrollStart={changeAccount}
+      onScrollStart={() => {
+        changeAccount();
+      }}
       loop={false}
       data={slides}
       style={{ padding: 24 }}
