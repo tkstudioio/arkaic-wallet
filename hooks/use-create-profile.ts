@@ -16,10 +16,10 @@ export function useCreateProfile() {
       const currentProfiles = storedProfiles ? JSON.parse(storedProfiles) : [];
 
       try {
-        await setAccount(profile);
+        setAccount(profile);
         await AsyncStorage.setItem(
           StorageKeys.Profiles,
-          JSON.stringify([...currentProfiles, profile])
+          JSON.stringify([...currentProfiles, profile]),
         );
 
         queryClient.invalidateQueries({ queryKey: ["profiles"] });
@@ -27,7 +27,7 @@ export function useCreateProfile() {
         router.replace("/dashboard");
       } catch (e) {
         throw new Error(
-          "Unable to create profile. Maybe the server is unreachable?"
+          "Unable to create profile. Maybe the server is unreachable?",
         );
       }
     },

@@ -16,18 +16,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useCreateProfile } from "@/hooks/use-create-profile";
-import { faker } from "@faker-js/faker";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
-import { capitalize, merge } from "lodash";
 import { ChevronDown, User } from "lucide-react-native";
 import { match } from "ts-pattern";
-import PrivateKeyInput from "./private-key-input";
 import { Card } from "./ui/card";
-
-function generateProfileName(): string {
-  return capitalize(faker.finance.accountName());
-}
 
 export default function CreateOrRestoreProfileForm(props: {
   restore?: boolean;
@@ -43,11 +36,7 @@ export default function CreateOrRestoreProfileForm(props: {
 
   return (
     <Formik
-      initialValues={
-        props.restore
-          ? defaultValues
-          : merge(defaultValues, { name: generateProfileName() })
-      }
+      initialValues={defaultValues}
       onSubmit={(values) =>
         createProfileMutation.mutate(values, {
           onSuccess: () => {
@@ -58,27 +47,18 @@ export default function CreateOrRestoreProfileForm(props: {
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (
         <>
-          <Card className='w-full gap-8'>
+          <Card className='w-full gap-8' variant={"ghost"}>
             <VStack space='xs'>
               <Text>Account name</Text>
               <Input size={"xl"}>
                 <InputIcon as={User} />
                 <InputField
-                  placeholder='account name'
+                  placeholder='Insert account name'
                   onChangeText={handleChange("name")}
                   onBlur={handleBlur("name")}
                   value={values.name}
                 />
               </Input>
-            </VStack>
-            <VStack space='xs'>
-              <Text>Private key</Text>
-              <PrivateKeyInput
-                onChangeText={handleChange("privateKey")}
-                onBlur={handleBlur("privateKey")}
-                value={values.privateKey}
-                generateInitialKey={!props.restore}
-              />
             </VStack>
             <VStack space='xs'>
               <Text>Arkade server URL</Text>
@@ -97,7 +77,7 @@ export default function CreateOrRestoreProfileForm(props: {
                       <SelectDragIndicator />
                     </SelectDragIndicatorWrapper>
                     <SelectItem
-                      label='Bitcoin (mainnet) — arkade.computer'
+                      label='mainnet — arkade.computer'
                       value='https://arkade.computer'
                     />
                     <SelectItem
