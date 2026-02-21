@@ -1,4 +1,4 @@
-import { AccountsCarousel } from "@/components/accounts-carousel";
+import { AccountBalance } from "@/components/account-balance";
 import AppLayout from "@/components/layout/app-layout";
 import { Transactions } from "@/components/transactions";
 import { Card } from "@/components/ui/card";
@@ -9,20 +9,17 @@ import useProfileStore from "@/stores/profile";
 import React from "react";
 
 const DashboardPage = () => {
-  const { wallet, showTransactionsList } = useProfileStore();
+  const { profile } = useProfileStore();
 
-  if (!wallet) return;
   return (
     <AppLayout>
-      <AccountsCarousel />
+      <Card variant={"ghost"} className='flex-1'>
+        <VStack className='items-center my-auto' space={"lg"}>
+          {profile ? <AccountBalance profile={profile} /> : <Spinner />}
+        </VStack>
+      </Card>
       <VStack className='px-6'>
-        {showTransactionsList ? (
-          <Transactions />
-        ) : (
-          <Card>
-            <Spinner />
-          </Card>
-        )}
+        <Transactions />
       </VStack>
     </AppLayout>
   );

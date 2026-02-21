@@ -1,37 +1,18 @@
 import { useProfiles } from "@/hooks/use-profiles";
-import useProfileStore from "@/stores/profile";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
-import { first, isEmpty } from "lodash";
-import { useEffect } from "react";
+import { map } from "lodash";
 import { Dimensions } from "react-native";
 import { match } from "ts-pattern";
 import { CreateProfile } from "./create-profile";
 import LogoFull from "./icons/logo";
 import AuthLayout from "./layout/auth-layout";
+import { ProfileListItem } from "./profile-list-item";
 import { Heading } from "./ui/heading";
-import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
 export function Home() {
-  const router = useRouter();
-  const { setAccount } = useProfileStore();
-  const { wallet } = useProfileStore();
   const profilesQuery = useProfiles();
-
-  useEffect(() => {
-    if (isEmpty(profilesQuery.data)) return;
-    const defaultProfile = first(profilesQuery.data);
-
-    if (!defaultProfile) return;
-    if (wallet) {
-      router.replace("/dashboard");
-      return;
-    }
-
-    setAccount(defaultProfile);
-  }, [wallet, profilesQuery.data, setAccount, router]);
 
   return (
     <AuthLayout>
@@ -56,12 +37,20 @@ export function Home() {
             <CreateProfile />
           </VStack>
         ))
-        .otherwise(() => (
+        .otherwise(({ data: profiles }) => (
           <VStack className='items-center justify-center' space={"3xl"}>
             <VStack className='items-center'>
-              <LogoFull height={64} width={246} className='flex-1' />
+              <LogoFull height={32} width={246} className='flex-1' />
             </VStack>
-            <Spinner />
+            <VStack className='items-center'>
+              <Heading>Login to one account</Heading>
+              <Text>tap on an account and log in</Text>
+            </VStack>
+            <VStack space={"md"}>
+              {map(profiles, (profile, index) => (
+                <ProfileListItem profile={profile} key={profile.name + index} />
+              ))}
+            </VStack>
           </VStack>
         ))}
     </AuthLayout>
