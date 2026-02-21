@@ -1,5 +1,7 @@
 import { map, range } from "lodash";
-import { Badge } from "./ui/badge";
+import { View } from "react-native";
+
+import { cnBase } from "tailwind-variants";
 import { HStack } from "./ui/hstack";
 
 export function CarouselPagination(props: {
@@ -9,12 +11,15 @@ export function CarouselPagination(props: {
   return (
     <HStack className='justify-center' space={"xs"}>
       {map(range(props.totalSlides), (index) => (
-        <Badge
+        <View
           key={index}
-          className='rounded-full size-2! w-1 h-1 p-0! aspect-square'
-          variant={"outline"}
-          action={index === props.selectedIndex ? "info" : "muted"}
-        />
+          className={cnBase(
+            "size-3 rounded-arkaic-button",
+            index === props.selectedIndex
+              ? "bg-arkaic-primary"
+              : "bg-arkaic-primary/30",
+          )}
+        ></View>
       ))}
     </HStack>
   );
