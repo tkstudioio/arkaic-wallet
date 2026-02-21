@@ -1,17 +1,12 @@
 import { create } from "zustand";
 
-import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
+import { ArkadeLightning } from "@arkade-os/boltz-swap";
 import {
   ArkProvider,
   IndexerProvider,
-  SingleKey,
   VtxoManager,
   Wallet,
 } from "@arkade-os/sdk";
-import {
-  ExpoArkProvider,
-  ExpoIndexerProvider,
-} from "@arkade-os/sdk/adapters/expo";
 
 import { ArkaicProfile } from "@/types/arkaic";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,8 +21,15 @@ type ProfileStore = {
   showTransactionsList: boolean;
   setShowTransactionsList: (showTransactionsList: boolean) => void;
   removeProfile: (profileName: string) => Promise<void>;
-  setAccount: (account: ArkaicProfile) => void;
-  account?: ArkaicProfile;
+  setStore: (
+    storeValues: Partial<
+      Omit<
+        ProfileStore,
+        "setStore" | "removeProfile" | "setShowTransactionsList"
+      >
+    >,
+  ) => void;
+  profile?: ArkaicProfile;
 };
 
 export enum StorageKeys {
@@ -50,50 +52,17 @@ const useProfileStore = create<ProfileStore>((set) => ({
 
     const newStoredProfiles = filter(
       currentProfiles,
-      (profile) => profile.name !== profileName
+      (profile) => profile.name !== profileName,
     );
 
     await AsyncStorage.setItem(
       StorageKeys.Profiles,
-      JSON.stringify(newStoredProfiles)
+      JSON.stringify(newStoredProfiles),
     );
   },
 
-  setAccount: async (account) => {
-    const arkProvider = new ExpoArkProvider(account.arkadeServerUrl);
-    const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
-
-    const identity = SingleKey.fromHex(account.privateKey);
-    const wallet = await Wallet.create({
-      identity,
-      arkProvider,
-      indexerProvider,
-    });
-
-    const swapProvider = new BoltzSwapProvider({
-      apiUrl: "https://api.ark.boltz.exchange",
-      network: "bitcoin",
-    });
-
-    const arkadeLightning = new ArkadeLightning({
-      // @ts-expect-error some strange type error.
-      wallet,
-      swapProvider,
-    });
-
-    const vtxoManager = new VtxoManager(wallet, {
-      enabled: true,
-      thresholdPercentage: 10,
-    });
-
-    set({
-      account,
-      wallet,
-      arkProvider,
-      indexerProvider,
-      vtxoManager,
-      arkadeLightning,
-    });
+  setStore: async (account) => {
+    set(account);
   },
 }));
 
