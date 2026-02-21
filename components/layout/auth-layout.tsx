@@ -8,7 +8,7 @@ export default function AuthLayout(props: PropsWithChildren) {
   return (
     <QueryClientProvider client={client}>
       <VStack
-        className='my-auto items-center bg-arkaic-background'
+        className='my-auto justify-center items-center bg-arkaic-background h-full px-arkaic-md'
         space={"4xl"}
       >
         <VStack>{props.children}</VStack>
