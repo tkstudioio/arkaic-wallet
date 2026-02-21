@@ -51,6 +51,7 @@ export function Home() {
                 <ProfileListItem profile={profile} key={profile.name + index} />
               ))}
             </VStack>
+            <CreateProfile />
           </VStack>
         ))}
     </AuthLayout>

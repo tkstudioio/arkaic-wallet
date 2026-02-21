@@ -15,7 +15,7 @@ export function CreateProfile() {
   }
 
   return (
-    <VStack className='my-auto px-4' space={"xl"}>
+    <VStack className='my-auto' space={"xl"}>
       <Button onPress={onCreate} action={"primary"} className='mx-auto'>
         <ButtonText>Create new account</ButtonText>
         <ButtonIcon as={UserPlus} />
