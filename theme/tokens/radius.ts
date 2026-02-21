@@ -1,5 +1,5 @@
 export const radius = {
-  button: 8,
+  button: 120,
   card: 16,
   full: 100,
 };
