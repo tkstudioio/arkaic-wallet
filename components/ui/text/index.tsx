@@ -2,6 +2,7 @@ import React from "react";
 
 import { type VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 import { Text as RNText } from "react-native";
+import { cnBase } from "tailwind-variants";
 import { textStyle } from "./styles";
 
 type ITextProps = React.ComponentProps<typeof RNText> &
@@ -34,7 +35,7 @@ const Text = React.forwardRef<React.ComponentRef<typeof RNText>, ITextProps>(
           sub: sub as boolean,
           italic: italic as boolean,
           highlight: highlight as boolean,
-          class: className,
+          class: cnBase("text-arkaic-primary-foreground", className),
         })}
         {...props}
         ref={ref}

@@ -37,7 +37,7 @@ cssInterop(PrimitiveIcon, {
 });
 
 const buttonStyle = tva({
-  base: "w-full group/button bg-arkaic-primary rounded-full flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2",
+  base: "w-full group/button bg-arkaic-primary rounded-button flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2",
   variants: {
     action: {
       primary:
@@ -290,7 +290,7 @@ const Button = React.forwardRef<
 >(
   (
     { className, variant = "solid", size = "md", action = "primary", ...props },
-    ref
+    ref,
   ) => {
     return (
       <UIButton
@@ -300,7 +300,7 @@ const Button = React.forwardRef<
         context={{ variant, size, action }}
       />
     );
-  }
+  },
 );
 
 type IButtonTextProps = React.ComponentPropsWithoutRef<typeof UIButton.Text> &
@@ -413,7 +413,7 @@ const ButtonGroup = React.forwardRef<
       flexDirection = "column",
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <UIButton.Group
@@ -427,7 +427,7 @@ const ButtonGroup = React.forwardRef<
         ref={ref}
       />
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

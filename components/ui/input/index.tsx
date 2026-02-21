@@ -34,7 +34,7 @@ cssInterop(PrimitiveIcon, {
 });
 
 const inputStyle = tva({
-  base: "px-3 border-dashed border-arkaic-border flex-row overflow-hidden content-center data-[hover=true]:border-arkaic-primary/60 data-[focus=true]:border-arkaic-primary data-[focus=true]:hover:border-arkaic-primary data-[disabled=true]:opacity-40 data-[disabled=true]:hover:border-arkaic-border items-center",
+  base: "px-3 placeholder-muted border border-arkaic-muted focus:border-arkaic-foreground border-dashed rounded-input flex-row overflow-hidden content-center items-center",
 
   variants: {
     size: {
@@ -42,17 +42,6 @@ const inputStyle = tva({
       lg: "h-11",
       md: "h-10",
       sm: "h-9",
-    },
-
-    variant: {
-      underlined:
-        "rounded-none border-b data-[invalid=true]:border-b-2 data-[invalid=true]:border-arkaic-negative data-[invalid=true]:hover:border-arkaic-negative data-[invalid=true]:data-[focus=true]:border-arkaic-negative data-[invalid=true]:data-[focus=true]:hover:border-arkaic-negative data-[invalid=true]:data-[disabled=true]:hover:border-arkaic-negative",
-
-      outline:
-        "border data-[invalid=true]:border-arkaic-negative data-[invalid=true]:hover:border-arkaic-negative data-[invalid=true]:data-[focus=true]:border-arkaic-negative data-[invalid=true]:data-[focus=true]:hover:border-arkaic-negative data-[invalid=true]:data-[disabled=true]:hover:border-arkaic-negative data-[focus=true]:web:ring-1 data-[focus=true]:web:ring-inset data-[focus=true]:web:ring-indicator-primary data-[invalid=true]:web:ring-1 data-[invalid=true]:web:ring-inset data-[invalid=true]:web:ring-indicator-error data-[invalid=true]:data-[focus=true]:hover:web:ring-1 data-[invalid=true]:data-[focus=true]:hover:web:ring-inset data-[invalid=true]:data-[focus=true]:hover:web:ring-indicator-error data-[invalid=true]:data-[disabled=true]:hover:web:ring-1 data-[invalid=true]:data-[disabled=true]:hover:web:ring-inset data-[invalid=true]:data-[disabled=true]:hover:web:ring-indicator-error",
-
-      rounded:
-        "rounded-full border data-[invalid=true]:border-arkaic-negative data-[invalid=true]:hover:border-arkaic-negative data-[invalid=true]:data-[focus=true]:border-arkaic-negative data-[invalid=true]:data-[focus=true]:hover:border-arkaic-negative data-[invalid=true]:data-[disabled=true]:hover:border-arkaic-negative data-[focus=true]:web:ring-1 data-[focus=true]:web:ring-inset data-[focus=true]:web:ring-indicator-primary data-[invalid=true]:web:ring-1 data-[invalid=true]:web:ring-inset data-[invalid=true]:web:ring-indicator-error data-[invalid=true]:data-[focus=true]:hover:web:ring-1 data-[invalid=true]:data-[focus=true]:hover:web:ring-inset data-[invalid=true]:data-[focus=true]:hover:web:ring-indicator-error data-[invalid=true]:data-[disabled=true]:hover:web:ring-1 data-[invalid=true]:data-[disabled=true]:hover:web:ring-inset data-[invalid=true]:data-[disabled=true]:hover:web:ring-indicator-error",
     },
   },
 });
@@ -77,12 +66,9 @@ const inputSlotStyle = tva({
 
 const inputFieldStyle = tva({
   base: "flex-1 text-arkaic-foreground py-0 px-3 placeholder:text-arkaic-muted h-full ios:leading-[0px] web:cursor-text web:data-[disabled=true]:cursor-not-allowed",
-
   parentVariants: {
     variant: {
-      underlined: "web:outline-0 web:outline-none px-0",
-      outline: "web:outline-0 web:outline-none",
-      rounded: "web:outline-0 web:outline-none px-4",
+      default: "web:outline-0 web:outline-none px-0",
     },
 
     size: {
@@ -104,19 +90,16 @@ const inputFieldStyle = tva({
 type IInputProps = React.ComponentProps<typeof UIInput> &
   VariantProps<typeof inputStyle> & { className?: string };
 const Input = React.forwardRef<React.ComponentRef<typeof UIInput>, IInputProps>(
-  function Input(
-    { className, variant = "outline", size = "md", ...props },
-    ref
-  ) {
+  function Input({ className, size = "md", ...props }, ref) {
     return (
       <UIInput
         ref={ref}
         {...props}
-        className={inputStyle({ variant, size, class: className })}
-        context={{ variant, size }}
+        className={inputStyle({ size, class: className })}
+        context={{ size }}
       />
     );
-  }
+  },
 );
 
 type IInputIconProps = React.ComponentProps<typeof UIInput.Icon> &
