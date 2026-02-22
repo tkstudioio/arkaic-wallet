@@ -4,14 +4,16 @@ import { useWallet } from "@/hooks/use-wallet";
 import { ArkaicProfile } from "@/types/arkaic";
 
 import useBitcoinPrice from "@/hooks/use-bitcoin-price";
+
+import useSettingsStore from "@/stores/settings";
 import { match } from "ts-pattern";
 import { AmountComponent } from "./amount";
 import { Heading } from "./ui/heading";
+import { HStack } from "./ui/hstack";
+import { Skeleton } from "./ui/skeleton";
 import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
-
-import useSettingsStore from "@/stores/settings";
 
 export function AccountBalance(props: { profile: ArkaicProfile }) {
   const { data: wallet } = useWallet(props.profile);
@@ -24,21 +26,36 @@ export function AccountBalance(props: { profile: ArkaicProfile }) {
       { isFetching: true },
       { isLoading: true },
       { isPending: true },
-      () => <Spinner />
+      () => (
+        <>
+          <VStack className='justify-around h-full items-end'>
+            <Skeleton className='h-20' />
+            <Skeleton className='h-10 w-1/2' />
+          </VStack>
+        </>
+      ),
     )
     .with({ isSuccess: true }, ({ data }) => (
-      <>
-        <AmountComponent
-          amount={data?.available}
-          size='5xl'
-          exchangeRate={exchangeData}
-        />
-        <AmountComponent
-          amount={data?.available + data.boarding.total}
-          size='2xl'
-          exchangeRate={exchangeData}
-        />
-      </>
+      <VStack className='justify-around h-full items-end'>
+        <HStack className='w-full items-baseline'>
+          <AmountComponent
+            amount={data?.available}
+            size='6xl'
+            exchangeRate={exchangeData}
+          />
+          <Heading>sats</Heading>
+        </HStack>
+        {data?.available !== 0 && (
+          <HStack space={"md"}>
+            <Spinner />
+            <AmountComponent
+              amount={data?.available}
+              size='2xl'
+              exchangeRate={exchangeData}
+            />
+          </HStack>
+        )}
+      </VStack>
     ))
     .otherwise(({ error }) => (
       <VStack className='items-center' space={"md"}>
