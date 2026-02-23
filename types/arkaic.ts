@@ -1,6 +1,6 @@
 export type ArkaicProfile = {
   name: string;
-  privateKey: string;
+  privateKey?: string;
   arkadeServerUrl: string;
   avatar?: string;
   mnemonic?: string;

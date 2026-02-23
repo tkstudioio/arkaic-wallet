@@ -1,4 +1,4 @@
-import { StorageKeys } from "@/stores/profile";
+import useProfileStore, { StorageKeys } from "@/stores/profile";
 import { ArkaicProfile } from "@/types/arkaic";
 import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
@@ -8,7 +8,11 @@ import {
 } from "@arkade-os/sdk/adapters/expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useProfileStore from "@/stores/profile";
+
+type CreateProfileParams = {
+  profile: ArkaicProfile;
+  privateKey: string;
+};
 
 export function useCreateProfile() {
   const { setStore } = useProfileStore();
@@ -16,7 +20,7 @@ export function useCreateProfile() {
 
   return useMutation({
     mutationKey: ["create-profile"],
-    mutationFn: async (profile: ArkaicProfile) => {
+    mutationFn: async ({ profile, privateKey }: CreateProfileParams) => {
       const storedProfiles = await AsyncStorage.getItem(StorageKeys.Profiles);
       const currentProfiles = storedProfiles ? JSON.parse(storedProfiles) : [];
 
@@ -30,7 +34,7 @@ export function useCreateProfile() {
       const arkProvider = new ExpoArkProvider(profile.arkadeServerUrl);
       const indexerProvider = new ExpoIndexerProvider(profile.arkadeServerUrl);
 
-      const identity = SingleKey.fromHex(profile.privateKey);
+      const identity = SingleKey.fromHex(privateKey);
       const wallet = await Wallet.create({
         identity,
         arkProvider,
@@ -54,7 +58,7 @@ export function useCreateProfile() {
       });
 
       setStore({
-        profile,
+        profile: { ...profile, privateKey },
         wallet,
         arkProvider,
         indexerProvider,

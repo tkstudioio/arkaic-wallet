@@ -355,10 +355,12 @@ export default function CreateOrRestoreProfileForm(props: {
 
             createProfileMutation.mutate(
               {
-                name: values.name,
+                profile: {
+                  name: values.name,
+                  arkadeServerUrl: values.arkadeServerUrl,
+                  mnemonic,
+                },
                 privateKey,
-                arkadeServerUrl: values.arkadeServerUrl,
-                mnemonic,
               },
               {
                 onSuccess: () => {
