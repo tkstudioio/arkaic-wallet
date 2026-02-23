@@ -1,7 +1,7 @@
 import { useProfiles } from "@/hooks/use-profiles";
 import { Image } from "expo-image";
 import { map } from "lodash";
-import { Dimensions } from "react-native";
+import { Dimensions, ScrollView } from "react-native";
 import { match } from "ts-pattern";
 import { CreateProfile } from "./create-profile";
 import LogoFull from "./icons/logo";
@@ -46,11 +46,15 @@ export function Home() {
               <Heading>Login to one account</Heading>
               <Text>tap on an account and log in</Text>
             </VStack>
-            <VStack space={"md"}>
-              {map(profiles, (profile, index) => (
-                <ProfileListItem profile={profile} key={profile.name + index} />
-              ))}
-            </VStack>
+            <ScrollView
+              style={{ maxHeight: Dimensions.get("window").height * 0.4, width: "100%" }}
+            >
+              <VStack space={"md"}>
+                {map(profiles, (profile, index) => (
+                  <ProfileListItem profile={profile} key={profile.name + index} />
+                ))}
+              </VStack>
+            </ScrollView>
             <CreateProfile />
           </VStack>
         ))}
