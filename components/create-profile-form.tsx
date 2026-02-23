@@ -353,12 +353,12 @@ export default function CreateOrRestoreProfileForm(props: {
               passphrase || undefined,
             );
 
-            console.log(privateKey);
             createProfileMutation.mutate(
               {
                 name: values.name,
                 privateKey,
                 arkadeServerUrl: values.arkadeServerUrl,
+                mnemonic,
               },
               {
                 onSuccess: () => {

@@ -3,6 +3,7 @@ export type ArkaicProfile = {
   privateKey: string;
   arkadeServerUrl: string;
   avatar?: string;
+  mnemonic?: string;
 };
 
 export type ArkaicPayment = {
