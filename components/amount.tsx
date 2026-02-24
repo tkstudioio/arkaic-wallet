@@ -1,12 +1,9 @@
-import { ExchangeRate } from "@/hooks/use-bitcoin-price";
-
 import { HStack } from "./ui/hstack";
 import { Text } from "./ui/text";
 
 export function AmountComponent(props: {
   amount?: number;
   size?: string;
-  exchangeRate?: ExchangeRate;
 }) {
   if (!props.amount)
     return (

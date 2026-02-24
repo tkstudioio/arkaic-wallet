@@ -11,15 +11,12 @@ import {
   ActionsheetDragIndicatorWrapper,
 } from "@/components/ui/actionsheet";
 import { useAspInfo } from "@/hooks/use-asp-info";
-import useBitcoinPrice from "@/hooks/use-bitcoin-price";
 import { usePasteFromClipboard } from "@/hooks/use-clipboard";
 import { useSendBitcoin } from "@/hooks/use-send-bitcoin";
-import useSettingsStore from "@/stores/settings";
 import { parserBIP21Address } from "@/utils/parse-bip21-address";
 import { shortenAddress } from "@/utils/shorten-address";
 import { useQueryClient } from "@tanstack/react-query";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { toNumber } from "lodash";
 import { View } from "react-native";
 import { match } from "ts-pattern";
 import { ArkaicPayment } from "../types/arkaic";
@@ -35,9 +32,7 @@ import { VStack } from "./ui/vstack";
 export function SendActionSheet() {
   const queryClient = useQueryClient();
   const sendBitcoinMutation = useSendBitcoin();
-  const { symbol } = useSettingsStore();
   const { data: aspInfo } = useAspInfo();
-  const { data: exchangeRate } = useBitcoinPrice(symbol);
   const { data: pastedData, mutate: pasteFromClipboard } =
     usePasteFromClipboard();
 
@@ -52,17 +47,6 @@ export function SendActionSheet() {
   );
 
   const [posValue, setPosValue] = useState<number>(0);
-  const [amountInFiat, setAmountInFiat] = useState<number | undefined>(
-    undefined
-  );
-
-  const amountInSats = useMemo(() => {
-    if (!exchangeRate?.last) return undefined;
-    if (!amountInFiat) return undefined;
-    return toNumber(
-      ((amountInFiat * 100000000) / exchangeRate.last).toFixed(0)
-    );
-  }, [amountInFiat, exchangeRate?.last]);
 
   const isIntrapayment = useMemo(
     () =>
@@ -78,7 +62,7 @@ export function SendActionSheet() {
       await sendBitcoinMutation.mutateAsync(
         {
           ...arkaicPayment,
-          amount: arkaicPayment.amount || amountInSats,
+          amount: arkaicPayment.amount || posValue,
         },
         {
           onSuccess: () => {
@@ -88,7 +72,7 @@ export function SendActionSheet() {
         }
       );
     },
-    [amountInSats, arkaicPayment, queryClient, sendBitcoinMutation]
+    [posValue, arkaicPayment, queryClient, sendBitcoinMutation]
   );
 
   function onNewAddressInput(address: string): void {
@@ -100,22 +84,16 @@ export function SendActionSheet() {
 
     setArkaicPayment(parsedArkaicPayment);
 
-    if (!exchangeRate?.last || !parsedArkaicPayment.amount) return;
-    const parsedAmountInFiat =
-      (parsedArkaicPayment.amount * exchangeRate.last) / 100000000;
-    setAmountInFiat(parsedAmountInFiat);
+    if (parsedArkaicPayment.amount) {
+      setPosValue(parsedArkaicPayment.amount);
+    }
   }
 
   function clean() {
     setArkaicPayment(undefined);
     setPosValue(0);
-    setAmountInFiat(undefined);
     sendBitcoinMutation.reset();
   }
-
-  useEffect(() => {
-    setAmountInFiat(posValue / 100);
-  }, [posValue]);
 
   useEffect(() => {
     if (!open) {
@@ -155,13 +133,10 @@ export function SendActionSheet() {
                 </Badge>
                 <HStack className='items-center' space={"sm"}>
                   <Text size='6xl'>
-                    {Intl.NumberFormat("it", {
-                      maximumFractionDigits: 2,
-                      minimumFractionDigits: 2,
-                    }).format(amountInFiat || 0)}
+                    {Intl.NumberFormat().format(posValue)}
                   </Text>
                   <Text className='text-arkaic-primary font-thin text-4xl'>
-                    {exchangeRate ? symbol : "SATS"}
+                    sats
                   </Text>
                 </HStack>
                 <Text className='text-center'>
@@ -249,6 +224,12 @@ export function SendActionSheet() {
                     >
                       <ButtonText>Paste from clipboard</ButtonText>
                     </Button>
+                    <Button
+                      variant={"link"}
+                      onPress={() => setManualInputDialogOpen(true)}
+                    >
+                      <ButtonText>Enter address</ButtonText>
+                    </Button>
                   </VStack>
                 ) : null}
 
@@ -285,13 +266,10 @@ export function SendActionSheet() {
 
                     <HStack className='items-center' space={"sm"}>
                       <Text size='6xl'>
-                        {Intl.NumberFormat("it", {
-                          maximumFractionDigits: 2,
-                          minimumFractionDigits: 2,
-                        }).format(amountInFiat || 0)}
+                        {Intl.NumberFormat().format(posValue)}
                       </Text>
                       <Text className='text-arkaic-primary font-thin text-4xl'>
-                        {exchangeRate ? symbol : "SATS"}
+                        sats
                       </Text>
                     </HStack>
 

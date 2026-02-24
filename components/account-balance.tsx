@@ -3,23 +3,17 @@ import { useBalance } from "@/hooks/use-balance";
 import { useWallet } from "@/hooks/use-wallet";
 import { ArkaicAccount } from "@/types/arkaic";
 
-import useBitcoinPrice from "@/hooks/use-bitcoin-price";
-
-import useSettingsStore from "@/stores/settings";
 import { match } from "ts-pattern";
 import { AmountComponent } from "./amount";
 import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Skeleton } from "./ui/skeleton";
-import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
 export function AccountBalance(props: { account: ArkaicAccount }) {
   const { data: wallet } = useWallet(props.account);
   const balanceQuery = useBalance(wallet);
-  const { symbol } = useSettingsStore();
-  const { data: exchangeData } = useBitcoinPrice(symbol);
 
   return match(balanceQuery)
     .with(
@@ -41,20 +35,9 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
           <AmountComponent
             amount={data?.available}
             size='6xl'
-            exchangeRate={exchangeData}
           />
           <Heading>sats</Heading>
         </HStack>
-        {data?.available !== 0 && (
-          <HStack space={"md"}>
-            <Spinner />
-            <AmountComponent
-              amount={data?.available}
-              size='2xl'
-              exchangeRate={exchangeData}
-            />
-          </HStack>
-        )}
       </VStack>
     ))
     .otherwise(({ error }) => (

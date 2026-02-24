@@ -1,7 +1,7 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { LayoutDashboard, Plus } from "lucide-react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Actionsheet,
@@ -10,8 +10,6 @@ import {
   ActionsheetDragIndicator,
   ActionsheetDragIndicatorWrapper,
 } from "@/components/ui/actionsheet";
-import useBitcoinPrice from "@/hooks/use-bitcoin-price";
-import useSettingsStore from "@/stores/settings";
 import { useRouter } from "expo-router";
 import PosComponent from "./pos";
 
@@ -19,7 +17,7 @@ import { usePaymentAddress } from "@/hooks/use-payment-address";
 import useAccountStore from "@/stores/account";
 import { IncomingFunds } from "@arkade-os/sdk";
 import { useQueryClient } from "@tanstack/react-query";
-import { map, toNumber, toString } from "lodash";
+import { map, toString } from "lodash";
 import { match } from "ts-pattern";
 import { Heading } from "./ui/heading";
 import { Input, InputField } from "./ui/input";
@@ -39,9 +37,6 @@ export function ReceiveActionSheet() {
   const walletAddressMutation = usePaymentAddress();
   const { mutate: copyToClipboard } = useCopyToClipboard();
   const { wallet } = useAccountStore();
-  const { symbol } = useSettingsStore();
-
-  const { data: exchangeRate } = useBitcoinPrice(symbol);
 
   const [open, setOpen] = useState<boolean>(false);
   const [showQrCode, setShowQrCode] = useState<boolean>(false);
@@ -49,19 +44,7 @@ export function ReceiveActionSheet() {
   const [transaction, setTransaction] = useState<IncomingFunds | undefined>(
     undefined
   );
-  const [amountInFiat, setAmountInFiat] = useState<number | undefined>(
-    undefined
-  );
-
-  const amountInSats = useMemo(() => {
-    return exchangeRate?.last
-      ? amountInFiat
-        ? toNumber(
-            (((amountInFiat / 100) * 100000000) / exchangeRate.last).toFixed(0)
-          )
-        : 0
-      : 0;
-  }, [amountInFiat, exchangeRate?.last]);
+  const [amountInSats, setAmountInSats] = useState<number>(0);
 
   function backToDashboard() {
     queryClient.invalidateQueries({ queryKey: ["balance"] });
@@ -101,7 +84,7 @@ export function ReceiveActionSheet() {
     if (open) return;
     walletAddressMutation.reset();
     setShowQrCode(false);
-    setAmountInFiat(0);
+    setAmountInSats(0);
     setTransaction(undefined);
   }, [open]);
 
@@ -147,18 +130,15 @@ export function ReceiveActionSheet() {
               <VStack space={"md"} className='items-end'>
                 <HStack className='items-center' space={"sm"}>
                   <Text size='6xl'>
-                    {Intl.NumberFormat("it", {
-                      maximumFractionDigits: 2,
-                      minimumFractionDigits: 2,
-                    }).format(amountInFiat ? amountInFiat / 100 : 0)}
+                    {Intl.NumberFormat().format(amountInSats)}
                   </Text>
                   <Text className='text-arkaic-primary font-thin text-4xl'>
-                    {exchangeRate ? symbol : "SATS"}
+                    sats
                   </Text>
                 </HStack>
                 <PosComponent
-                  value={amountInFiat || 0}
-                  onChange={setAmountInFiat}
+                  value={amountInSats}
+                  onChange={setAmountInSats}
                 />
               </VStack>
               <Divider />
@@ -171,10 +151,17 @@ export function ReceiveActionSheet() {
                   action='negative'
                   onPress={() => {
                     setOpen(false);
-                    setAmountInFiat(0);
+                    setAmountInSats(0);
                   }}
                 >
                   <ButtonText>Cancel</ButtonText>
+                </Button>
+                <Divider />
+                <Button
+                  variant={"link"}
+                  onPress={() => setShowQrCode(true)}
+                >
+                  <ButtonText>Show my address</ButtonText>
                 </Button>
               </VStack>
             </VStack>
@@ -200,10 +187,14 @@ export function ReceiveActionSheet() {
                               type: "normal",
                               address: data.paymentAddress,
                             },
-                            {
-                              type: "ln invoice",
-                              address: data.lnInvoice?.invoice,
-                            },
+                            ...(data.lnInvoice?.invoice
+                              ? [
+                                  {
+                                    type: "ln invoice" as const,
+                                    address: data.lnInvoice.invoice,
+                                  },
+                                ]
+                              : []),
                           ]}
                         />
 
