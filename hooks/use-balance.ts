@@ -1,9 +1,9 @@
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 import { Wallet } from "@arkade-os/sdk";
 import { useQuery } from "@tanstack/react-query";
 
 export function useBalance(passedWallet?: Wallet) {
-  const { wallet: storedWallet } = useProfileStore();
+  const { wallet: storedWallet } = useAccountStore();
   const wallet = passedWallet || storedWallet;
 
   return useQuery({

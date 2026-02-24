@@ -1,4 +1,4 @@
-export type ArkaicProfile = {
+export type ArkaicAccount = {
   name: string;
   privateKey?: string;
   arkadeServerUrl: string;

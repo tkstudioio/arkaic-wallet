@@ -1,11 +1,11 @@
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 import { ArkaicPayment } from "@/types/arkaic";
 import { Ramps } from "@arkade-os/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAspInfo } from "./use-asp-info";
 
 export function useSendBitcoin() {
-  const { wallet, arkadeLightning } = useProfileStore();
+  const { wallet, arkadeLightning } = useAccountStore();
   const { data: aspInfo } = useAspInfo();
   const queryClient = useQueryClient();
   return useMutation<string | undefined, Error, ArkaicPayment>({

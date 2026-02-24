@@ -1,7 +1,7 @@
 import { useBalance } from "@/hooks/use-balance";
 
 import { useWallet } from "@/hooks/use-wallet";
-import { ArkaicProfile } from "@/types/arkaic";
+import { ArkaicAccount } from "@/types/arkaic";
 
 import useBitcoinPrice from "@/hooks/use-bitcoin-price";
 
@@ -15,8 +15,8 @@ import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
-export function AccountBalance(props: { profile: ArkaicProfile }) {
-  const { data: wallet } = useWallet(props.profile);
+export function AccountBalance(props: { account: ArkaicAccount }) {
+  const { data: wallet } = useWallet(props.account);
   const balanceQuery = useBalance(wallet);
   const { symbol } = useSettingsStore();
   const { data: exchangeData } = useBitcoinPrice(symbol);

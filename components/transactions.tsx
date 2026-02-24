@@ -5,7 +5,7 @@ import { Text } from "@/components/ui/text";
 
 import { VStack } from "@/components/ui/vstack";
 import { useTransactions } from "@/hooks/use-transactions";
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { isEmpty, join, map, values } from "lodash";
@@ -19,7 +19,7 @@ import { Switch } from "./ui/switch";
 export function Transactions() {
   const { detailedTransactions, toggleDetailedTransactions } =
     useSettingsStore();
-  const { wallet, account } = useProfileStore();
+  const { wallet, account } = useAccountStore();
   const transactionsQuery = useTransactions();
   const queryClient = useQueryClient();
 

@@ -1,9 +1,9 @@
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 import { useQuery } from "@tanstack/react-query";
 import { filter } from "lodash";
 
 export function useArkTransactions() {
-  const { wallet } = useProfileStore();
+  const { wallet } = useAccountStore();
   return useQuery({
     queryKey: ["ark-transactions"],
     queryFn: async () => {

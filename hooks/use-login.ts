@@ -1,5 +1,5 @@
-import useProfileStore from "@/stores/profile";
-import { ArkaicProfile } from "@/types/arkaic";
+import useAccountStore from "@/stores/account";
+import { ArkaicAccount } from "@/types/arkaic";
 import { mnemonicToPrivateKey } from "@/utils/mnemonic";
 import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
@@ -11,29 +11,29 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 
 type LoginParams = {
-  profile: ArkaicProfile;
+  account: ArkaicAccount;
   passphrase?: string;
 };
 
 export function useLoginMutation() {
-  const { setStore } = useProfileStore();
+  const { setStore } = useAccountStore();
   const router = useRouter();
 
   return useMutation({
     mutationKey: ["setAccount"],
-    mutationFn: async ({ profile, passphrase }: LoginParams) => {
-      let privateKey = profile.privateKey;
+    mutationFn: async ({ account, passphrase }: LoginParams) => {
+      let privateKey = account.privateKey;
 
-      if (profile.mnemonic) {
-        privateKey = mnemonicToPrivateKey(profile.mnemonic, passphrase);
+      if (account.mnemonic) {
+        privateKey = mnemonicToPrivateKey(account.mnemonic, passphrase);
       }
 
       if (!privateKey) {
         throw new Error("No private key or mnemonic available");
       }
 
-      const arkProvider = new ExpoArkProvider(profile.arkadeServerUrl);
-      const indexerProvider = new ExpoIndexerProvider(profile.arkadeServerUrl);
+      const arkProvider = new ExpoArkProvider(account.arkadeServerUrl);
+      const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
 
       const identity = SingleKey.fromHex(privateKey);
       const wallet = await Wallet.create({
@@ -58,7 +58,7 @@ export function useLoginMutation() {
         thresholdPercentage: 10,
       });
       setStore({
-        profile: { ...profile, privateKey },
+        account: { ...account, privateKey },
         wallet,
         arkProvider,
         indexerProvider,

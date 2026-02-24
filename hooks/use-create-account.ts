@@ -1,5 +1,5 @@
-import useProfileStore, { StorageKeys } from "@/stores/profile";
-import { ArkaicProfile } from "@/types/arkaic";
+import useAccountStore, { StorageKeys } from "@/stores/account";
+import { ArkaicAccount } from "@/types/arkaic";
 import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
 import {
@@ -9,30 +9,30 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-type CreateProfileParams = {
-  profile: ArkaicProfile;
+type CreateAccountParams = {
+  account: ArkaicAccount;
   privateKey: string;
 };
 
-export function useCreateProfile() {
-  const { setStore } = useProfileStore();
+export function useCreateAccount() {
+  const { setStore } = useAccountStore();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ["create-profile"],
-    mutationFn: async ({ profile, privateKey }: CreateProfileParams) => {
-      const storedProfiles = await AsyncStorage.getItem(StorageKeys.Profiles);
-      const currentProfiles = storedProfiles ? JSON.parse(storedProfiles) : [];
+    mutationKey: ["create-account"],
+    mutationFn: async ({ account, privateKey }: CreateAccountParams) => {
+      const storedAccounts = await AsyncStorage.getItem(StorageKeys.Accounts);
+      const currentAccounts = storedAccounts ? JSON.parse(storedAccounts) : [];
 
       await AsyncStorage.setItem(
-        StorageKeys.Profiles,
-        JSON.stringify([...currentProfiles, profile]),
+        StorageKeys.Accounts,
+        JSON.stringify([...currentAccounts, account]),
       );
 
-      queryClient.invalidateQueries({ queryKey: ["profiles"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
 
-      const arkProvider = new ExpoArkProvider(profile.arkadeServerUrl);
-      const indexerProvider = new ExpoIndexerProvider(profile.arkadeServerUrl);
+      const arkProvider = new ExpoArkProvider(account.arkadeServerUrl);
+      const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
 
       const identity = SingleKey.fromHex(privateKey);
       const wallet = await Wallet.create({
@@ -58,7 +58,7 @@ export function useCreateProfile() {
       });
 
       setStore({
-        profile: { ...profile, privateKey },
+        account: { ...account, privateKey },
         wallet,
         arkProvider,
         indexerProvider,

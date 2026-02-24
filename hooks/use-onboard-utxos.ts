@@ -1,9 +1,9 @@
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 import { Ramps } from "@arkade-os/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useOnboardUtxos() {
-  const { wallet } = useProfileStore();
+  const { wallet } = useAccountStore();
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["onboard-utxos"],

@@ -16,7 +16,7 @@ import { useRouter } from "expo-router";
 import PosComponent from "./pos";
 
 import { usePaymentAddress } from "@/hooks/use-payment-address";
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 import { IncomingFunds } from "@arkade-os/sdk";
 import { useQueryClient } from "@tanstack/react-query";
 import { map, toNumber, toString } from "lodash";
@@ -33,12 +33,12 @@ import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 
 export function ReceiveActionSheet() {
-  const { arkadeLightning } = useProfileStore();
+  const { arkadeLightning } = useAccountStore();
   const router = useRouter();
   const queryClient = useQueryClient();
   const walletAddressMutation = usePaymentAddress();
   const { mutate: copyToClipboard } = useCopyToClipboard();
-  const { wallet } = useProfileStore();
+  const { wallet } = useAccountStore();
   const { symbol } = useSettingsStore();
 
   const { data: exchangeRate } = useBitcoinPrice(symbol);

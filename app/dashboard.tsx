@@ -7,22 +7,22 @@ import { Card } from "@/components/ui/card";
 import { HStack } from "@/components/ui/hstack";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 
 import React from "react";
 import { match } from "ts-pattern";
 
 const DashboardPage = () => {
-  const { profile } = useProfileStore();
+  const { account } = useAccountStore();
 
   return (
     <AppLayout>
-      {match(profile)
+      {match(account)
         .with(undefined, () => <Text>Ciro</Text>)
-        .otherwise((profile) => (
+        .otherwise((account) => (
           <VStack className='px-arkaic-md' space={"4xl"}>
             <Card className='flex-1 w-full aspect-video items-center justify-center'>
-              <AccountBalance profile={profile} />
+              <AccountBalance account={account} />
             </Card>
             <HStack space={"xl"} className='justify-center'>
               <ReceiveActionSheet />

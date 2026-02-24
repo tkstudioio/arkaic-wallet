@@ -1,5 +1,5 @@
 import { useLoginMutation } from "@/hooks/use-login";
-import { ArkaicProfile } from "@/types/arkaic";
+import { ArkaicAccount } from "@/types/arkaic";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Button, ButtonText } from "./ui/button";
@@ -19,26 +19,26 @@ import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
-export function ProfileListItem(props: { profile: ArkaicProfile }) {
+export function AccountListItem(props: { account: ArkaicAccount }) {
   const loginMutation = useLoginMutation();
   const [showPassphraseModal, setShowPassphraseModal] = useState(false);
   const [passphrase, setPassphrase] = useState("");
 
-  const hasMnemonic = !!props.profile.mnemonic;
+  const hasMnemonic = !!props.account.mnemonic;
 
   const handlePress = () => {
     if (hasMnemonic) {
       setPassphrase("");
       setShowPassphraseModal(true);
     } else {
-      loginMutation.mutate({ profile: props.profile });
+      loginMutation.mutate({ account: props.account });
     }
   };
 
   const handleLogin = () => {
     setShowPassphraseModal(false);
     loginMutation.mutate({
-      profile: props.profile,
+      account: props.account,
       passphrase: passphrase || undefined,
     });
   };
@@ -49,8 +49,8 @@ export function ProfileListItem(props: { profile: ArkaicProfile }) {
         <Card>
           <HStack>
             <VStack>
-              <Text>{props.profile.name}</Text>
-              <Text size={"xs"}>{props.profile.arkadeServerUrl}</Text>
+              <Text>{props.account.name}</Text>
+              <Text size={"xs"}>{props.account.arkadeServerUrl}</Text>
             </VStack>
             {loginMutation.isPending && <Spinner />}
           </HStack>
@@ -70,7 +70,7 @@ export function ProfileListItem(props: { profile: ArkaicProfile }) {
             <VStack space='sm'>
               <Text>
                 Enter your passphrase to unlock{" "}
-                <Text bold>{props.profile.name}</Text>. Leave empty if you
+                <Text bold>{props.account.name}</Text>. Leave empty if you
                 {"didn't set one."}
               </Text>
               <Input size='xl'>

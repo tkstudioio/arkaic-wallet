@@ -18,7 +18,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
-import { useCreateProfile } from "@/hooks/use-create-profile";
+import { useCreateAccount } from "@/hooks/use-create-account";
 import {
   generateMnemonic,
   getRandomVerificationIndices,
@@ -43,11 +43,11 @@ type Step =
   | "restoreWords"
   | "accountInfo";
 
-export default function CreateOrRestoreProfileForm(props: {
+export default function CreateOrRestoreAccountForm(props: {
   restore?: boolean;
 }) {
   const router = useRouter();
-  const createProfileMutation = useCreateProfile();
+  const createAccountMutation = useCreateAccount();
 
   const [step, setStep] = useState<Step>("wordCount");
   const [wordCount, setWordCount] = useState<WordCount>(12);
@@ -353,9 +353,9 @@ export default function CreateOrRestoreProfileForm(props: {
               passphrase || undefined,
             );
 
-            createProfileMutation.mutate(
+            createAccountMutation.mutate(
               {
-                profile: {
+                account: {
                   name: values.name,
                   arkadeServerUrl: values.arkadeServerUrl,
                   mnemonic,
@@ -415,11 +415,11 @@ export default function CreateOrRestoreProfileForm(props: {
                 </VStack>
               </Card>
               <VStack space='md' className='w-full'>
-                {match(createProfileMutation)
+                {match(createAccountMutation)
                   .with({ isError: true }, () => (
                     <>
                       <Text className='text-center text-error-500'>
-                        Error creating profile
+                        Error creating account
                       </Text>
                       <Button
                         variant='link'

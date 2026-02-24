@@ -1,10 +1,10 @@
-import useProfileStore from "@/stores/profile";
+import useAccountStore from "@/stores/account";
 import { CreateLightningInvoiceResponse } from "@arkade-os/boltz-swap";
 import { useMutation } from "@tanstack/react-query";
 import { toNumber } from "lodash";
 
 export function usePaymentAddress() {
-  const { wallet, arkadeLightning } = useProfileStore();
+  const { wallet, arkadeLightning } = useAccountStore();
   return useMutation({
     mutationKey: ["payment-address"],
     mutationFn: async (amount: number | undefined) => {

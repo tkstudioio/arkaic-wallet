@@ -4,14 +4,14 @@ import React from "react";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { VStack } from "./ui/vstack";
 
-export function CreateProfile() {
+export function CreateAccount() {
   const router = useRouter();
 
   function onCreate() {
-    router.push("/profile/create");
+    router.push("/account/create");
   }
   function onRestoreFromSeedPhrase() {
-    router.push("/profile/restore");
+    router.push("/account/restore");
   }
 
   return (

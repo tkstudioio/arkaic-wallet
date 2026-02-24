@@ -1,6 +1,6 @@
 import LogoFull from "@/components/icons/logo";
-import { useDeleteProfile } from "@/hooks/use-delete-profile";
-import useProfileStore from "@/stores/profile";
+import { useDeleteAccount } from "@/hooks/use-delete-account";
+import useAccountStore from "@/stores/account";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import {
@@ -42,17 +42,17 @@ export default function AppLayout(props: PropsWithChildren) {
 
 function AppLayoutContent(props: PropsWithChildren) {
   const router = useRouter();
-  const { profile } = useProfileStore();
-  const deleteProfileMutation = useDeleteProfile();
+  const { account } = useAccountStore();
+  const deleteAccountMutation = useDeleteAccount();
   const [showBackupModal, setShowBackupModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const menuTriggerRef = useRef(null);
 
-  const mnemonicWords = profile?.mnemonic?.split(" ") ?? [];
+  const mnemonicWords = account?.mnemonic?.split(" ") ?? [];
 
   const handleDeleteConfirm = () => {
-    if (!profile) return;
-    deleteProfileMutation.mutate(profile.name, {
+    if (!account) return;
+    deleteAccountMutation.mutate(account.name, {
       onSuccess: () => {
         setShowDeleteModal(false);
         router.replace("/");
@@ -77,7 +77,7 @@ function AppLayoutContent(props: PropsWithChildren) {
                   size={"xs"}
                   {...triggerProps}
                 >
-                  <ButtonText>{profile?.name}</ButtonText>
+                  <ButtonText>{account?.name}</ButtonText>
                   <ButtonIcon as={EllipsisVertical} />
                 </Button>
               )}
@@ -169,7 +169,7 @@ function AppLayoutContent(props: PropsWithChildren) {
             <VStack space='sm'>
               <Text>
                 Are you sure you want to delete{" "}
-                <Text bold>{profile?.name}</Text>?
+                <Text bold>{account?.name}</Text>?
               </Text>
               <Text>
                 This action is irreversible. If you have not backed up your seed
@@ -183,16 +183,16 @@ function AppLayoutContent(props: PropsWithChildren) {
               variant='outline'
               action='secondary'
               onPress={() => setShowDeleteModal(false)}
-              disabled={deleteProfileMutation.isPending}
+              disabled={deleteAccountMutation.isPending}
             >
               <ButtonText>Cancel</ButtonText>
             </Button>
             <Button
               action='negative'
               onPress={handleDeleteConfirm}
-              disabled={deleteProfileMutation.isPending}
+              disabled={deleteAccountMutation.isPending}
             >
-              {deleteProfileMutation.isPending ? (
+              {deleteAccountMutation.isPending ? (
                 <Spinner />
               ) : (
                 <ButtonText>Delete</ButtonText>
