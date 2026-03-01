@@ -27,7 +27,6 @@ import { VStack } from "./ui/vstack";
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { Toast } from "toastify-react-native";
 import { QrCarousel } from "./qr-carousel";
-import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 
 export function ReceiveActionSheet() {
@@ -42,9 +41,10 @@ export function ReceiveActionSheet() {
   const [showQrCode, setShowQrCode] = useState<boolean>(false);
 
   const [transaction, setTransaction] = useState<IncomingFunds | undefined>(
-    undefined
+    undefined,
   );
   const [amountInSats, setAmountInSats] = useState<number>(0);
+  const [currentAddress, setCurrentAddress] = useState<string | undefined>();
 
   function backToDashboard() {
     queryClient.invalidateQueries({ queryKey: ["balance"] });
@@ -68,7 +68,7 @@ export function ReceiveActionSheet() {
         if (!data.lnInvoice || !arkadeLightning) return;
         try {
           const receivalResult = await arkadeLightning.waitAndClaim(
-            data.lnInvoice?.pendingSwap
+            data.lnInvoice?.pendingSwap,
           );
           if (!receivalResult) throw new Error("no receival result");
           Toast.success("LN Swap received");
@@ -136,15 +136,13 @@ export function ReceiveActionSheet() {
                     sats
                   </Text>
                 </HStack>
-                <PosComponent
-                  value={amountInSats}
-                  onChange={setAmountInSats}
-                />
+                <PosComponent value={amountInSats} onChange={setAmountInSats} />
               </VStack>
-              <Divider />
               <VStack space={"md"}>
                 <Button onPress={() => setShowQrCode(true)}>
-                  <ButtonText>Show QR</ButtonText>
+                  <ButtonText>
+                    {amountInSats ? "Show QR" : "Show without amount"}
+                  </ButtonText>
                 </Button>
                 <Button
                   variant={"link"}
@@ -155,13 +153,6 @@ export function ReceiveActionSheet() {
                   }}
                 >
                   <ButtonText>Cancel</ButtonText>
-                </Button>
-                <Divider />
-                <Button
-                  variant={"link"}
-                  onPress={() => setShowQrCode(true)}
-                >
-                  <ButtonText>Show my address</ButtonText>
                 </Button>
               </VStack>
             </VStack>
@@ -181,7 +172,7 @@ export function ReceiveActionSheet() {
                     {!transaction ? (
                       <>
                         <QrCarousel
-                          copyToClipboard={copyToClipboard}
+                          onAddressChange={setCurrentAddress}
                           paymentOptions={[
                             {
                               type: "normal",
@@ -198,11 +189,19 @@ export function ReceiveActionSheet() {
                           ]}
                         />
 
-                        <Divider />
-                        <Button disabled={true} variant={"link"}>
+                        <Button
+                          disabled={true}
+                          variant={"link"}
+                          action='secondary'
+                        >
                           <Spinner />
                           <ButtonText>Waiting payment notification</ButtonText>
                         </Button>
+                        {currentAddress && (
+                          <Button onPress={() => copyToClipboard(currentAddress)}>
+                            <ButtonText>Copy to clipboard</ButtonText>
+                          </Button>
+                        )}
                       </>
                     ) : (
                       <>
@@ -215,7 +214,6 @@ export function ReceiveActionSheet() {
                                   isDisabled
                                   size={"sm"}
                                   className='h-max py-3'
-                                  variant={"underlined"}
                                 >
                                   <InputField
                                     value={toString(newCoin.txid)}
@@ -236,14 +234,13 @@ export function ReceiveActionSheet() {
                                 isDisabled
                                 size={"sm"}
                                 className='h-max py-3'
-                                variant={"underlined"}
                               >
                                 <InputField
                                   value={toString(vtxo.txid)}
                                   multiline
                                 />
                               </Input>
-                            ))
+                            )),
                           )
                           .otherwise(() => null)}
                         <Button onPress={backToDashboard}>
