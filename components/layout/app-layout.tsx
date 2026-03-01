@@ -3,12 +3,7 @@ import { useDeleteAccount } from "@/hooks/use-delete-account";
 import useAccountStore from "@/stores/account";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import {
-  EllipsisVertical,
-  KeyRound,
-  PowerOff,
-  Trash2,
-} from "lucide-react-native";
+import { KeyRound, MenuIcon, PowerOff, Trash2 } from "lucide-react-native";
 import { PropsWithChildren, useMemo, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import ToastManager from "toastify-react-native";
@@ -16,7 +11,13 @@ import { Badge, BadgeText } from "../ui/badge";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { Heading } from "../ui/heading";
 import { HStack } from "../ui/hstack";
-import { Menu, MenuItem, MenuItemLabel, MenuSeparator } from "../ui/menu";
+import {
+  Menu,
+  MenuItem,
+  MenuItemIcon,
+  MenuItemLabel,
+  MenuSeparator,
+} from "../ui/menu";
 import {
   Modal,
   ModalBackdrop,
@@ -72,47 +73,47 @@ function AppLayoutContent(props: PropsWithChildren) {
                 <Button
                   ref={menuTriggerRef}
                   action={"secondary"}
-                  variant={"link"}
                   className='w-min'
-                  size={"xs"}
                   {...triggerProps}
                 >
-                  <ButtonText>{account?.name}</ButtonText>
-                  <ButtonIcon as={EllipsisVertical} />
+                  <ButtonText className='text-arkaic-foreground'>
+                    {account?.name}
+                  </ButtonText>
+                  <ButtonIcon
+                    as={MenuIcon}
+                    className='text-arkaic-foreground'
+                  />
                 </Button>
               )}
             >
-              {mnemonicWords.length > 0 && (
+              {mnemonicWords.length > 0 ? (
                 <MenuItem
                   key='backup'
                   textValue='Backup seed phrase'
                   onPress={() => setShowBackupModal(true)}
                 >
-                  <KeyRound
-                    size={16}
-                    className='text-arkaic-foreground mr-2'
-                  />
+                  <MenuItemIcon as={KeyRound} />
                   <MenuItemLabel>Backup seed phrase</MenuItemLabel>
                 </MenuItem>
-              )}
-              <MenuItem
-                key='logout'
-                textValue='Log out'
-                onPress={() => router.replace("/")}
-              >
-                <PowerOff size={16} className='text-arkaic-foreground mr-2' />
-                <MenuItemLabel>Log out</MenuItemLabel>
-              </MenuItem>
-              <MenuSeparator />
+              ) : null}
               <MenuItem
                 key='delete'
                 textValue='Delete account'
                 onPress={() => setShowDeleteModal(true)}
               >
-                <Trash2 size={16} className='text-error-500 mr-2' />
-                <MenuItemLabel className='text-error-500'>
-                  Delete account
-                </MenuItemLabel>
+                <MenuItemIcon as={Trash2} />
+                <MenuItemLabel>Delete account</MenuItemLabel>
+              </MenuItem>
+              <MenuSeparator />
+
+              <MenuItem
+                key='logout'
+                textValue='Log out'
+                action='negative'
+                onPress={() => router.replace("/")}
+              >
+                <MenuItemIcon as={PowerOff} />
+                <MenuItemLabel>Log out</MenuItemLabel>
               </MenuItem>
             </Menu>
           </HStack>
@@ -156,10 +157,7 @@ function AppLayoutContent(props: PropsWithChildren) {
         </ModalContent>
       </Modal>
 
-      <Modal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-      >
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
         <ModalBackdrop />
         <ModalContent>
           <ModalHeader>
@@ -179,25 +177,27 @@ function AppLayoutContent(props: PropsWithChildren) {
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <Button
-              variant='outline'
-              action='secondary'
-              onPress={() => setShowDeleteModal(false)}
-              disabled={deleteAccountMutation.isPending}
-            >
-              <ButtonText>Cancel</ButtonText>
-            </Button>
-            <Button
-              action='negative'
-              onPress={handleDeleteConfirm}
-              disabled={deleteAccountMutation.isPending}
-            >
-              {deleteAccountMutation.isPending ? (
-                <Spinner />
-              ) : (
-                <ButtonText>Delete</ButtonText>
-              )}
-            </Button>
+            <VStack space={"md"}>
+              <Button
+                action='negative'
+                onPress={handleDeleteConfirm}
+                disabled={deleteAccountMutation.isPending}
+              >
+                {deleteAccountMutation.isPending ? (
+                  <Spinner />
+                ) : (
+                  <ButtonText>Delete</ButtonText>
+                )}
+              </Button>
+              <Button
+                variant='ghost'
+                action='secondary'
+                onPress={() => setShowDeleteModal(false)}
+                disabled={deleteAccountMutation.isPending}
+              >
+                <ButtonText>Cancel</ButtonText>
+              </Button>
+            </VStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
