@@ -84,16 +84,18 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <Button
-              variant='outline'
-              action='secondary'
-              onPress={() => setShowPassphraseModal(false)}
-            >
-              <ButtonText>Cancel</ButtonText>
-            </Button>
-            <Button onPress={handleLogin}>
-              <ButtonText>Unlock</ButtonText>
-            </Button>
+            <VStack space={"md"}>
+              <Button onPress={handleLogin}>
+                <ButtonText>Unlock</ButtonText>
+              </Button>
+              <Button
+                variant='ghost'
+                action='secondary'
+                onPress={() => setShowPassphraseModal(false)}
+              >
+                <ButtonText>Cancel</ButtonText>
+              </Button>
+            </VStack>
           </ModalFooter>
         </ModalContent>
       </Modal>

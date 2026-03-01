@@ -66,10 +66,9 @@ export function OnboardButton(
                     <Button
                       onPress={() => setOpen(false)}
                       variant={"link"}
-                      action='negative'
+                      action='secondary'
                     >
                       <ButtonText>Close</ButtonText>
-                      <ButtonIcon />
                     </Button>
                   </VStack>
                 </VStack>
@@ -94,7 +93,6 @@ export function OnboardButton(
                 <>
                   <Text>Error onboarding funds</Text>
                   <Button
-                    disabled
                     variant='link'
                     action='negative'
                     onPress={() => mutate(undefined)}
