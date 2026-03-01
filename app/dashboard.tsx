@@ -24,7 +24,7 @@ const DashboardPage = () => {
             <Card className='flex-1 w-full aspect-video items-center justify-center'>
               <AccountBalance account={account} />
             </Card>
-            <HStack space={"xl"} className='justify-center'>
+            <HStack className='justify-around w-full'>
               <ReceiveActionSheet />
               <SendActionSheet />
             </HStack>
