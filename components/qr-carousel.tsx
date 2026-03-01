@@ -1,58 +1,83 @@
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { UseMutateFunction } from "@tanstack/react-query";
-import { filter, isUndefined, map } from "lodash";
-import { Dimensions } from "react-native";
+import { map } from "lodash";
+import { Dimensions, View } from "react-native";
 import QRCode from "react-native-qrcode-skia";
 import { useSharedValue } from "react-native-reanimated";
 
 import { colors } from "@/theme/tokens";
-import { CarouselPagination } from "./carousel-pagination";
-import { Badge, BadgeText } from "./ui/badge";
-import { Button, ButtonText } from "./ui/button";
+import { Button, ButtonGroup, ButtonText } from "./ui/button";
+import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
 
 export function QrCarousel(props: {
-  copyToClipboard: UseMutateFunction<boolean, Error, string, unknown>;
   paymentOptions: { address?: string; type: string }[];
+  onAddressChange?: (address: string | undefined) => void;
 }) {
   const [index, setIndex] = useState<number>(0);
   const ref = React.useRef<ICarouselInstance>(null);
 
   const progress = useSharedValue<number>(0);
   const width = Dimensions.get("window").width;
+  const qrSize = width - 48;
 
-  const addresses = filter(
-    map(props.paymentOptions, (option) => option.address),
-    (address) => !isUndefined(address),
-  );
+  const currentAddress = props.paymentOptions[index]?.address;
+
+  useEffect(() => {
+    props.onAddressChange?.(currentAddress);
+  }, [currentAddress]);
+
+  const goToSlide = (i: number) => {
+    ref.current?.scrollTo({ index: i, animated: true });
+    setIndex(i);
+  };
 
   return (
-    <>
+    <VStack space={"xl"} className='items-center'>
+      <HStack space={"sm"}>
+        <ButtonGroup flexDirection='row'>
+          {map(props.paymentOptions, (option, i) => (
+            <Button
+              key={option.type}
+              action={i === index ? "primary" : "secondary"}
+              isDisabled={i === index}
+              onPress={() => goToSlide(i)}
+              className='w-min'
+            >
+              <ButtonText>
+                {option.type === "normal" ? "Arkaic payment" : "Lightning swap"}
+              </ButtonText>
+            </Button>
+          ))}
+        </ButtonGroup>
+      </HStack>
+
       <Carousel
         ref={ref}
-        width={Dimensions.get("window").width * 0.6}
-        height={Dimensions.get("window").width}
+        width={qrSize}
+        height={qrSize}
         loop={false}
+        enabled={false}
         onSnapToItem={setIndex}
         containerStyle={{
           justifyContent: "center",
           alignItems: "center",
         }}
         data={map(props.paymentOptions, (option) => (
-          <VStack space={"xl"} className='items-center border w-full'>
-            <Badge action={option.type === "normal" ? "success" : "info"}>
-              <BadgeText>
-                {option.type === "normal" ? "arkaic payment" : "lightning swap"}
-              </BadgeText>
-            </Badge>
-
+          <View
+            key={option.address}
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 16,
+            }}
+          >
             <QRCode
-              key={option.address}
               value={option.address || ""}
-              size={width * 0.6}
+              size={qrSize - 32}
               color={colors.foreground}
               shapeOptions={{
                 shape: "square",
@@ -61,26 +86,12 @@ export function QrCarousel(props: {
                 gap: 0,
               }}
             />
-
-            {option.address && (
-              <Button
-                variant={"link"}
-                action={"secondary"}
-                onPress={() => props.copyToClipboard(option.address!)}
-              >
-                <ButtonText>Copy to clipboard</ButtonText>
-              </Button>
-            )}
-          </VStack>
+          </View>
         ))}
-        style={{ padding: 24 }}
         onProgressChange={progress}
         renderItem={({ item }) => item}
       />
-      <CarouselPagination
-        totalSlides={addresses.length}
-        selectedIndex={index}
-      />
-    </>
+
+    </VStack>
   );
 }
