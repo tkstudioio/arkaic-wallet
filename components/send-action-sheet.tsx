@@ -20,7 +20,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { View } from "react-native";
 import { match } from "ts-pattern";
 import { ArkaicPayment } from "../types/arkaic";
-import { ManualInputModal } from "./manual-input-modal";
+
 import PosComponent from "./pos";
 import { Badge, BadgeText } from "./ui/badge";
 import { Divider } from "./ui/divider";
@@ -39,9 +39,6 @@ export function SendActionSheet() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanning, setScanning] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [manualInputDialogOpen, setManualInputDialogOpen] =
-    useState<boolean>(false);
-
   const [arkaicPayment, setArkaicPayment] = useState<ArkaicPayment | undefined>(
     undefined
   );
@@ -195,42 +192,23 @@ export function SendActionSheet() {
                                 }
                               />
                             </View>
-                            <Button
-                              action={"negative"}
-                              variant={"link"}
-                              onPress={() => setScanning(false)}
-                            >
-                              <ButtonText>Stop scanning</ButtonText>
-                            </Button>
                           </>
                         );
                       })
                   : null}
 
                 {!arkaicPayment ? (
-                  <VStack space={"xl"}>
-                    <ManualInputModal
-                      open={manualInputDialogOpen}
-                      setOpen={setManualInputDialogOpen}
-                      onAddressInput={onNewAddressInput}
-                    />
-                    <Button
-                      variant={"link"}
-                      onPress={() =>
-                        pasteFromClipboard(undefined, {
-                          onSuccess: onNewAddressInput,
-                        })
-                      }
-                    >
-                      <ButtonText>Paste from clipboard</ButtonText>
-                    </Button>
-                    <Button
-                      variant={"link"}
-                      onPress={() => setManualInputDialogOpen(true)}
-                    >
-                      <ButtonText>Enter address</ButtonText>
-                    </Button>
-                  </VStack>
+                  <Button
+                    variant={"link"}
+                    onPress={() => {
+                      setScanning(false);
+                      pasteFromClipboard(undefined, {
+                        onSuccess: onNewAddressInput,
+                      });
+                    }}
+                  >
+                    <ButtonText>Paste from clipboard</ButtonText>
+                  </Button>
                 ) : null}
 
                 {arkaicPayment ? (
