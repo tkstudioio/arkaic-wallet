@@ -1,6 +1,6 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { Camera, QrCode, Send } from "lucide-react-native";
+import { Camera, ClipboardPaste, QrCode, Send } from "lucide-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
@@ -49,7 +49,11 @@ export function SendActionSheet() {
     () =>
       aspInfo?.signerPubkey === arkaicPayment?.signerPubkey &&
       arkaicPayment?.arkAddress,
-    [aspInfo?.signerPubkey, arkaicPayment?.signerPubkey, arkaicPayment?.arkAddress],
+    [
+      aspInfo?.signerPubkey,
+      arkaicPayment?.signerPubkey,
+      arkaicPayment?.arkAddress,
+    ],
   );
 
   const handleSendBitcoins = useCallback(
@@ -101,7 +105,7 @@ export function SendActionSheet() {
   return (
     <>
       <Button
-        action={"primary"}
+        action={"secondary"}
         variant={"solid"}
         size={"big"}
         onPress={() => setOpen(true)}
@@ -165,7 +169,8 @@ export function SendActionSheet() {
                         if (!scanning)
                           return (
                             <Button
-                              variant='outline'
+                              variant={"outline"}
+                              action={"primary"}
                               className='w-96 h-96 mx-auto rounded-xl border-dashed'
                               size={"xl"}
                               onPress={() => setScanning(true)}
@@ -193,7 +198,9 @@ export function SendActionSheet() {
 
                 {!arkaicPayment ? (
                   <Button
-                    variant={"link"}
+                    className='w-max'
+                    action={"secondary"}
+                    size={"xs"}
                     onPress={() => {
                       setScanning(false);
                       pasteFromClipboard(undefined, {
@@ -202,6 +209,7 @@ export function SendActionSheet() {
                     }}
                   >
                     <ButtonText>Paste from clipboard</ButtonText>
+                    <ButtonIcon as={ClipboardPaste} />
                   </Button>
                 ) : null}
 

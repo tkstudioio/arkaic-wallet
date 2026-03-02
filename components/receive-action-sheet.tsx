@@ -91,7 +91,7 @@ export function ReceiveActionSheet() {
 
   return (
     <>
-      <Button action={"secondary"} size={"big"} onPress={() => setOpen(true)}>
+      <Button action={"primary"} size={"big"} onPress={() => setOpen(true)}>
         <ButtonIcon as={Plus} />
         <ButtonText>Receive</ButtonText>
       </Button>
