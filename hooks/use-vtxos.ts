@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 export function useVtxos() {
   const { wallet } = useAccountStore();
   return useQuery({
-    queryKey: ["ark-transactions"],
+    queryKey: ["vtxos", wallet?.arkAddress],
     queryFn: async () => {
       if (!wallet) throw new Error("missing vtxo manager");
       return wallet.getVtxos();

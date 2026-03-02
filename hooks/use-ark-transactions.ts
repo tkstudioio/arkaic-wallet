@@ -1,19 +1,16 @@
-import useAccountStore from "@/stores/account";
-import { useQuery } from "@tanstack/react-query";
+import { useTransactions } from "@/hooks/use-transactions";
+import { useMemo } from "react";
 import { filter } from "lodash";
 
 export function useArkTransactions() {
-  const { wallet } = useAccountStore();
-  return useQuery({
-    queryKey: ["ark-transactions"],
-    queryFn: async () => {
-      if (!wallet) throw new Error("missing wallet");
-      const transactions = await wallet.getTransactionHistory();
-
-      return filter(
-        transactions,
+  const transactionsQuery = useTransactions();
+  const data = useMemo(
+    () =>
+      filter(
+        transactionsQuery.data,
         (transaction) => transaction.key.boardingTxid === ""
-      );
-    },
-  });
+      ),
+    [transactionsQuery.data]
+  );
+  return { ...transactionsQuery, data };
 }
