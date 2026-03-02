@@ -1,6 +1,6 @@
 import { isWeb, tva } from "@gluestack-ui/utils/nativewind-utils";
 const baseStyle = isWeb
-  ? "flex flex-col relative z-0 rounded-xl"
+  ? "flex flex-col relative z-0 rounded-card"
   : "rounded-card";
 
 export const cardStyle = tva({
@@ -13,7 +13,7 @@ export const cardStyle = tva({
     },
     variant: {
       elevated: "bg-arkaic-fill",
-      outline: "border border-arkaic-border ",
+      outline: "border border-arkaic-border",
       ghost: "rounded-none",
       filled: "bg-arkaic-fill",
     },
