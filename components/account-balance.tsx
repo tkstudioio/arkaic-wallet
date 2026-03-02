@@ -32,11 +32,7 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
     .with({ isSuccess: true }, ({ data }) => (
       <VStack className='justify-around h-full items-end'>
         <HStack className='w-full items-baseline'>
-          <AmountComponent
-            amount={data?.available}
-            size='6xl'
-          />
-          <Heading>sats</Heading>
+          <AmountComponent amount={data?.available} size='6xl' />
         </HStack>
       </VStack>
     ))

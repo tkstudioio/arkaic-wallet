@@ -1,16 +1,15 @@
-import { useTheme } from "@react-navigation/native";
+import { colors } from "@/theme/tokens";
 import * as React from "react";
 import Svg, { Path, SvgProps } from "react-native-svg";
 
 const Sats = (props: SvgProps) => {
-  const { colors } = useTheme();
-
   return (
     <Svg
+      className='fill-inherit text-inherit'
       viewBox='0 0 18 18'
       width={24}
       preserveAspectRatio='xMidYMid meet'
-      fill={colors.text}
+      fill={colors.muted}
       {...props}
     >
       <Path d='M5.75 15.5V18H4.25V15.5H5.75Z' />
