@@ -75,6 +75,41 @@ All data fetching uses React Query hooks. Key patterns:
 - **React Native Skia**: QR code rendering
 - **Reanimated + Legend Motion**: Animations and carousel
 
+### Typography System
+
+**Fonts**:
+
+- Ubuntu Mono (`@expo-google-fonts/ubuntu-mono`): `UbuntuMono_400Regular`, `UbuntuMono_700Bold`
+- Ubuntu (`@expo-google-fonts/ubuntu`): `Ubuntu_300Light`, `Ubuntu_500Medium`
+
+Fonts are loaded in `app/_layout.tsx` via `useFonts`. The splash screen is held until fonts are ready.
+
+**Tailwind font families** (in `tailwind.config.js`):
+
+- `font-heading` → `UbuntuMono_700Bold`
+- `font-body` / `font-mono` → `UbuntuMono_400Regular`
+- `font-sans-medium` → `Ubuntu_500Medium`
+- `font-sans-light` → `Ubuntu_300Light`
+
+**Semantic typography components** (`components/ui/typography/index.tsx`):
+Following the shadcn-typography factory pattern, adapted for React Native + NativeWind.
+
+| Component | Size | Weight  | Font family          |
+| --------- | ---- | ------- | -------------------- |
+| `H1`      | 48px | Bold    | Ubuntu Mono          |
+| `P`       | 16px | Regular | Ubuntu Mono          |
+| `Large`   | 20px | Medium  | Ubuntu               |
+| `Small`   | 14px | Light   | Ubuntu               |
+| `Muted`   | 14px | Light   | Ubuntu (muted color) |
+
+Usage:
+
+```tsx
+import { H1, P } from "@/components/ui/typography";
+```
+
+All components accept a `className` prop for NativeWind overrides.
+
 ### Forms
 
 - **Formik** for `create-account-form.tsx` (account creation)
