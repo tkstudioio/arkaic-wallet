@@ -22,7 +22,7 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
       { isPending: true },
       () => (
         <>
-          <VStack className='justify-around h-full items-end'>
+          <VStack className='justify-around h-0.5 items-end'>
             <Skeleton className='h-20' />
             <Skeleton className='h-10 w-1/2' />
           </VStack>
@@ -30,11 +30,9 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
       ),
     )
     .with({ isSuccess: true }, ({ data }) => (
-      <VStack className='justify-around h-full items-end'>
-        <HStack className='w-full items-baseline'>
-          <AmountComponent amount={data?.available} size='6xl' />
-        </HStack>
-      </VStack>
+      <HStack className='aspect-video justify-center'>
+        <AmountComponent amount={data?.available} size='6xl' />
+      </HStack>
     ))
     .otherwise(({ error }) => (
       <VStack className='items-center' space={"md"}>

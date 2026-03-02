@@ -8,10 +8,10 @@ export default function AuthLayout(props: PropsWithChildren) {
   return (
     <QueryClientProvider client={client}>
       <VStack
-        className='my-auto justify-center items-center bg-arkaic-background h-full px-arkaic-md'
+        className='justify-center items-center bg-arkaic-background h-full px-arkaic-md pt-arkaic-xl pb-arkaic-lg'
         space={"4xl"}
       >
-        <VStack>{props.children}</VStack>
+        <VStack className='flex-1 w-full'>{props.children}</VStack>
       </VStack>
     </QueryClientProvider>
   );
