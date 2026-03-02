@@ -49,7 +49,7 @@ export function SendActionSheet() {
     () =>
       aspInfo?.signerPubkey === arkaicPayment?.signerPubkey &&
       arkaicPayment?.arkAddress,
-    [arkaicPayment?.signerPubkey],
+    [aspInfo?.signerPubkey, arkaicPayment?.signerPubkey, arkaicPayment?.arkAddress],
   );
 
   const handleSendBitcoins = useCallback(

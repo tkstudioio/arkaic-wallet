@@ -9,7 +9,7 @@ import useAccountStore from "@/stores/account";
 import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { isEmpty, join, map, values } from "lodash";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { match } from "ts-pattern";
 import { Transaction } from "./transaction";
 import { Divider } from "./ui/divider";
@@ -24,16 +24,15 @@ export function Transactions() {
   const transactionsQuery = useTransactions();
   const queryClient = useQueryClient();
 
-  function refreshBalanceAndTransactions() {
+  const refreshBalanceAndTransactions = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["balance"] });
     queryClient.invalidateQueries({ queryKey: ["transactions"] });
-  }
+  }, [queryClient]);
 
   useEffect(() => {
-    transactionsQuery.refetch();
     if (!wallet) return;
     wallet.notifyIncomingFunds(refreshBalanceAndTransactions);
-  }, [wallet, account]);
+  }, [wallet, account, refreshBalanceAndTransactions]);
 
   return (
     <Card size={"lg"} className='bg-arkaic-fill gap-4'>

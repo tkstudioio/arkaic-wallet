@@ -58,11 +58,12 @@ export function ReceiveActionSheet() {
     const stopListening = wallet.notifyIncomingFunds(setTransaction);
 
     return () => {
-      stopListening.then();
+      stopListening.then((fn) => fn?.());
     };
   }, [wallet]);
 
   useEffect(() => {
+    if (!showQrCode) return;
     walletAddressMutation.mutate(amountInSats, {
       onSuccess: async (data) => {
         if (!data.lnInvoice || !arkadeLightning) return;
