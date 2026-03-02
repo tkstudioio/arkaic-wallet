@@ -1,3 +1,5 @@
+import AccountInfoImage from "@/assets/images/account-info.svg";
+import SeedPhraseImage from "@/assets/images/seedphrase.svg";
 import { Badge, BadgeText } from "@/components/ui/badge";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
@@ -35,8 +37,6 @@ import {
 import { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { match } from "ts-pattern";
-import AccountInfoImage from "@/assets/images/account-info.svg";
-import SeedPhraseImage from "@/assets/images/seedphrase.svg";
 import { Card } from "./ui/card";
 import { Large, Muted, P, Small } from "./ui/typography";
 
@@ -146,15 +146,13 @@ export default function CreateOrRestoreAccountForm(props: {
         <VStack space='xl' className='items-center flex-1 justify-center'>
           <SeedPhraseImage
             height={Dimensions.get("window").height * 0.25}
-            width="100%"
+            width='100%'
           />
           <VStack className='items-center' space='xs'>
-            <Large>
-              {isRestore ? "Restore wallet" : "Create new wallet"}
-            </Large>
-            <Muted className='text-center'>
+            <Large>{isRestore ? "Restore wallet" : "Create new wallet"}</Large>
+            <P className='text-center'>
               Choose the mnemonic seed phrase length
-            </Muted>
+            </P>
           </VStack>
         </VStack>
         <VStack space='md' className='w-full'>
@@ -354,7 +352,7 @@ export default function CreateOrRestoreAccountForm(props: {
         <VStack space='4xl' className='items-center flex-1 justify-center'>
           <AccountInfoImage
             height={Dimensions.get("window").height * 0.25}
-            width="100%"
+            width='100%'
           />
           <VStack className='items-center' space='xs'>
             <Large>Account info</Large>
@@ -420,9 +418,7 @@ export default function CreateOrRestoreAccountForm(props: {
                     />
                   </Input>
                   {touched.name && errors.name && (
-                    <Muted className='text-error-500'>
-                      {errors.name}
-                    </Muted>
+                    <Muted className='text-error-500'>{errors.name}</Muted>
                   )}
                 </VStack>
                 <VStack space='xs'>
