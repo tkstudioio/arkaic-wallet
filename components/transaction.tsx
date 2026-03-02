@@ -26,12 +26,12 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
 
   const onchainTransaction = find(
     transactions,
-    ({ key }) => arkTxid !== "" && key.boardingTxid === commitmentTxid
+    ({ key }) => arkTxid !== "" && key.boardingTxid === commitmentTxid,
   );
 
   const arkTransaction = find(
     transactions,
-    ({ key }) => key.commitmentTxid === boardingTxid
+    ({ key }) => key.commitmentTxid === boardingTxid,
   );
 
   const hasOnboardableTransactions = some(
@@ -40,7 +40,7 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
       tx.createdAt &&
       tx.type === "RECEIVED" &&
       !tx.settled &&
-      tx.key.boardingTxid !== ""
+      tx.key.boardingTxid !== "",
   );
 
   const isExternalTransaction = !arkTransaction && !onchainTransaction;
@@ -51,13 +51,13 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
       onPress={() =>
         commitmentTxid || boardingTxid
           ? Linking.openURL(
-              `https://mempool.space/it/tx/${commitmentTxid || boardingTxid}`
+              `https://mempool.space/it/tx/${commitmentTxid || boardingTxid}`,
             )
           : null
       }
     >
       <HStack className='justify-between'>
-        <VStack className='items-start w-max' space='xs'>
+        <VStack className='items-start flex-1' space='xs'>
           <HStack className='items-center' space={"sm"}>
             {transaction.type === TxType.TxSent ? (
               <Button
@@ -69,10 +69,7 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
               >
                 <ButtonIcon as={Minus} size={"sm"} />
                 <ButtonText>
-                  <AmountComponent
-                    amount={transaction.amount}
-                    size='2xl'
-                  />
+                  <AmountComponent amount={transaction.amount} size='2xl' />
                 </ButtonText>
               </Button>
             ) : (
@@ -87,10 +84,7 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
                   <ButtonIcon as={Plus} size={"sm"} />
                   {isOnboardingFunds ? <Spinner /> : null}
                   <ButtonText>
-                    <AmountComponent
-                      amount={transaction.amount}
-                      size='2xl'
-                      />
+                    <AmountComponent amount={transaction.amount} size='2xl' />
                   </ButtonText>
                   {shouldOnboard ? <ButtonIcon as={Link2} size={"sm"} /> : null}
                 </Button>
@@ -127,7 +121,7 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
         </VStack>
 
         {transaction.createdAt ? (
-          <VStack className='items-end'>
+          <VStack className='items-end w-max'>
             <Text size='sm' className='text-arkaic-muted'>
               {detailedTransactions
                 ? format(transaction.createdAt, "PP", {})
