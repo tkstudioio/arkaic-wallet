@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { MenuIcon } from "lucide-react-native";
 import { PropsWithChildren, useMemo, useRef, useState } from "react";
-import { ScrollView } from "react-native";
+import { View } from "react-native";
 import ToastManager from "toastify-react-native";
 import { Badge, BadgeText } from "../ui/badge";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
@@ -57,8 +57,8 @@ function AppLayoutContent(props: PropsWithChildren) {
 
   return (
     <>
-      <ScrollView className='pt-24 pb-24 bg-arkaic-background'>
-        <VStack space={"4xl"} className='items-center'>
+      <View className='flex-1 pt-24 pb-24 bg-arkaic-background'>
+        <VStack space={"4xl"} className='items-center flex-1'>
           <HStack className='items-center justify-between w-full px-arkaic-md'>
             <LogoFull height={24} width={100} className='flex-1' />
             <Menu
@@ -115,7 +115,7 @@ function AppLayoutContent(props: PropsWithChildren) {
 
           {props.children}
         </VStack>
-      </ScrollView>
+      </View>
 
       <Modal
         isOpen={showBackupModal}

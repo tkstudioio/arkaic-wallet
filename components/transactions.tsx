@@ -8,6 +8,7 @@ import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { isEmpty, join, map, values } from "lodash";
 import { useCallback, useEffect } from "react";
+import { ScrollView } from "react-native";
 import { match } from "ts-pattern";
 import { Transaction } from "./transaction";
 import { Divider } from "./ui/divider";
@@ -33,7 +34,7 @@ export function Transactions() {
   }, [wallet, account, refreshBalanceAndTransactions]);
 
   return (
-    <Card size={"lg"} className='bg-arkaic-fill gap-4'>
+    <Card size={"lg"} className='bg-arkaic-fill gap-4 flex-1'>
       <HStack className='justify-between items-center'>
         <Large>Transactions</Large>
         <HStack className='items-center justify-end'>
@@ -46,36 +47,38 @@ export function Transactions() {
         </HStack>
       </HStack>
       <Divider />
-      <VStack space={"lg"}>
-        {match(transactionsQuery)
-          .with({ isSuccess: true }, ({ data }) => {
-            if (!isEmpty(data)) {
-              return map(data, (transaction, index) => (
-                <Transaction
-                  transaction={transaction}
-                  key={join(values(transaction.key)) + transaction.createdAt}
-                />
-              ));
-            }
-            return (
-              <VStack>
-                <Large className='text-center'>No transactions</Large>
-                <Muted className='text-center'>
-                  press &quot;receive&quot; to request a payment
-                </Muted>
-              </VStack>
-            );
-          })
-          .with(
-            { isLoading: true },
-            { isFetching: true },
-            { isPending: true },
-            () => <Spinner />,
-          )
-          .otherwise(() => (
-            <P>Something went wrong</P>
-          ))}
-      </VStack>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <VStack space={"lg"}>
+          {match(transactionsQuery)
+            .with({ isSuccess: true }, ({ data }) => {
+              if (!isEmpty(data)) {
+                return map(data, (transaction, index) => (
+                  <Transaction
+                    transaction={transaction}
+                    key={join(values(transaction.key)) + transaction.createdAt}
+                  />
+                ));
+              }
+              return (
+                <VStack>
+                  <Large className='text-center'>No transactions</Large>
+                  <Muted className='text-center'>
+                    press &quot;receive&quot; to request a payment
+                  </Muted>
+                </VStack>
+              );
+            })
+            .with(
+              { isLoading: true },
+              { isFetching: true },
+              { isPending: true },
+              () => <Spinner />,
+            )
+            .otherwise(() => (
+              <P>Something went wrong</P>
+            ))}
+        </VStack>
+      </ScrollView>
     </Card>
   );
 }

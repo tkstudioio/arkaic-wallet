@@ -20,13 +20,13 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
       { isLoading: true },
       { isPending: true },
       () => (
-        <HStack className='aspect-video justify-center'>
+        <HStack className='py-4 justify-center'>
           <Spinner />
         </HStack>
       ),
     )
     .with({ isSuccess: true }, ({ data }) => (
-      <HStack className='aspect-video justify-center'>
+      <HStack className='py-4 justify-center'>
         <AmountComponent amount={data?.available} size='6xl' />
       </HStack>
     ))

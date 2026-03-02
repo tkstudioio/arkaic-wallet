@@ -19,9 +19,9 @@ const DashboardPage = () => {
       {match(account)
         .with(undefined, () => <P>Ciro</P>)
         .otherwise((account) => (
-          <VStack className='px-arkaic-md' space={"4xl"}>
+          <VStack className='px-arkaic-md flex-1' space={"4xl"}>
             <AccountBalance account={account} />
-            <HStack className='justify-center gap-12 w-full'>
+            <HStack className='gap-3 w-full'>
               <ReceiveActionSheet />
               <SendActionSheet />
             </HStack>
