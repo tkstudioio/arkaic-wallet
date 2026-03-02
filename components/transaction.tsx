@@ -127,20 +127,22 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
         </VStack>
 
         {transaction.createdAt ? (
-          <VStack className='w-max items-end'>
+          <VStack className='items-end'>
+            <Text size='sm' className='text-arkaic-muted'>
+              {detailedTransactions
+                ? format(transaction.createdAt, "PP", {})
+                : formatDistanceToNowStrict(transaction.createdAt)}
+            </Text>
             {detailedTransactions ? (
-              <Text>{format(transaction.createdAt, "PP", {})}</Text>
-            ) : (
-              <Text>{formatDistanceToNowStrict(transaction.createdAt)}</Text>
-            )}
-            {detailedTransactions ? (
-              <Text>{format(transaction.createdAt, "HH:mm", {})}</Text>
+              <Text size='xs' className='text-arkaic-muted'>
+                {format(transaction.createdAt, "HH:mm", {})}
+              </Text>
             ) : null}
           </VStack>
         ) : (
           <HStack className='items-center' space={"xs"}>
             <Spinner />
-            <Text>Pending</Text>
+            <Text className='text-arkaic-muted'>Pending</Text>
           </HStack>
         )}
       </HStack>

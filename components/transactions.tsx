@@ -12,6 +12,7 @@ import { isEmpty, join, map, values } from "lodash";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
 import { Transaction } from "./transaction";
+import { Divider } from "./ui/divider";
 import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Switch } from "./ui/switch";
@@ -35,7 +36,7 @@ export function Transactions() {
   }, [wallet, account]);
 
   return (
-    <Card size={"lg"} className='gap-8'>
+    <Card size={"lg"} className='bg-arkaic-fill gap-4'>
       <HStack className='justify-between items-center'>
         <Heading>Transactions</Heading>
         <HStack className='items-center justify-end'>
@@ -47,14 +48,15 @@ export function Transactions() {
           />
         </HStack>
       </HStack>
-      <VStack space={detailedTransactions ? "2xl" : "lg"}>
+      <Divider />
+      <VStack space={"lg"}>
         {match(transactionsQuery)
           .with({ isSuccess: true }, ({ data }) => {
             if (!isEmpty(data)) {
-              return map(data, (transaction) => (
+              return map(data, (transaction, index) => (
                 <Transaction
-                  key={join(values(transaction.key)) + transaction.createdAt}
                   transaction={transaction}
+                  key={join(values(transaction.key)) + transaction.createdAt}
                 />
               ));
             }
