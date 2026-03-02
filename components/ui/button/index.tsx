@@ -37,7 +37,7 @@ cssInterop(PrimitiveIcon, {
 });
 
 const buttonStyle = tva({
-  base: "w-full group/button bg-arkaic-primary rounded-button flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2",
+  base: "w-full rounded-arkaic-button group/button bg-arkaic-primary rounded-button flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2",
   variants: {
     action: {
       primary:
@@ -64,6 +64,7 @@ const buttonStyle = tva({
       md: "px-5 py-3",
       lg: "px-6 py-4",
       xl: "px-7 py-5",
+      big: "flex-col w-max h-max aspect-square p-5 gap-1",
     },
   },
   compoundVariants: [
@@ -143,6 +144,7 @@ const buttonTextStyle = tva({
       md: "text-base",
       lg: "text-lg",
       xl: "text-xl",
+      big: "text-lg",
     },
   },
   parentCompoundVariants: [
@@ -212,6 +214,7 @@ const buttonIconStyle = tva({
       md: "h-[18px] w-[18px]",
       lg: "h-[18px] w-[18px]",
       xl: "h-5 w-5",
+      big: "h-7 w-7",
     },
     action: {
       primary:
