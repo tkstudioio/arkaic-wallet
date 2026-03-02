@@ -1042,6 +1042,11 @@
   resolved "https://registry.yarnpkg.com/@expo-google-fonts/ubuntu-mono/-/ubuntu-mono-0.4.1.tgz#e80fc99de05c798ce8fd00a55ce7292b0f47fdb1"
   integrity sha512-jdA0/y+QBELtynfxWL9WgaSeK36WiI++Ky/jxfAmqcnIwx/RWGrFHtvXakVicsR8EajyGd8L7TH5KdJgVEEjlQ==
 
+"@expo-google-fonts/ubuntu@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/ubuntu/-/ubuntu-0.4.1.tgz#fba4869d4dcd3bc8996b624931e3e4f45223e74b"
+  integrity sha512-dwfRVuLkdFJH/D9iVMYZXDBwbCEKGLfH53AqBMyKhATYBs21iDxkf3NjyjI0MYEHm24mOM7i236idCfyF23Z6Q==
+
 "@expo/cli@54.0.23":
   version "54.0.23"
   resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-54.0.23.tgz#e8a7dc4e1f2a8a5361afd80bcc352014b57a87ac"
