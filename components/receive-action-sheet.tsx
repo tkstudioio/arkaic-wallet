@@ -90,16 +90,15 @@ export function ReceiveActionSheet() {
 
   return (
     <>
-      <VStack className='items-center w-max'>
-        <Button
-          action={"secondary"}
-          className='flex-col w-max h-max rounded-full size-14'
-          onPress={() => setOpen(true)}
-        >
-          <ButtonIcon as={Plus} />
-        </Button>
-        <Text>Receive</Text>
-      </VStack>
+      <Button
+        action={"secondary"}
+        variant={"outline"}
+        size={"big"}
+        onPress={() => setOpen(true)}
+      >
+        <ButtonIcon as={Plus} />
+        <ButtonText>Receive</ButtonText>
+      </Button>
 
       <Actionsheet isOpen={open} onClose={() => setOpen(false)}>
         <ActionsheetBackdrop />
@@ -131,9 +130,6 @@ export function ReceiveActionSheet() {
                 <HStack className='items-center' space={"sm"}>
                   <Text size='6xl'>
                     {Intl.NumberFormat().format(amountInSats)}
-                  </Text>
-                  <Text className='text-arkaic-primary font-thin text-4xl'>
-                    sats
                   </Text>
                 </HStack>
                 <PosComponent value={amountInSats} onChange={setAmountInSats} />
@@ -198,7 +194,9 @@ export function ReceiveActionSheet() {
                           <ButtonText>Waiting payment notification</ButtonText>
                         </Button>
                         {currentAddress && (
-                          <Button onPress={() => copyToClipboard(currentAddress)}>
+                          <Button
+                            onPress={() => copyToClipboard(currentAddress)}
+                          >
                             <ButtonText>Copy to clipboard</ButtonText>
                           </Button>
                         )}

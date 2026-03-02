@@ -40,7 +40,7 @@ export function SendActionSheet() {
   const [scanning, setScanning] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [arkaicPayment, setArkaicPayment] = useState<ArkaicPayment | undefined>(
-    undefined
+    undefined,
   );
 
   const [posValue, setPosValue] = useState<number>(0);
@@ -49,7 +49,7 @@ export function SendActionSheet() {
     () =>
       aspInfo?.signerPubkey === arkaicPayment?.signerPubkey &&
       arkaicPayment?.arkAddress,
-    [arkaicPayment?.signerPubkey]
+    [arkaicPayment?.signerPubkey],
   );
 
   const handleSendBitcoins = useCallback(
@@ -66,10 +66,10 @@ export function SendActionSheet() {
             queryClient.invalidateQueries({ queryKey: ["balance"] });
             queryClient.invalidateQueries({ queryKey: ["transactions"] });
           },
-        }
+        },
       );
     },
-    [posValue, arkaicPayment, queryClient, sendBitcoinMutation]
+    [posValue, arkaicPayment, queryClient, sendBitcoinMutation],
   );
 
   function onNewAddressInput(address: string): void {
@@ -100,16 +100,15 @@ export function SendActionSheet() {
 
   return (
     <>
-      <VStack className='items-center w-max'>
-        <Button
-          action={"secondary"}
-          className='flex-col w-max h-max rounded-full size-14'
-          onPress={() => setOpen(true)}
-        >
-          <ButtonIcon as={Send} />
-        </Button>
-        <Text>Send</Text>
-      </VStack>
+      <Button
+        action={"primary"}
+        variant={"solid"}
+        size={"big"}
+        onPress={() => setOpen(true)}
+      >
+        <ButtonIcon as={Send} />
+        <ButtonText>Send</ButtonText>
+      </Button>
       <Actionsheet isOpen={open} onClose={() => setOpen(false)}>
         <ActionsheetBackdrop />
         <ActionsheetContent className='gap-8'>
@@ -129,12 +128,7 @@ export function SendActionSheet() {
                   </BadgeText>
                 </Badge>
                 <HStack className='items-center' space={"sm"}>
-                  <Text size='6xl'>
-                    {Intl.NumberFormat().format(posValue)}
-                  </Text>
-                  <Text className='text-arkaic-primary font-thin text-4xl'>
-                    sats
-                  </Text>
+                  <Text size='6xl'>{Intl.NumberFormat().format(posValue)}</Text>
                 </HStack>
                 <Text className='text-center'>
                   {arkaicPayment
@@ -219,24 +213,24 @@ export function SendActionSheet() {
                         {isIntrapayment
                           ? shortenAddress(arkaicPayment.arkAddress)
                           : arkaicPayment.lightningInvoice
-                          ? shortenAddress(arkaicPayment.lightningInvoice)
-                          : shortenAddress(arkaicPayment.onchainAddress)}
+                            ? shortenAddress(arkaicPayment.lightningInvoice)
+                            : shortenAddress(arkaicPayment.onchainAddress)}
                       </Text>
                       <Badge
                         action={
                           isIntrapayment
                             ? "success"
                             : arkaicPayment.lightningInvoice
-                            ? "info"
-                            : "warning"
+                              ? "info"
+                              : "warning"
                         }
                       >
                         <BadgeText>
                           {isIntrapayment
                             ? "Ark payment"
                             : arkaicPayment.lightningInvoice
-                            ? "Lightning Swap"
-                            : "Onchain payment"}
+                              ? "Lightning Swap"
+                              : "Onchain payment"}
                         </BadgeText>
                       </Badge>
                     </VStack>
@@ -245,9 +239,6 @@ export function SendActionSheet() {
                     <HStack className='items-center' space={"sm"}>
                       <Text size='6xl'>
                         {Intl.NumberFormat().format(posValue)}
-                      </Text>
-                      <Text className='text-arkaic-primary font-thin text-4xl'>
-                        sats
                       </Text>
                     </HStack>
 
