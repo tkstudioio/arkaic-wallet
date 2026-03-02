@@ -90,12 +90,7 @@ export function ReceiveActionSheet() {
 
   return (
     <>
-      <Button
-        action={"secondary"}
-        variant={"outline"}
-        size={"big"}
-        onPress={() => setOpen(true)}
-      >
+      <Button action={"secondary"} size={"big"} onPress={() => setOpen(true)}>
         <ButtonIcon as={Plus} />
         <ButtonText>Receive</ButtonText>
       </Button>
@@ -195,6 +190,7 @@ export function ReceiveActionSheet() {
                         </Button>
                         {currentAddress && (
                           <Button
+                            action={"secondary"}
                             onPress={() => copyToClipboard(currentAddress)}
                           >
                             <ButtonText>Copy to clipboard</ButtonText>
