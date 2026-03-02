@@ -2,19 +2,16 @@ import * as Crypto from "expo-crypto";
 
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
+import { Ubuntu_300Light, Ubuntu_500Medium } from "@expo-google-fonts/ubuntu";
 import {
   UbuntuMono_400Regular,
   UbuntuMono_700Bold,
 } from "@expo-google-fonts/ubuntu-mono";
-import {
-  Ubuntu_300Light,
-  Ubuntu_500Medium,
-} from "@expo-google-fonts/ubuntu";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 
 if (!global.crypto) global.crypto = {} as any;
 // @ts-expect-error
@@ -68,7 +65,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-      <StatusBar style='auto' />
+      <StatusBar style='light' />
     </GluestackUIProvider>
   );
 }
