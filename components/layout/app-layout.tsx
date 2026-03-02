@@ -3,7 +3,7 @@ import { useDeleteAccount } from "@/hooks/use-delete-account";
 import useAccountStore from "@/stores/account";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { KeyRound, MenuIcon, PowerOff, Trash2 } from "lucide-react-native";
+import { MenuIcon } from "lucide-react-native";
 import { PropsWithChildren, useMemo, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import ToastManager from "toastify-react-native";
@@ -11,13 +11,7 @@ import { Badge, BadgeText } from "../ui/badge";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { Heading } from "../ui/heading";
 import { HStack } from "../ui/hstack";
-import {
-  Menu,
-  MenuItem,
-  MenuItemIcon,
-  MenuItemLabel,
-  MenuSeparator,
-} from "../ui/menu";
+import { Menu, MenuItem, MenuItemLabel, MenuSeparator } from "../ui/menu";
 import {
   Modal,
   ModalBackdrop,
@@ -92,7 +86,6 @@ function AppLayoutContent(props: PropsWithChildren) {
                   textValue='Backup seed phrase'
                   onPress={() => setShowBackupModal(true)}
                 >
-                  <MenuItemIcon as={KeyRound} />
                   <MenuItemLabel>Backup seed phrase</MenuItemLabel>
                 </MenuItem>
               ) : null}
@@ -101,7 +94,6 @@ function AppLayoutContent(props: PropsWithChildren) {
                 textValue='Delete account'
                 onPress={() => setShowDeleteModal(true)}
               >
-                <MenuItemIcon as={Trash2} />
                 <MenuItemLabel>Delete account</MenuItemLabel>
               </MenuItem>
               <MenuSeparator />
@@ -110,9 +102,9 @@ function AppLayoutContent(props: PropsWithChildren) {
                 key='logout'
                 textValue='Log out'
                 action='negative'
+                variant={"link"}
                 onPress={() => router.replace("/")}
               >
-                <MenuItemIcon as={PowerOff} />
                 <MenuItemLabel>Log out</MenuItemLabel>
               </MenuItem>
             </Menu>
