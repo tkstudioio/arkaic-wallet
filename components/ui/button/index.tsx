@@ -43,7 +43,7 @@ const buttonStyle = tva({
       primary:
         "bg-arkaic-primary data-[hover=true]:bg-arkaic-primary/90 data-[active=true]:bg-arkaic-primary/80 border-arkaic-border data-[focus-visible=true]:web:ring-indicator-info",
       secondary:
-        "bg-arkaic-fill border-arkaic-border data-[hover=true]:bg-arkaic-fill/90 data-[active=true]:bg-arkaic-fill/80 data-[focus-visible=true]:web:ring-indicator-info",
+        "bg-arkaic-fill border border-arkaic-primary data-[hover=true]:bg-arkaic-fill/90 data-[active=true]:bg-arkaic-fill/80 data-[focus-visible=true]:web:ring-indicator-info",
       positive:
         "bg-arkaic-positive border-arkaic-border data-[hover=true]:bg-arkaic-positive/90 data-[active=true]:bg-arkaic-positive/80 data-[focus-visible=true]:web:ring-indicator-info",
       negative:
@@ -54,8 +54,8 @@ const buttonStyle = tva({
     variant: {
       link: "px-0",
       outline:
-        "bg-transparent border data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
-      solid: "",
+        "bg-transparent border shadow-arkaic data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
+      solid: "shadow-arkaic",
     },
 
     size: {
@@ -64,7 +64,7 @@ const buttonStyle = tva({
       md: "px-5 py-3",
       lg: "px-6 py-4",
       xl: "px-7 py-5",
-      big: "flex-col w-max h-max aspect-square p-5 gap-1",
+      big: "flex-row flex-1 h-max py-5 px-4 gap-3",
     },
   },
   compoundVariants: [
