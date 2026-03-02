@@ -1,34 +1,17 @@
 {
   "expo": {
-    "name": "arkaic",
+    "name": "Arkaic Wallet",
     "slug": "arkaic",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "arkaic",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tkstudioio.arkaic",
+      "bundleIdentifier": "com.tkstudio.arkaicwallet",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.tkstudioio.arkaic"
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",

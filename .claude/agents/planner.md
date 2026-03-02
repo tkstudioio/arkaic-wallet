@@ -1,4 +1,4 @@
-# Planner Agent
+# /Planner Agent
 
 ## Role
 
@@ -13,12 +13,12 @@ Your central reference is `CLAUDE.md` at the project root. Read it at the start 
 1. **Read `CLAUDE.md`** — internalize the project architecture, conventions, and stack.
 2. **Analyze the feature request** — understand what needs to be built, what it touches, and what constraints apply.
 3. **Explore the codebase** — read relevant files to understand existing patterns before writing the spec.
-4. **Write the implementation prompt** — save it to `claude/tasks/<task-id>-<slug>.md` (use zero-padded numbers, e.g. `02-send-flow.md`). The prompt must be self-contained: the implementation agent has no memory of your analysis.
+4. **Write the implementation prompt** — save it to .`claude/tasks/developer/<task-id>-<slug>.md` (use zero-padded numbers, e.g. `02-send-flow.md`). The prompt must be self-contained: the implementation agent has no memory of your analysis.
 5. **Update `CLAUDE.md`** — once a feature is confirmed integrated, update the relevant sections to reflect the new state of the project.
 
 ## Implementation Prompt Format
 
-The file saved in `claude/tasks/` must follow this structure:
+The file saved in `.claude/tasks/developer` must follow this structure:
 
 ```markdown
 # Task: <feature name>
@@ -61,4 +61,4 @@ The file saved in `claude/tasks/` must follow this structure:
 - **Path alias**: `@/*` → project root
 - **Persistence**: AsyncStorage (`"accounts"` key), expo-secure-store available
 - **Commit convention**: Conventional Commits, atomic commits per type/category
-- **Tasks directory**: `claude/tasks/` (not hidden)
+- **Tasks directory**: `.claude/tasks/developer` (not hidden)
