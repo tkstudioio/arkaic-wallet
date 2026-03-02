@@ -10,8 +10,6 @@ import {
 
 import { ArkaicAccount } from "@/types/arkaic";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { filter } from "lodash";
-
 type AccountStore = {
   arkadeLightning?: ArkadeLightning;
   arkProvider?: ArkProvider;
@@ -20,12 +18,12 @@ type AccountStore = {
   wallet?: Wallet;
   showTransactionsList: boolean;
   setShowTransactionsList: (showTransactionsList: boolean) => void;
-  removeAccount: (accountName: string) => Promise<void>;
+  logout: () => void;
   setStore: (
     storeValues: Partial<
       Omit<
         AccountStore,
-        "setStore" | "removeAccount" | "setShowTransactionsList"
+        "setStore" | "logout" | "setShowTransactionsList"
       >
     >,
   ) => void;
@@ -53,22 +51,15 @@ const useAccountStore = create<AccountStore>((set) => ({
       showTransactionsList,
     });
   },
-  removeAccount: async (accountName: string) => {
-    const storedAccounts = await AsyncStorage.getItem(StorageKeys.Accounts);
-
-    const currentAccounts = storedAccounts
-      ? (JSON.parse(storedAccounts) as ArkaicAccount[])
-      : [];
-
-    const newStoredAccounts = filter(
-      currentAccounts,
-      (account) => account.name !== accountName,
-    );
-
-    await AsyncStorage.setItem(
-      StorageKeys.Accounts,
-      JSON.stringify(newStoredAccounts),
-    );
+  logout: () => {
+    set({
+      wallet: undefined,
+      arkProvider: undefined,
+      indexerProvider: undefined,
+      vtxoManager: undefined,
+      arkadeLightning: undefined,
+      account: undefined,
+    });
   },
 
   setStore: async (account) => {

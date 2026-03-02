@@ -37,7 +37,7 @@ export default function AppLayout(props: PropsWithChildren) {
 
 function AppLayoutContent(props: PropsWithChildren) {
   const router = useRouter();
-  const { account } = useAccountStore();
+  const { account, logout } = useAccountStore();
   const deleteAccountMutation = useDeleteAccount();
   const [showBackupModal, setShowBackupModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -103,7 +103,10 @@ function AppLayoutContent(props: PropsWithChildren) {
                 textValue='Log out'
                 action='negative'
                 variant={"link"}
-                onPress={() => router.replace("/")}
+                onPress={() => {
+                  logout();
+                  router.replace("/");
+                }}
               >
                 <MenuItemLabel>Log out</MenuItemLabel>
               </MenuItem>
