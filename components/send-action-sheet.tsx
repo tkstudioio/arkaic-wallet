@@ -24,9 +24,9 @@ import { ArkaicPayment } from "../types/arkaic";
 import PosComponent from "./pos";
 import { Badge, BadgeText } from "./ui/badge";
 import { Divider } from "./ui/divider";
-import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Spinner } from "./ui/spinner";
+import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function SendActionSheet() {
@@ -120,7 +120,7 @@ export function SendActionSheet() {
             .with({ isSuccess: true }, () => (
               <>
                 <VStack className='items-center'>
-                  <Heading>Payment sent!</Heading>
+                  <Large>Payment sent!</Large>
                 </VStack>
                 <Badge action={isIntrapayment ? "success" : "warning"}>
                   <BadgeText>
@@ -130,21 +130,21 @@ export function SendActionSheet() {
                 <HStack className='items-center' space={"sm"}>
                   <Text size='6xl'>{Intl.NumberFormat().format(posValue)}</Text>
                 </HStack>
-                <Text className='text-center'>
+                <P className='text-center'>
                   {arkaicPayment
                     ? isIntrapayment
                       ? shortenAddress(arkaicPayment.arkAddress)
                       : shortenAddress(arkaicPayment.onchainAddress)
                     : null}
-                </Text>
+                </P>
               </>
             ))
             .otherwise(() => (
               <>
                 {!permission ? (
                   <VStack className='items-center'>
-                    <Heading>Grant camera access</Heading>
-                    <Text>Grant camera access to scan a QR.</Text>
+                    <Large>Grant camera access</Large>
+                    <P>Grant camera access to scan a QR.</P>
                   </VStack>
                 ) : null}
 
@@ -208,14 +208,14 @@ export function SendActionSheet() {
                 {arkaicPayment ? (
                   <VStack className='items-center' space={"2xl"}>
                     <VStack className='items-center' space={"sm"}>
-                      <Heading>Sending to:</Heading>
-                      <Text className='text-center'>
+                      <Large>Sending to:</Large>
+                      <P className='text-center'>
                         {isIntrapayment
                           ? shortenAddress(arkaicPayment.arkAddress)
                           : arkaicPayment.lightningInvoice
                             ? shortenAddress(arkaicPayment.lightningInvoice)
                             : shortenAddress(arkaicPayment.onchainAddress)}
-                      </Text>
+                      </P>
                       <Badge
                         action={
                           isIntrapayment
@@ -245,7 +245,7 @@ export function SendActionSheet() {
                     {match(sendBitcoinMutation)
                       .with({ isPending: true }, () => <Spinner />)
                       .with({ isError: true }, ({ error }) => (
-                        <Text>{error.message}</Text>
+                        <P>{error.message}</P>
                       ))
                       .with({ isSuccess: true }, () => (
                         <Button

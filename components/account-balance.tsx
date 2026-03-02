@@ -5,10 +5,9 @@ import { ArkaicAccount } from "@/types/arkaic";
 
 import { match } from "ts-pattern";
 import { AmountComponent } from "./amount";
-import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Spinner } from "./ui/spinner";
-import { Text } from "./ui/text";
+import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function AccountBalance(props: { account: ArkaicAccount }) {
@@ -34,11 +33,11 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
     .otherwise(({ error }) => (
       <VStack className='items-center' space={"md"}>
         <VStack className='items-center'>
-          <Heading>Failed to fetch balance</Heading>
-          <Text>
+          <Large>Failed to fetch balance</Large>
+          <P>
             {error?.message} {error?.stack}
-          </Text>
-          <Text>{error?.stack}</Text>
+          </P>
+          <P>{error?.stack}</P>
         </VStack>
       </VStack>
     ));

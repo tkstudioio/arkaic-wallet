@@ -15,7 +15,7 @@ import { Badge, BadgeText } from "./ui/badge";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { HStack } from "./ui/hstack";
 import { Spinner } from "./ui/spinner";
-import { Text } from "./ui/text";
+import { Small } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function Transaction({ transaction }: { transaction: ArkTransaction }) {
@@ -122,21 +122,21 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
 
         {transaction.createdAt ? (
           <VStack className='items-end w-max'>
-            <Text size='sm' className='text-arkaic-muted'>
+            <Small className='text-arkaic-muted'>
               {detailedTransactions
                 ? format(transaction.createdAt, "PP", {})
                 : formatDistanceToNowStrict(transaction.createdAt)}
-            </Text>
+            </Small>
             {detailedTransactions ? (
-              <Text size='xs' className='text-arkaic-muted'>
+              <Small className='text-arkaic-muted text-xs'>
                 {format(transaction.createdAt, "HH:mm", {})}
-              </Text>
+              </Small>
             ) : null}
           </VStack>
         ) : (
           <HStack className='items-center' space={"xs"}>
             <Spinner />
-            <Text className='text-arkaic-muted'>Pending</Text>
+            <Small className='text-arkaic-muted'>Pending</Small>
           </HStack>
         )}
       </HStack>

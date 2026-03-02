@@ -1,8 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
-import { Text } from "@/components/ui/text";
-
 import { VStack } from "@/components/ui/vstack";
 import { useTransactions } from "@/hooks/use-transactions";
 import useAccountStore from "@/stores/account";
@@ -13,9 +11,9 @@ import { useCallback, useEffect } from "react";
 import { match } from "ts-pattern";
 import { Transaction } from "./transaction";
 import { Divider } from "./ui/divider";
-import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Switch } from "./ui/switch";
+import { Large, Muted, P, Small } from "./ui/typography";
 
 export function Transactions() {
   const { detailedTransactions, toggleDetailedTransactions } =
@@ -37,9 +35,9 @@ export function Transactions() {
   return (
     <Card size={"lg"} className='bg-arkaic-fill gap-4'>
       <HStack className='justify-between items-center'>
-        <Heading>Transactions</Heading>
+        <Large>Transactions</Large>
         <HStack className='items-center justify-end'>
-          <Text size='sm'>show details</Text>
+          <Small>show details</Small>
           <Switch
             value={detailedTransactions}
             onToggle={toggleDetailedTransactions}
@@ -61,10 +59,10 @@ export function Transactions() {
             }
             return (
               <VStack>
-                <Heading className='text-center'>No transactions</Heading>
-                <Text className='text-center'>
+                <Large className='text-center'>No transactions</Large>
+                <Muted className='text-center'>
                   press &quot;receive&quot; to request a payment
-                </Text>
+                </Muted>
               </VStack>
             );
           })
@@ -75,7 +73,7 @@ export function Transactions() {
             () => <Spinner />,
           )
           .otherwise(() => (
-            <Text>Something went wrong</Text>
+            <P>Something went wrong</P>
           ))}
       </VStack>
     </Card>

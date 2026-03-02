@@ -21,7 +21,7 @@ import {
   ModalHeader,
 } from "../ui/modal";
 import { Spinner } from "../ui/spinner";
-import { Text } from "../ui/text";
+import { P } from "../ui/typography";
 import { VStack } from "../ui/vstack";
 
 export default function AppLayout(props: PropsWithChildren) {
@@ -129,10 +129,10 @@ function AppLayoutContent(props: PropsWithChildren) {
           </ModalHeader>
           <ModalBody>
             <VStack space='md'>
-              <Text>
+              <P>
                 Write down these {mnemonicWords.length} words in order. Do not
                 share them with anyone.
-              </Text>
+              </P>
               <HStack className='flex-wrap gap-2 justify-center'>
                 {mnemonicWords.map((word, i) => (
                   <Badge key={i} action='muted' size='lg' className='px-3 py-2'>
@@ -160,15 +160,15 @@ function AppLayoutContent(props: PropsWithChildren) {
           </ModalHeader>
           <ModalBody>
             <VStack space='sm'>
-              <Text>
+              <P>
                 Are you sure you want to delete{" "}
-                <Text bold>{account?.name}</Text>?
-              </Text>
-              <Text>
+                <P className="font-heading">{account?.name}</P>?
+              </P>
+              <P>
                 This action is irreversible. If you have not backed up your seed
                 phrase, you will permanently lose access to this wallet and its
                 funds.
-              </Text>
+              </P>
             </VStack>
           </ModalBody>
           <ModalFooter>

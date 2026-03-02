@@ -16,8 +16,7 @@ import {
   ModalHeader,
 } from "./ui/modal";
 import { Spinner } from "./ui/spinner";
-import { Text } from "./ui/text";
-import { Large, Muted, Small } from "./ui/typography";
+import { Large, Muted, P, Small } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function AccountListItem(props: { account: ArkaicAccount }) {
@@ -82,11 +81,11 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
           </ModalHeader>
           <ModalBody>
             <VStack space='sm'>
-              <Text>
+              <P>
                 Enter your passphrase to unlock{" "}
-                <Text bold>{props.account.name}</Text>. Leave empty if you
+                <P className="font-heading">{props.account.name}</P>. Leave empty if you
                 {"didn't set one."}
-              </Text>
+              </P>
               <Input size='xl'>
                 <InputField
                   placeholder='Passphrase'

@@ -1,6 +1,5 @@
 import { Badge, BadgeText } from "@/components/ui/badge";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
-import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
 import {
@@ -16,7 +15,6 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useCreateAccount } from "@/hooks/use-create-account";
 import {
@@ -40,6 +38,7 @@ import { match } from "ts-pattern";
 import AccountInfoImage from "@/assets/images/account-info.svg";
 import SeedPhraseImage from "@/assets/images/seedphrase.svg";
 import { Card } from "./ui/card";
+import { Large, Muted, P, Small } from "./ui/typography";
 
 type WordCount = 12 | 24;
 
@@ -150,12 +149,12 @@ export default function CreateOrRestoreAccountForm(props: {
             width="100%"
           />
           <VStack className='items-center' space='xs'>
-            <Heading>
+            <Large>
               {isRestore ? "Restore wallet" : "Create new wallet"}
-            </Heading>
-            <Text className='text-center'>
+            </Large>
+            <Muted className='text-center'>
               Choose the mnemonic seed phrase length
-            </Text>
+            </Muted>
           </VStack>
         </VStack>
         <VStack space='md' className='w-full'>
@@ -177,15 +176,15 @@ export default function CreateOrRestoreAccountForm(props: {
       <VStack className='flex-1 w-full justify-between'>
         <VStack space='4xl' className='items-center flex-1 justify-center'>
           <VStack className='items-center' space='xs'>
-            <Heading>Passphrase</Heading>
-            <Text className='text-center'>
+            <Large>Passphrase</Large>
+            <Muted className='text-center'>
               Add an optional passphrase for extra security. Leave empty if you
               {"don't want one."}
-            </Text>
+            </Muted>
           </VStack>
 
           <VStack space='xs' className='w-full'>
-            <Text>Passphrase (optional)</Text>
+            <Small>Passphrase (optional)</Small>
             <Input size='xl'>
               <InputField
                 placeholder='Enter passphrase'
@@ -217,11 +216,11 @@ export default function CreateOrRestoreAccountForm(props: {
         <VStack className='flex-1 w-full justify-between'>
           <VStack space='xl' className='items-center flex-1 justify-center'>
             <VStack className='items-center' space='xs'>
-              <Heading>Your seed phrase</Heading>
-              <Text className='text-center'>
+              <Large>Your seed phrase</Large>
+              <Muted className='text-center'>
                 Write down these words in order. This is the only way to recover
                 your wallet.
-              </Text>
+              </Muted>
             </VStack>
             <Card className='w-full' variant='ghost'>
               <HStack className='flex-wrap gap-2 justify-center'>
@@ -259,16 +258,16 @@ export default function CreateOrRestoreAccountForm(props: {
         <VStack className='flex-1 w-full justify-between'>
           <VStack space='4xl' className='items-center flex-1 justify-center'>
             <VStack className='items-center' space='xs'>
-              <Heading>Verify backup</Heading>
-              <Text className='text-center'>
+              <Large>Verify backup</Large>
+              <Muted className='text-center'>
                 Enter the correct word for each position to verify your backup.
-              </Text>
+              </Muted>
             </VStack>
 
             <VStack space={"xl"}>
               {verificationIndices.map((wordIndex, i) => (
                 <VStack space='xs' key={wordIndex}>
-                  <Text>Word #{wordIndex + 1}</Text>
+                  <Small>Word #{wordIndex + 1}</Small>
                   <Input size='xl'>
                     <InputField
                       placeholder={`Enter word #${wordIndex + 1}`}
@@ -285,9 +284,9 @@ export default function CreateOrRestoreAccountForm(props: {
             </VStack>
 
             {verificationError && (
-              <Text className='text-error-500 text-center'>
+              <P className='text-error-500 text-center'>
                 Some words are incorrect. Please try again.
-              </Text>
+              </P>
             )}
           </VStack>
           <VStack space='md' className='w-full'>
@@ -308,15 +307,15 @@ export default function CreateOrRestoreAccountForm(props: {
     .with("restoreWords", () => (
       <ScrollView style={{ width: "100%" }} contentContainerStyle={{ gap: 32 }}>
         <VStack className='items-center' space='xs'>
-          <Heading>Enter seed phrase</Heading>
-          <Text className='text-center'>
+          <Large>Enter seed phrase</Large>
+          <Muted className='text-center'>
             Enter your {wordCount}-word seed phrase to restore your wallet.
-          </Text>
+          </Muted>
         </VStack>
         <VStack space='sm'>
           {restoreWords.map((word, i) => (
             <HStack key={i} space='sm' className='items-center'>
-              <Text className='w-8 text-right'>{i + 1}.</Text>
+              <Small className='w-8 text-right'>{i + 1}.</Small>
               <Input size='xl' className='flex-1'>
                 <InputField
                   placeholder={`Word ${i + 1}`}
@@ -331,11 +330,11 @@ export default function CreateOrRestoreAccountForm(props: {
         </VStack>
         <VStack space='md'>
           {restoreSubmitAttempted && !restoreMnemonicValid && (
-            <Text className='text-error-500 text-center'>
+            <P className='text-error-500 text-center'>
               {restoreWords.some((w) => !w.trim())
                 ? `Fill in all ${wordCount} words to continue`
                 : "The seed phrase is invalid, please check the words"}
-            </Text>
+            </P>
           )}
           <Button onPress={handleRestoreWordsContinue}>
             <ButtonText>Continue</ButtonText>
@@ -358,10 +357,10 @@ export default function CreateOrRestoreAccountForm(props: {
             width="100%"
           />
           <VStack className='items-center' space='xs'>
-            <Heading>Account info</Heading>
-            <Text className='text-center'>
+            <Large>Account info</Large>
+            <Muted className='text-center'>
               Give your account a name and select an ASP to connect to.
-            </Text>
+            </Muted>
           </VStack>
         </VStack>
         <Formik
@@ -410,7 +409,7 @@ export default function CreateOrRestoreAccountForm(props: {
             <VStack space='4xl' className='w-full'>
               <VStack className='w-full' space={"xl"}>
                 <VStack space='xs'>
-                  <Text>Account name</Text>
+                  <Small>Account name</Small>
                   <Input size='xl' isInvalid={!!(touched.name && errors.name)}>
                     <InputIcon as={User} />
                     <InputField
@@ -421,13 +420,13 @@ export default function CreateOrRestoreAccountForm(props: {
                     />
                   </Input>
                   {touched.name && errors.name && (
-                    <Text className='text-error-500 text-sm'>
+                    <Muted className='text-error-500'>
                       {errors.name}
-                    </Text>
+                    </Muted>
                   )}
                 </VStack>
                 <VStack space='xs'>
-                  <Text>Arkade server URL</Text>
+                  <Small>Arkade server URL</Small>
                   <Select
                     selectedValue={values.arkadeServerUrl}
                     onValueChange={handleChange("arkadeServerUrl")}
@@ -459,9 +458,9 @@ export default function CreateOrRestoreAccountForm(props: {
                 {match(createAccountMutation)
                   .with({ isError: true }, () => (
                     <>
-                      <Text className='text-center text-error-500'>
+                      <P className='text-center text-error-500'>
                         Error creating account
-                      </Text>
+                      </P>
                       <Button
                         variant='link'
                         action='negative'

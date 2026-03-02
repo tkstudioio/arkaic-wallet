@@ -12,9 +12,8 @@ import {
   ActionsheetDragIndicatorWrapper,
 } from "./ui/actionsheet";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
-import { Heading } from "./ui/heading";
 import { Spinner } from "./ui/spinner";
-import { Text } from "./ui/text";
+import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function OnboardButton(
@@ -47,8 +46,8 @@ export function OnboardButton(
               .with({ isSuccess: true }, ({ data: commitmentTxid }) => (
                 <VStack className='items-center' space={"xl"}>
                   <VStack className='items-center'>
-                    <Heading>Onboard transaction sent</Heading>
-                    <Text>Check your transaction on mempool.space</Text>
+                    <Large>Onboard transaction sent</Large>
+                    <P>Check your transaction on mempool.space</P>
                   </VStack>
                   <VStack>
                     <Button
@@ -75,8 +74,8 @@ export function OnboardButton(
               ))
               .otherwise(() => (
                 <>
-                  <Heading>Onboard funds</Heading>
-                  <Text>Do you really want to onboard all pending funds?</Text>
+                  <Large>Onboard funds</Large>
+                  <P>Do you really want to onboard all pending funds?</P>
                 </>
               ))}
           </VStack>
@@ -91,7 +90,7 @@ export function OnboardButton(
               ))
               .with({ isError: true }, ({ mutate }) => (
                 <>
-                  <Text>Error onboarding funds</Text>
+                  <P>Error onboarding funds</P>
                   <Button
                     variant='link'
                     action='negative'

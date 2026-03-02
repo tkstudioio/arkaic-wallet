@@ -4,7 +4,7 @@ import { ReceiveActionSheet } from "@/components/receive-action-sheet";
 import { SendActionSheet } from "@/components/send-action-sheet";
 import { Transactions } from "@/components/transactions";
 import { HStack } from "@/components/ui/hstack";
-import { Text } from "@/components/ui/text";
+import { P } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import useAccountStore from "@/stores/account";
 
@@ -17,7 +17,7 @@ const DashboardPage = () => {
   return (
     <AppLayout>
       {match(account)
-        .with(undefined, () => <Text>Ciro</Text>)
+        .with(undefined, () => <P>Ciro</P>)
         .otherwise((account) => (
           <VStack className='px-arkaic-md' space={"4xl"}>
             <AccountBalance account={account} />

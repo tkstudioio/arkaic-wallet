@@ -6,8 +6,6 @@ import { match } from "ts-pattern";
 import { AccountListItem } from "./account-list-item";
 import { CreateAccount } from "./create-account";
 
-import { Heading } from "./ui/heading";
-import { Text } from "./ui/text";
 import { Large, Muted } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
@@ -23,13 +21,13 @@ export function Home() {
           width="100%"
         />
         <VStack>
-          <Heading className='text-center' size={"2xl"}>
+          <Large className='text-center'>
             No accounts found
-          </Heading>
-          <Text className='text-center'>
+          </Large>
+          <Muted className='text-center'>
             create a new account or restore from private key to get started with
             arkaic wallet
-          </Text>
+          </Muted>
         </VStack>
         <CreateAccount />
       </VStack>

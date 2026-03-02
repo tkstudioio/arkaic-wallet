@@ -19,9 +19,9 @@ import { IncomingFunds } from "@arkade-os/sdk";
 import { useQueryClient } from "@tanstack/react-query";
 import { map, toString } from "lodash";
 import { match } from "ts-pattern";
-import { Heading } from "./ui/heading";
 import { Input, InputField } from "./ui/input";
 import { Spinner } from "./ui/spinner";
+import { Large, Muted, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
@@ -105,18 +105,18 @@ export function ReceiveActionSheet() {
 
           {!showQrCode ? (
             <VStack className='items-center'>
-              <Heading>Select amount</Heading>
-              <Text>Type an amount or leave empty</Text>
+              <Large>Select amount</Large>
+              <Muted>Type an amount or leave empty</Muted>
             </VStack>
           ) : transaction ? (
             <VStack className='items-center'>
-              <Heading>Payment fulfilled</Heading>
-              <Text>You have an incoming transaction</Text>
+              <Large>Payment fulfilled</Large>
+              <P>You have an incoming transaction</P>
             </VStack>
           ) : (
             <VStack className='items-center'>
-              <Heading>Payment</Heading>
-              <Text>Show payment request</Text>
+              <Large>Payment</Large>
+              <Muted>Show payment request</Muted>
             </VStack>
           )}
 
@@ -153,12 +153,12 @@ export function ReceiveActionSheet() {
               .with({ isPending: true }, () => (
                 <HStack space={"sm"} className='items-center'>
                   <Spinner />
-                  <Heading size={"sm"}>Generating QR</Heading>
+                  <P>Generating QR</P>
                 </HStack>
               ))
-              .with({ isError: true }, () => <Text>Error</Text>)
+              .with({ isError: true }, () => <P>Error</P>)
               .with({ isSuccess: true }, ({ data }) => {
-                if (!data) return <Text>No wallet generated</Text>;
+                if (!data) return <P>No wallet generated</P>;
                 return (
                   <VStack space={"xl"} className='w-full'>
                     {!transaction ? (
@@ -247,7 +247,7 @@ export function ReceiveActionSheet() {
                   </VStack>
                 );
               })
-              .otherwise(({ status }) => <Text>{status}</Text>)
+              .otherwise(({ status }) => <P>{status}</P>)
           )}
         </ActionsheetContent>
       </Actionsheet>
