@@ -1,9 +1,9 @@
 import { useLoginMutation } from "@/hooks/use-login";
 import { ArkaicAccount } from "@/types/arkaic";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import { Avatar, AvatarFallbackText, AvatarImage } from "./ui/avatar";
 import { Button, ButtonText } from "./ui/button";
-import { Card } from "./ui/card";
 import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
 import { Input, InputField } from "./ui/input";
@@ -17,6 +17,7 @@ import {
 } from "./ui/modal";
 import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
+import { Large, Muted, Small } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function AccountListItem(props: { account: ArkaicAccount }) {
@@ -46,15 +47,28 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
   return (
     <>
       <TouchableOpacity onPress={handlePress}>
-        <Card>
-          <HStack>
-            <VStack>
-              <Text>{props.account.name}</Text>
-              <Text size={"xs"}>{props.account.arkadeServerUrl}</Text>
+        <View className='bg-arkaic-fill rounded-arkaic-card px-arkaic-md py-arkaic-md'>
+          <HStack className='items-center' space='lg'>
+            <Avatar size='lg'>
+              {props.account.avatar ? (
+                <AvatarImage source={{ uri: props.account.avatar }} />
+              ) : (
+                <AvatarFallbackText>
+                  {props.account.name}
+                </AvatarFallbackText>
+              )}
+            </Avatar>
+            <VStack className='flex-1' space='xs'>
+              <Large className='text-arkaic-foreground'>
+                {props.account.name}
+              </Large>
+              <Small className='text-arkaic-muted'>
+                {props.account.arkadeServerUrl}
+              </Small>
             </VStack>
             {loginMutation.isPending && <Spinner />}
           </HStack>
-        </Card>
+        </View>
       </TouchableOpacity>
 
       <Modal
@@ -83,15 +97,16 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
               </Input>
             </VStack>
           </ModalBody>
-          <ModalFooter>
-            <VStack space={"md"}>
-              <Button onPress={handleLogin}>
+          <ModalFooter className='w-full'>
+            <VStack space={"md"} className='w-full'>
+              <Button onPress={handleLogin} className='w-full'>
                 <ButtonText>Unlock</ButtonText>
               </Button>
               <Button
                 variant='ghost'
                 action='secondary'
                 onPress={() => setShowPassphraseModal(false)}
+                className='w-full'
               >
                 <ButtonText>Cancel</ButtonText>
               </Button>

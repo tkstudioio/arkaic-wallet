@@ -8,6 +8,7 @@ import { CreateAccount } from "./create-account";
 import LogoFull from "./icons/logo";
 import { Heading } from "./ui/heading";
 import { Text } from "./ui/text";
+import { Large, Muted } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function Home() {
@@ -27,24 +28,26 @@ export function Home() {
             No accounts found
           </Heading>
           <Text className='text-center'>
-            create a new account or restore from private key to get started
-            with arkaic wallet
+            create a new account or restore from private key to get started with
+            arkaic wallet
           </Text>
         </VStack>
         <CreateAccount />
       </VStack>
     ))
     .otherwise(({ data: accounts }) => (
-      <VStack className='items-center justify-center' space={"3xl"}>
+      <VStack className='w-full h-full' space={"3xl"}>
         <VStack className='items-center'>
           <LogoFull height={32} width={246} className='flex-1' />
         </VStack>
-        <VStack className='items-center'>
-          <Heading>Login to one account</Heading>
-          <Text>tap on an account and log in</Text>
+        <VStack className='items-center w-full' space={"xs"}>
+          <Large>Login to one of your accounts</Large>
+          <Muted>tap on an account and log in</Muted>
         </VStack>
         <ScrollView
-          style={{ maxHeight: Dimensions.get("window").height * 0.4, width: "100%" }}
+          className='flex-1'
+          style={{ width: "100%" }}
+          contentContainerStyle={{ paddingBottom: 16 }}
         >
           <VStack space={"md"}>
             {map(accounts, (account, index) => (
