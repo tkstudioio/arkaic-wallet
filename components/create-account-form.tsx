@@ -1,5 +1,5 @@
 import { Badge, BadgeText } from "@/components/ui/badge";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
@@ -27,7 +27,13 @@ import {
 } from "@/utils/mnemonic";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
-import { ChevronDown, User } from "lucide-react-native";
+import {
+  ChevronDown,
+  ListCheck,
+  Shield,
+  ShieldCheck,
+  User,
+} from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView } from "react-native";
 import { match } from "ts-pattern";
@@ -57,6 +63,7 @@ export default function CreateOrRestoreAccountForm(props: {
   const [verificationIndices, setVerificationIndices] = useState<number[]>([]);
   const [verificationAnswers, setVerificationAnswers] = useState<string[]>([]);
   const [verificationError, setVerificationError] = useState(false);
+  const [restoreSubmitAttempted, setRestoreSubmitAttempted] = useState(false);
 
   const isRestore = props.restore === true;
 
@@ -103,6 +110,7 @@ export default function CreateOrRestoreAccountForm(props: {
   };
 
   const handleRestoreWordsContinue = () => {
+    setRestoreSubmitAttempted(true);
     const joined = restoreWords.map((w) => w.trim().toLowerCase()).join(" ");
     if (!validateMnemonic(joined)) {
       return;
@@ -133,7 +141,7 @@ export default function CreateOrRestoreAccountForm(props: {
 
   return match(step)
     .with("wordCount", () => (
-      <VStack space='xl' className='items-center w-full'>
+      <VStack space='xl' className='items-center w-full '>
         <VStack className='items-center' space='xs'>
           <Heading>
             {isRestore ? "Restore wallet" : "Create new wallet"}
@@ -143,18 +151,12 @@ export default function CreateOrRestoreAccountForm(props: {
           </Text>
         </VStack>
         <VStack space='md' className='w-full'>
-          <Button
-            size='xl'
-            action={"secondary"}
-            onPress={() => handleSelectWordCount(12)}
-          >
+          <Button onPress={() => handleSelectWordCount(12)}>
+            <ButtonIcon as={Shield} />
             <ButtonText>12 words</ButtonText>
           </Button>
-          <Button
-            size='xl'
-            action='secondary'
-            onPress={() => handleSelectWordCount(24)}
-          >
+          <Button action='secondary' onPress={() => handleSelectWordCount(24)}>
+            <ButtonIcon as={ShieldCheck} />
             <ButtonText>24 words</ButtonText>
           </Button>
         </VStack>
@@ -164,7 +166,7 @@ export default function CreateOrRestoreAccountForm(props: {
       </VStack>
     ))
     .with("passphrase", () => (
-      <VStack space='xl' className='items-center w-full'>
+      <VStack space='4xl' className='items-center w-full '>
         <VStack className='items-center' space='xs'>
           <Heading>Passphrase</Heading>
           <Text className='text-center'>
@@ -172,21 +174,21 @@ export default function CreateOrRestoreAccountForm(props: {
             {"don't want one."}
           </Text>
         </VStack>
-        <Card className='w-full gap-4' variant='ghost'>
-          <VStack space='xs'>
-            <Text>Passphrase (optional)</Text>
-            <Input size='xl'>
-              <InputField
-                placeholder='Enter passphrase'
-                value={passphrase}
-                onChangeText={setPassphrase}
-                secureTextEntry
-              />
-            </Input>
-          </VStack>
-        </Card>
+
+        <VStack space='xs'>
+          <Text>Passphrase (optional)</Text>
+          <Input size='xl'>
+            <InputField
+              placeholder='Enter passphrase'
+              value={passphrase}
+              onChangeText={setPassphrase}
+              secureTextEntry
+            />
+          </Input>
+        </VStack>
+
         <VStack space='md' className='w-full'>
-          <Button size='xl' onPress={handlePassphraseContinue}>
+          <Button onPress={handlePassphraseContinue}>
             <ButtonText>Continue</ButtonText>
           </Button>
           <Button
@@ -222,14 +224,11 @@ export default function CreateOrRestoreAccountForm(props: {
             </HStack>
           </Card>
           <VStack space='md' className='w-full'>
-            <Button size='xl' onPress={handleStartVerification}>
+            <Button onPress={handleStartVerification}>
+              <ButtonIcon as={ListCheck} />
               <ButtonText>Verify backup</ButtonText>
             </Button>
-            <Button
-              size='xl'
-              action='secondary'
-              onPress={() => setStep("accountInfo")}
-            >
+            <Button action='secondary' onPress={() => setStep("accountInfo")}>
               <ButtonText>Skip</ButtonText>
             </Button>
             <Button
@@ -245,14 +244,15 @@ export default function CreateOrRestoreAccountForm(props: {
     })
     .with("verify", () => {
       return (
-        <VStack space='xl' className='items-center w-full'>
+        <VStack space='4xl' className='items-center w-full'>
           <VStack className='items-center' space='xs'>
             <Heading>Verify backup</Heading>
             <Text className='text-center'>
               Enter the correct word for each position to verify your backup.
             </Text>
           </VStack>
-          <Card className='w-full gap-4' variant='ghost'>
+
+          <VStack space={"xl"}>
             {verificationIndices.map((wordIndex, i) => (
               <VStack space='xs' key={wordIndex}>
                 <Text>Word #{wordIndex + 1}</Text>
@@ -269,14 +269,15 @@ export default function CreateOrRestoreAccountForm(props: {
                 </Input>
               </VStack>
             ))}
-          </Card>
+          </VStack>
+
           {verificationError && (
             <Text className='text-error-500 text-center'>
               Some words are incorrect. Please try again.
             </Text>
           )}
           <VStack space='md' className='w-full'>
-            <Button size='xl' onPress={handleVerify}>
+            <Button onPress={handleVerify}>
               <ButtonText>Confirm</ButtonText>
             </Button>
             <Button
@@ -291,37 +292,38 @@ export default function CreateOrRestoreAccountForm(props: {
       );
     })
     .with("restoreWords", () => (
-      <VStack space='xl' className='items-center w-full'>
+      <ScrollView style={{ width: "100%" }} contentContainerStyle={{ gap: 32 }}>
         <VStack className='items-center' space='xs'>
           <Heading>Enter seed phrase</Heading>
           <Text className='text-center'>
             Enter your {wordCount}-word seed phrase to restore your wallet.
           </Text>
         </VStack>
-        <ScrollView style={{ width: "100%", maxHeight: 400 }}>
-          <Card className='w-full gap-3' variant='ghost'>
-            {restoreWords.map((word, i) => (
-              <HStack key={i} space='sm' className='items-center'>
-                <Text className='w-8 text-right'>{i + 1}.</Text>
-                <Input size='xl' className='flex-1'>
-                  <InputField
-                    placeholder={`Word ${i + 1}`}
-                    value={word}
-                    onChangeText={(val: string) => updateRestoreWord(i, val)}
-                    autoCapitalize='none'
-                    autoCorrect={false}
-                  />
-                </Input>
-              </HStack>
-            ))}
-          </Card>
-        </ScrollView>
-        <VStack space='md' className='w-full'>
-          <Button
-            size='xl'
-            onPress={handleRestoreWordsContinue}
-            disabled={!restoreMnemonicValid}
-          >
+        <VStack space='sm'>
+          {restoreWords.map((word, i) => (
+            <HStack key={i} space='sm' className='items-center'>
+              <Text className='w-8 text-right'>{i + 1}.</Text>
+              <Input size='xl' className='flex-1'>
+                <InputField
+                  placeholder={`Word ${i + 1}`}
+                  value={word}
+                  onChangeText={(val: string) => updateRestoreWord(i, val)}
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                />
+              </Input>
+            </HStack>
+          ))}
+        </VStack>
+        <VStack space='md'>
+          {restoreSubmitAttempted && !restoreMnemonicValid && (
+            <Text className='text-error-500 text-center'>
+              {restoreWords.some((w) => !w.trim())
+                ? `Fill in all ${wordCount} words to continue`
+                : "The seed phrase is invalid, please check the words"}
+            </Text>
+          )}
+          <Button onPress={handleRestoreWordsContinue}>
             <ButtonText>Continue</ButtonText>
           </Button>
           <Button
@@ -332,10 +334,10 @@ export default function CreateOrRestoreAccountForm(props: {
             <ButtonText>Go back</ButtonText>
           </Button>
         </VStack>
-      </VStack>
+      </ScrollView>
     ))
     .with("accountInfo", () => (
-      <VStack space='xl' className='items-center w-full'>
+      <VStack space='4xl' className='items-center w-full'>
         <VStack className='items-center' space='xs'>
           <Heading>Account info</Heading>
           <Text className='text-center'>
@@ -346,6 +348,13 @@ export default function CreateOrRestoreAccountForm(props: {
           initialValues={{
             name: "",
             arkadeServerUrl: "https://arkade.computer",
+          }}
+          validate={(values) => {
+            const errors: { name?: string } = {};
+            if (values.name.trim().length < 3) {
+              errors.name = "Account name must be at least 3 characters";
+            }
+            return errors;
           }}
           onSubmit={(values) => {
             const privateKey = mnemonicToPrivateKey(
@@ -370,12 +379,19 @@ export default function CreateOrRestoreAccountForm(props: {
             );
           }}
         >
-          {({ handleChange, handleBlur, handleSubmit, values }) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <>
-              <Card className='w-full gap-8' variant='ghost'>
+              <VStack className='w-full' space={"xl"}>
                 <VStack space='xs'>
                   <Text>Account name</Text>
-                  <Input size='xl'>
+                  <Input size='xl' isInvalid={!!(touched.name && errors.name)}>
                     <InputIcon as={User} />
                     <InputField
                       placeholder='Insert account name'
@@ -384,6 +400,11 @@ export default function CreateOrRestoreAccountForm(props: {
                       value={values.name}
                     />
                   </Input>
+                  {touched.name && errors.name && (
+                    <Text className='text-error-500 text-sm'>
+                      {errors.name}
+                    </Text>
+                  )}
                 </VStack>
                 <VStack space='xs'>
                   <Text>Arkade server URL</Text>
@@ -413,7 +434,7 @@ export default function CreateOrRestoreAccountForm(props: {
                     </SelectPortal>
                   </Select>
                 </VStack>
-              </Card>
+              </VStack>
               <VStack space='md' className='w-full'>
                 {match(createAccountMutation)
                   .with({ isError: true }, () => (
@@ -433,9 +454,8 @@ export default function CreateOrRestoreAccountForm(props: {
                   .otherwise(({ isPending }) => (
                     <>
                       <Button
-                        size='xl'
                         onPress={() => handleSubmit()}
-                        disabled={isPending}
+                        disabled={isPending || !!errors.name}
                       >
                         {isPending ? (
                           <Spinner />

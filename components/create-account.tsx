@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
-import { ArchiveRestore, UserPlus } from "lucide-react-native";
 import React from "react";
-import { Button, ButtonIcon, ButtonText } from "./ui/button";
+import { Button, ButtonText } from "./ui/button";
 import { VStack } from "./ui/vstack";
 
 export function CreateAccount() {
@@ -15,18 +14,12 @@ export function CreateAccount() {
   }
 
   return (
-    <VStack className='my-auto' space={"xl"}>
-      <Button onPress={onCreate} action={"primary"} className='mx-auto'>
-        <ButtonText>Create new account</ButtonText>
-        <ButtonIcon as={UserPlus} />
+    <VStack className='w-full' space={"md"}>
+      <Button onPress={onCreate} action={"primary"} size='lg'>
+        <ButtonText>Create account</ButtonText>
       </Button>
-      <Button
-        onPress={onRestoreFromSeedPhrase}
-        action={"secondary"}
-        className='mx-auto '
-      >
-        <ButtonText>Restore from seed phrase</ButtonText>
-        <ButtonIcon as={ArchiveRestore} />
+      <Button onPress={onRestoreFromSeedPhrase} action={"secondary"} size='lg'>
+        <ButtonText>Restore account</ButtonText>
       </Button>
     </VStack>
   );
