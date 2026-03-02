@@ -6,7 +6,10 @@
     "orientation": "portrait",
     "scheme": "arkaic",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
     "ios": {
+      "buildNumber": "2",
+      "icon": "./assets/icon.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.tkstudio.arkaicwallet",
       "infoPlist": {
