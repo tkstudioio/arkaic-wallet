@@ -7,7 +7,7 @@ import { match } from "ts-pattern";
 import { AmountComponent } from "./amount";
 import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
-import { Skeleton } from "./ui/skeleton";
+import { Spinner } from "./ui/spinner";
 import { Text } from "./ui/text";
 import { VStack } from "./ui/vstack";
 
@@ -21,12 +21,9 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
       { isLoading: true },
       { isPending: true },
       () => (
-        <>
-          <VStack className='justify-around h-0.5 items-end'>
-            <Skeleton className='h-20' />
-            <Skeleton className='h-10 w-1/2' />
-          </VStack>
-        </>
+        <HStack className='aspect-video justify-center'>
+          <Spinner />
+        </HStack>
       ),
     )
     .with({ isSuccess: true }, ({ data }) => (
