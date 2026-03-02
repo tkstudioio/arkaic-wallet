@@ -20,7 +20,6 @@ export const badgeStyle = tva({
       error: "bg-arkaic-negative/15 border-arkaic-negative/50",
       warning: "bg-arkaic-warning/15 border-arkaic-warning/50",
       success: "bg-arkaic-positive/15 border-arkaic-positive/50",
-      info: "bg-background-info border-info-300",
       muted: "bg-arkaic-muted/15 border-arkaic-border",
     },
     variant: {
@@ -43,7 +42,6 @@ const badgeTextStyle = tva({
       error: "text-arkaic-negative",
       warning: "text-arkaic-warning",
       success: "text-arkaic-positive",
-      info: "text-info-600",
       muted: "text-arkaic-muted",
     },
     size: {
@@ -84,7 +82,6 @@ const badgeIconStyle = tva({
       error: "text-arkaic-negative",
       warning: "text-arkaic-warning",
       success: "text-arkaic-positive",
-      info: "text-info-600",
       muted: "text-arkaic-muted",
     },
     size: {
