@@ -235,7 +235,7 @@ module.exports = {
         "soft-2": "0px 0px 20px rgba(38, 38, 38, 0.2)",
         "soft-3": "0px 0px 30px rgba(38, 38, 38, 0.1)",
         "soft-4": "0px 0px 40px rgba(38, 38, 38, 0.1)",
-        arkaic: "4px 5px 0px 0px rgba(116, 59, 116, 0.33)",
+        arkaic: "4px 5px 0px 0px rgb(var(--color-arkaic-shadow) / 0.33)",
       },
     },
   },
