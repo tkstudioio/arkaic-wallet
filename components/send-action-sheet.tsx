@@ -169,7 +169,7 @@ export function SendActionSheet() {
                             <Button
                               variant={"outline"}
                               action={"primary"}
-                              className='w-96 h-96 mx-auto rounded-xl border-dashed'
+                              className='w-full aspect-square '
                               onPress={() => setScanning(true)}
                             >
                               <ButtonIcon as={QrCode} />
@@ -179,7 +179,7 @@ export function SendActionSheet() {
 
                         return (
                           <>
-                            <View className='w-96 h-96 aspect-square mx-auto rounded-lg overflow-hidden'>
+                            <View className='w-full aspect-square'>
                               <CameraView
                                 style={{ flex: 1 }}
                                 facing='back'
@@ -195,8 +195,7 @@ export function SendActionSheet() {
 
                 {!arkaicPayment ? (
                   <Button
-                    className='w-max'
-                    variant={"outline"}
+                    size='sm'
                     onPress={() => {
                       setScanning(false);
                       pasteFromClipboard(undefined, {
