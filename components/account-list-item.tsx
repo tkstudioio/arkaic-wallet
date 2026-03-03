@@ -16,7 +16,7 @@ import {
   ModalHeader,
 } from "./ui/modal";
 import { Spinner } from "./ui/spinner";
-import { Large, Muted, P, Small } from "./ui/typography";
+import { Large, P, Small } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function AccountListItem(props: { account: ArkaicAccount }) {
@@ -52,9 +52,7 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
               {props.account.avatar ? (
                 <AvatarImage source={{ uri: props.account.avatar }} />
               ) : (
-                <AvatarFallbackText>
-                  {props.account.name}
-                </AvatarFallbackText>
+                <AvatarFallbackText>{props.account.name}</AvatarFallbackText>
               )}
             </Avatar>
             <VStack className='flex-1' space='xs'>
@@ -83,7 +81,8 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
             <VStack space='sm'>
               <P>
                 Enter your passphrase to unlock{" "}
-                <P className="font-heading">{props.account.name}</P>. Leave empty if you
+                <P className='font-heading'>{props.account.name}</P>. Leave
+                empty if you
                 {"didn't set one."}
               </P>
               <Input size='xl'>
@@ -103,7 +102,7 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
               </Button>
               <Button
                 variant='link'
-                action='secondary'
+                action='negative'
                 onPress={() => setShowPassphraseModal(false)}
                 className='w-full'
               >

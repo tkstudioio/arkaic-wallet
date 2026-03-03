@@ -160,7 +160,7 @@ export default function CreateOrRestoreAccountForm(props: {
             <ButtonIcon as={Shield} />
             <ButtonText>12 words</ButtonText>
           </Button>
-          <Button action='secondary' onPress={() => handleSelectWordCount(24)}>
+          <Button variant='outline' onPress={() => handleSelectWordCount(24)}>
             <ButtonIcon as={ShieldCheck} />
             <ButtonText>24 words</ButtonText>
           </Button>
@@ -237,7 +237,7 @@ export default function CreateOrRestoreAccountForm(props: {
               <ButtonIcon as={ListCheck} />
               <ButtonText>Verify backup</ButtonText>
             </Button>
-            <Button action='secondary' onPress={() => setStep("accountInfo")}>
+            <Button variant='outline' onPress={() => setStep("accountInfo")}>
               <ButtonText>Skip</ButtonText>
             </Button>
             <Button

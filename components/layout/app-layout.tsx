@@ -11,7 +11,7 @@ import { useDeleteAccount } from "@/hooks/use-delete-account";
 import useAccountStore from "@/stores/account";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { FileKey2, LogOut, MenuIcon } from "lucide-react-native";
+import { FileKey2, LogOut, MenuIcon, TrashIcon } from "lucide-react-native";
 import { PropsWithChildren, useMemo, useState } from "react";
 import { View } from "react-native";
 import ToastManager from "toastify-react-native";
@@ -72,6 +72,7 @@ function AppLayoutContent(props: PropsWithChildren) {
             <Button
               variant={"outline"}
               size={"sm"}
+              action={"neutral"}
               className='w-min'
               onPress={() => setShowDrawer(true)}
             >
@@ -179,8 +180,8 @@ function AppLayoutContent(props: PropsWithChildren) {
           <DrawerBody>
             <VStack space={"lg"}>
               <Button
-                variant='outline'
-                action={"positive"}
+                variant={"outline"}
+                action={"neutral"}
                 onPress={() => {
                   setShowBackupModal(true);
                 }}
@@ -190,13 +191,13 @@ function AppLayoutContent(props: PropsWithChildren) {
               </Button>
 
               <Button
-                variant='outline'
+                variant={"outline"}
                 action={"negative"}
                 onPress={() => {
                   setShowDeleteModal(true);
                 }}
               >
-                <ButtonIcon as={FileKey2} />
+                <ButtonIcon as={TrashIcon} />
                 <ButtonText>Delete account</ButtonText>
               </Button>
             </VStack>
@@ -204,7 +205,6 @@ function AppLayoutContent(props: PropsWithChildren) {
           <DrawerFooter>
             <Button
               action={"negative"}
-              variant='outline'
               onPress={() => {
                 logout();
                 router.replace("/");
