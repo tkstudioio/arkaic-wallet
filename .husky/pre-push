@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# Check if we're pushing a tag
+while read local_ref local_sha remote_ref remote_sha; do
+  if echo "$remote_ref" | grep -q "^refs/tags/"; then
+    TAG_NAME=$(echo "$remote_ref" | sed 's|refs/tags/||')
+    echo "Detected tag push: $TAG_NAME"
+    echo "Starting EAS build and submit for iOS..."
+
+    eas build -p ios --non-interactive
+    eas submit -p ios --non-interactive --latest
+
+    echo "EAS build and submit completed."
+  fi
+done

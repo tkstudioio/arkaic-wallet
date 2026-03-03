@@ -12,7 +12,9 @@
     "changelog": "changelog",
     "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'bumped major' && npm version major",
     "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'bumped minor' && npm version minor",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'bumped minor' && npm version patch"
+    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'bumped patch' && npm version patch",
+    "version": "node scripts/sync-app-version.js && git add app.json",
+    "prepare": "husky"
   },
   "dependencies": {
     "@arkade-os/boltz-swap": "^0.2.6",
@@ -95,6 +97,7 @@
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "generate-changelog": "^1.8.0",
+    "husky": "^9.1.7",
     "typescript": "~5.9.2"
   },
   "private": true
