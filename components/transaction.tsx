@@ -35,7 +35,6 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
 
   const amountButton = (
     <Button
-      size={"xl"}
       className='w-max py-0'
       variant={"link"}
       action={transaction.type === TxType.TxSent ? "negative" : "positive"}

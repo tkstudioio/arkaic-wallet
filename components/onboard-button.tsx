@@ -17,7 +17,7 @@ import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function OnboardButton(
-  props: PropsWithChildren<{ disabled?: boolean }>
+  props: PropsWithChildren<{ disabled?: boolean }>,
 ) {
   const onboardUtxos = useOnboardUtxos();
   const queryClient = useQueryClient();
@@ -52,10 +52,10 @@ export function OnboardButton(
                   <VStack>
                     <Button
                       variant={"link"}
-                      action={"secondary"}
+                      variant={"outline"}
                       onPress={() =>
                         Linking.openURL(
-                          `https://mempool.space/it/tx/${commitmentTxid}`
+                          `https://mempool.space/it/tx/${commitmentTxid}`,
                         )
                       }
                     >

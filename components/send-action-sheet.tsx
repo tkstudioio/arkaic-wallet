@@ -105,10 +105,9 @@ export function SendActionSheet() {
   return (
     <>
       <Button
-        action={"secondary"}
-        variant={"solid"}
-        size={"big"}
+        variant={"outline"}
         onPress={() => setOpen(true)}
+        className='flex-shrink-0'
       >
         <ButtonIcon as={Send} />
         <ButtonText>Send</ButtonText>
@@ -158,7 +157,6 @@ export function SendActionSheet() {
                         <Button
                           variant={"outline"}
                           className='w-96 h-96 mx-auto rounded-xl border-dashed'
-                          size={"xl"}
                           onPress={requestPermission}
                         >
                           <ButtonIcon as={Camera} />
@@ -172,7 +170,6 @@ export function SendActionSheet() {
                               variant={"outline"}
                               action={"primary"}
                               className='w-96 h-96 mx-auto rounded-xl border-dashed'
-                              size={"xl"}
                               onPress={() => setScanning(true)}
                             >
                               <ButtonIcon as={QrCode} />
@@ -199,8 +196,7 @@ export function SendActionSheet() {
                 {!arkaicPayment ? (
                   <Button
                     className='w-max'
-                    action={"secondary"}
-                    size={"xs"}
+                    variant={"outline"}
                     onPress={() => {
                       setScanning(false);
                       pasteFromClipboard(undefined, {

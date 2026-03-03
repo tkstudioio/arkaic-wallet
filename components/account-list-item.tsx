@@ -102,7 +102,7 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
                 <ButtonText>Unlock</ButtonText>
               </Button>
               <Button
-                variant='ghost'
+                variant='link'
                 action='secondary'
                 onPress={() => setShowPassphraseModal(false)}
                 className='w-full'

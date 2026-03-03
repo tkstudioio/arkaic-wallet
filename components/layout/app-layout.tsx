@@ -66,17 +66,12 @@ function AppLayoutContent(props: PropsWithChildren) {
               trigger={(triggerProps) => (
                 <Button
                   ref={menuTriggerRef}
-                  action={"secondary"}
+                  variant={"outline"}
+                  size={"sm"}
                   className='w-min'
                   {...triggerProps}
                 >
-                  <ButtonText className='text-arkaic-foreground'>
-                    {account?.name}
-                  </ButtonText>
-                  <ButtonIcon
-                    as={MenuIcon}
-                    className='text-arkaic-foreground'
-                  />
+                  <ButtonIcon as={MenuIcon} />
                 </Button>
               )}
             >
@@ -162,7 +157,7 @@ function AppLayoutContent(props: PropsWithChildren) {
             <VStack space='sm'>
               <P>
                 Are you sure you want to delete{" "}
-                <P className="font-heading">{account?.name}</P>?
+                <P className='font-heading'>{account?.name}</P>?
               </P>
               <P>
                 This action is irreversible. If you have not backed up your seed
@@ -185,7 +180,7 @@ function AppLayoutContent(props: PropsWithChildren) {
                 )}
               </Button>
               <Button
-                variant='ghost'
+                variant='link'
                 action='secondary'
                 onPress={() => setShowDeleteModal(false)}
                 disabled={deleteAccountMutation.isPending}

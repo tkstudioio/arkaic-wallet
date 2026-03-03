@@ -53,7 +53,7 @@ export default function PosComponent(props: PosComponentProps) {
             return (
               <Button
                 key={row}
-                action='secondary'
+                variant={"outline"}
                 className='flex-1 aspect-video'
                 onPress={() => onChange(digit)}
               >
@@ -73,15 +73,15 @@ export default function PosComponent(props: PosComponentProps) {
           <ButtonText>C</ButtonText>
         </Button>
         <Button
-          action='secondary'
+          variant={"outline"}
           className='w-max flex-1 aspect-video  px-5'
           onPress={() => onChange(0)}
         >
           <ButtonText>{0}</ButtonText>
         </Button>
         <Button
+          variant={"outline"}
           className='w-max flex-1 aspect-video  px-5'
-          action='secondary'
           onPress={handleBackspace}
         >
           <ButtonIcon as={Delete} />

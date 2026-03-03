@@ -91,7 +91,11 @@ export function ReceiveActionSheet() {
 
   return (
     <>
-      <Button action={"primary"} size={"big"} onPress={() => setOpen(true)}>
+      <Button
+        action={"primary"}
+        onPress={() => setOpen(true)}
+        className='flex-shrink-0'
+      >
         <ButtonIcon as={Plus} />
         <ButtonText>Receive</ButtonText>
       </Button>
@@ -131,7 +135,7 @@ export function ReceiveActionSheet() {
                 <PosComponent value={amountInSats} onChange={setAmountInSats} />
               </VStack>
               <VStack space={"md"}>
-                <Button onPress={() => setShowQrCode(true)}>
+                <Button onPress={() => setShowQrCode(true)} action={"positive"}>
                   <ButtonText>
                     {amountInSats ? "Show QR" : "Show without amount"}
                   </ButtonText>
@@ -191,7 +195,7 @@ export function ReceiveActionSheet() {
                         </Button>
                         {currentAddress && (
                           <Button
-                            action={"secondary"}
+                            variant={"outline"}
                             onPress={() => copyToClipboard(currentAddress)}
                           >
                             <ButtonText>Copy to clipboard</ButtonText>

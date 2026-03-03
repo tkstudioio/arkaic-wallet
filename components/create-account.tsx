@@ -15,10 +15,10 @@ export function CreateAccount() {
 
   return (
     <VStack className='w-full' space={"md"}>
-      <Button onPress={onCreate} action={"primary"} size='lg'>
+      <Button onPress={onCreate}>
         <ButtonText>Create account</ButtonText>
       </Button>
-      <Button onPress={onRestoreFromSeedPhrase} action={"secondary"} size='lg'>
+      <Button onPress={onRestoreFromSeedPhrase} variant={"outline"}>
         <ButtonText>Restore account</ButtonText>
       </Button>
     </VStack>
