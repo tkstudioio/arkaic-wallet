@@ -1,3 +1,45 @@
+### 0.2.0 (2026-03-03)
+
+##### Chores
+
+*  update yarn.lock (de4a052e)
+
+##### Continuous Integration
+
+* **release:**  auto-push commits and tags after version bump (ede46210)
+*  add automated iOS build/submit on tag push (5a36e965)
+
+##### Documentation Changes
+
+* **claude:**  add agent definitions and task specifications (0b1fa35a)
+* **versioning:**  add automatic changelog generation documentation (f82e1b91)
+
+##### Bug Fixes
+
+* **send:**  improve QR scanner and paste button sizing (4702bd3e)
+* **account-balance:**  only show spinner during balance refetch (a7726b93)
+* **dashboard:**  wrap action buttons in flex-1 containers for equal sizing (968287a6)
+* **ui:**  use foreground token for base text color instead of primary-foreground (e7fbcb9e)
+
+##### Other Changes
+
+* **theme:**  update primary color palette from purple to pink" (40cae1a2)
+
+##### Refactors
+
+* **layout:**  replace menu dropdown with drawer navigation (12a10d2f)
+* **account-balance:**  replace ts-pattern match with explicit conditionals and add account name badge (52f52e7e)
+* **components:**  migrate button variants from secondary/ghost to outline/link (43ec990e)
+* **ui:**  remove non-standard button sizes and add action-colored outline borders (28f55b2a)
+
+##### Code Style Changes
+
+* **ui:**  update button actions and variants across components (47202d54)
+* **button:**  add neutral action and refine outline variant styles (aa45b47b)
+* **layout:**  reduce top padding and remove bottom padding (a7646380)
+* **drawer:**  normalize quotes and sort imports (b4b861c6)
+* **theme:**  update primary color palette from purple to pink (f4d1868d)
+
 ### 0.1.0 (2026-03-03)
 
 ##### Chores
