@@ -9,6 +9,7 @@ import { VStack } from "@/components/ui/vstack";
 import useAccountStore from "@/stores/account";
 
 import React from "react";
+import { View } from "react-native";
 import { match } from "ts-pattern";
 
 const DashboardPage = () => {
@@ -21,9 +22,13 @@ const DashboardPage = () => {
         .otherwise((account) => (
           <VStack className='px-arkaic-md flex-1' space={"4xl"}>
             <AccountBalance account={account} />
-            <HStack className='gap-3 w-full'>
-              <ReceiveActionSheet />
-              <SendActionSheet />
+            <HStack className='gap-6 w-full'>
+              <View className='flex-1'>
+                <ReceiveActionSheet />
+              </View>
+              <View className='flex-1'>
+                <SendActionSheet />
+              </View>
             </HStack>
             <Transactions />
           </VStack>
