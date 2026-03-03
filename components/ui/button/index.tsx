@@ -59,12 +59,9 @@ const buttonStyle = tva({
     },
 
     size: {
-      xs: "px-3.5 py-1.5",
       sm: "px-4 py-2",
       md: "px-5 py-3",
       lg: "px-6 py-4",
-      xl: "px-7 py-5",
-      big: "flex-row flex-1 h-max py-5 px-4 gap-3",
     },
   },
   compoundVariants: [
@@ -96,25 +93,25 @@ const buttonStyle = tva({
       action: "primary",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
+        "bg-transparent border-arkaic-primary data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
     },
     {
       action: "secondary",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
+        "bg-transparent border-arkaic-primary data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
     },
     {
       action: "positive",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
+        "bg-transparent border-arkaic-positive data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
     },
     {
       action: "negative",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
+        "bg-transparent border-arkaic-negative data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-transparent",
     },
   ],
 });
@@ -139,12 +136,9 @@ const buttonTextStyle = tva({
         "text-arkaic-primary-foreground data-[hover=true]:text-arkaic-primary-foreground data-[active=true]:text-arkaic-primary-foreground",
     },
     size: {
-      xs: "text-xs",
       sm: "text-sm",
       md: "text-base",
       lg: "text-lg",
-      xl: "text-xl",
-      big: "text-lg",
     },
   },
   parentCompoundVariants: [
@@ -209,12 +203,9 @@ const buttonIconStyle = tva({
         "text-arkaic-primary-foreground data-[hover=true]:text-arkaic-primary-foreground data-[active=true]:text-arkaic-primary-foreground",
     },
     size: {
-      xs: "h-3.5 w-3.5",
       sm: "h-4 w-4",
       md: "h-[18px] w-[18px]",
       lg: "h-[18px] w-[18px]",
-      xl: "h-5 w-5",
-      big: "h-7 w-7",
     },
     action: {
       primary:
