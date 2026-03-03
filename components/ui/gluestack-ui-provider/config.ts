@@ -155,11 +155,11 @@ export const config = {
     "--color-indicator-error": "185 28 28",
 
     /* Arkaic Tokens */
-    "--color-arkaic-background": "15 23 42",
+    "--color-arkaic-background": "0 23 42",
     "--color-arkaic-foreground": "248 250 252",
     "--color-arkaic-muted": "148 148 148",
-    "--color-arkaic-primary": "136 39 138",
-    "--color-arkaic-primary-foreground": "226 226 226",
+    "--color-arkaic-primary": "249 143 196",
+    "--color-arkaic-primary-foreground": "26 35 56",
     "--color-arkaic-fill": "26 35 56",
     "--color-arkaic-border": "198 185 197",
     "--color-arkaic-shadow": "116 59 116",
