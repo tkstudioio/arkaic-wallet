@@ -37,7 +37,9 @@ export function AccountBalance(props: { account: ArkaicAccount }) {
         <BadgeText>{account?.name}</BadgeText>
       </Badge>
       <HStack>
-        <Spinner className='absolute -right-4 ' />
+        {balanceQuery.isRefetching && (
+          <Spinner className='absolute -right-4 ' />
+        )}
         <AmountComponent amount={balanceQuery.data?.available} size='6xl' />
       </HStack>
     </VStack>
