@@ -35,7 +35,7 @@ const Text = React.forwardRef<React.ComponentRef<typeof RNText>, ITextProps>(
           sub: sub as boolean,
           italic: italic as boolean,
           highlight: highlight as boolean,
-          class: cnBase("text-arkaic-primary-foreground", className),
+          class: cnBase("text-arkaic-foreground", className),
         })}
         {...props}
         ref={ref}
