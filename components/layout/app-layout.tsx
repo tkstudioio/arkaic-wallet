@@ -65,7 +65,7 @@ function AppLayoutContent(props: PropsWithChildren) {
 
   return (
     <>
-      <View className='flex-1 pt-24 pb-24 bg-arkaic-background'>
+      <View className='flex-1 pt-16 bg-arkaic-background'>
         <VStack space={"4xl"} className='items-center flex-1'>
           <HStack className='items-center justify-between w-full px-arkaic-md'>
             <LogoFull height={24} width={100} className='flex-1' />
