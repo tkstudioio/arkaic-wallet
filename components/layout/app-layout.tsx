@@ -1,17 +1,24 @@
 import LogoFull from "@/components/icons/logo";
+import {
+  Drawer,
+  DrawerBackdrop,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+} from "@/components/ui/drawer";
 import { useDeleteAccount } from "@/hooks/use-delete-account";
 import useAccountStore from "@/stores/account";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { MenuIcon } from "lucide-react-native";
-import { PropsWithChildren, useMemo, useRef, useState } from "react";
+import { FileKey2, LogOut, MenuIcon } from "lucide-react-native";
+import { PropsWithChildren, useMemo, useState } from "react";
 import { View } from "react-native";
 import ToastManager from "toastify-react-native";
 import { Badge, BadgeText } from "../ui/badge";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { Heading } from "../ui/heading";
 import { HStack } from "../ui/hstack";
-import { Menu, MenuItem, MenuItemLabel, MenuSeparator } from "../ui/menu";
 import {
   Modal,
   ModalBackdrop,
@@ -21,7 +28,7 @@ import {
   ModalHeader,
 } from "../ui/modal";
 import { Spinner } from "../ui/spinner";
-import { P } from "../ui/typography";
+import { Large, P } from "../ui/typography";
 import { VStack } from "../ui/vstack";
 
 export default function AppLayout(props: PropsWithChildren) {
@@ -39,9 +46,9 @@ function AppLayoutContent(props: PropsWithChildren) {
   const router = useRouter();
   const { account, logout } = useAccountStore();
   const deleteAccountMutation = useDeleteAccount();
+  const [showDrawer, setShowDrawer] = useState(false);
   const [showBackupModal, setShowBackupModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const menuTriggerRef = useRef(null);
 
   const mnemonicWords = account?.mnemonic?.split(" ") ?? [];
 
@@ -50,6 +57,7 @@ function AppLayoutContent(props: PropsWithChildren) {
     deleteAccountMutation.mutate(account.name, {
       onSuccess: () => {
         setShowDeleteModal(false);
+        setShowDrawer(false);
         router.replace("/");
       },
     });
@@ -61,51 +69,14 @@ function AppLayoutContent(props: PropsWithChildren) {
         <VStack space={"4xl"} className='items-center flex-1'>
           <HStack className='items-center justify-between w-full px-arkaic-md'>
             <LogoFull height={24} width={100} className='flex-1' />
-            <Menu
-              placement='bottom right'
-              trigger={(triggerProps) => (
-                <Button
-                  ref={menuTriggerRef}
-                  variant={"outline"}
-                  size={"sm"}
-                  className='w-min'
-                  {...triggerProps}
-                >
-                  <ButtonIcon as={MenuIcon} />
-                </Button>
-              )}
+            <Button
+              variant={"outline"}
+              size={"sm"}
+              className='w-min'
+              onPress={() => setShowDrawer(true)}
             >
-              {mnemonicWords.length > 0 ? (
-                <MenuItem
-                  key='backup'
-                  textValue='Backup seed phrase'
-                  onPress={() => setShowBackupModal(true)}
-                >
-                  <MenuItemLabel>Backup seed phrase</MenuItemLabel>
-                </MenuItem>
-              ) : null}
-              <MenuItem
-                key='delete'
-                textValue='Delete account'
-                onPress={() => setShowDeleteModal(true)}
-              >
-                <MenuItemLabel>Delete account</MenuItemLabel>
-              </MenuItem>
-              <MenuSeparator />
-
-              <MenuItem
-                key='logout'
-                textValue='Log out'
-                action='negative'
-                variant={"link"}
-                onPress={() => {
-                  logout();
-                  router.replace("/");
-                }}
-              >
-                <MenuItemLabel>Log out</MenuItemLabel>
-              </MenuItem>
-            </Menu>
+              <ButtonIcon as={MenuIcon} />
+            </Button>
           </HStack>
 
           {props.children}
@@ -181,7 +152,7 @@ function AppLayoutContent(props: PropsWithChildren) {
               </Button>
               <Button
                 variant='link'
-                action='secondary'
+                action='negative'
                 onPress={() => setShowDeleteModal(false)}
                 disabled={deleteAccountMutation.isPending}
               >
@@ -191,6 +162,61 @@ function AppLayoutContent(props: PropsWithChildren) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <Drawer
+        isOpen={showDrawer}
+        size='lg'
+        anchor='right'
+        onClose={() => {
+          setShowDrawer(false);
+        }}
+      >
+        <DrawerBackdrop />
+        <DrawerContent>
+          <DrawerHeader>
+            <Large>Menu</Large>
+          </DrawerHeader>
+          <DrawerBody>
+            <VStack space={"lg"}>
+              <Button
+                variant='outline'
+                action={"positive"}
+                onPress={() => {
+                  setShowBackupModal(true);
+                }}
+              >
+                <ButtonIcon as={FileKey2} />
+                <ButtonText>Backup seed phrase</ButtonText>
+              </Button>
+
+              <Button
+                variant='outline'
+                action={"negative"}
+                onPress={() => {
+                  setShowDeleteModal(true);
+                }}
+              >
+                <ButtonIcon as={FileKey2} />
+                <ButtonText>Delete account</ButtonText>
+              </Button>
+            </VStack>
+          </DrawerBody>
+          <DrawerFooter>
+            <Button
+              action={"negative"}
+              variant='outline'
+              onPress={() => {
+                logout();
+                router.replace("/");
+                setShowDrawer(false);
+              }}
+            >
+              <ButtonIcon as={LogOut} />
+              <ButtonText>Log out</ButtonText>
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }
