@@ -1,14 +1,18 @@
 {
   "name": "arkaic",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "changelog": "changelog",
+    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'bumped major' && npm version major",
+    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'bumped minor' && npm version minor",
+    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'bumped minor' && npm version patch"
   },
   "dependencies": {
     "@arkade-os/boltz-swap": "^0.2.6",
@@ -90,6 +94,7 @@
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "generate-changelog": "^1.8.0",
     "typescript": "~5.9.2"
   },
   "private": true
