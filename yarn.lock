@@ -35,10 +35,11 @@
     bip68 "1.0.4"
 
 "@arkade-os/sdk@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.npmjs.org/@arkade-os/sdk/-/sdk-0.3.0.tgz"
-  integrity sha512-PSW4O80un4fQm9WpCEi/Nf5HtxPRqiB7YaixY9QnQH6UImeqmTntNPVNENJl6cvgBVc02//XOBKju+qT0K3Nxg==
+  version "0.3.13"
+  resolved "https://registry.yarnpkg.com/@arkade-os/sdk/-/sdk-0.3.13.tgz#105da96412802a3fb4241792013d1ab6b59bf037"
+  integrity sha512-eC6XGifqVf2Xu+sf/3T2duUgLiXlgh/IQXHD+v09wsu8ik/CZedH4gvQpetTjRMKti3DdY/QVLC1OQTKKWgvqQ==
   dependencies:
+    "@marcbachmann/cel-js" "7.3.1"
     "@noble/curves" "2.0.0"
     "@noble/secp256k1" "3.0.0"
     "@scure/base" "2.0.0"
@@ -1666,6 +1667,11 @@
   resolved "https://registry.npmjs.org/@legendapp/tools/-/tools-2.0.1.tgz"
   integrity sha512-Kxt0HWvWElRK6oybHRzcYxdgaKGwuaiRNreS7usW7QuHXRIHaH4yMcW2YNRG4DHE5fpefv+Bno/BohQcCE4FaA==
 
+"@marcbachmann/cel-js@7.3.1":
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/@marcbachmann/cel-js/-/cel-js-7.3.1.tgz#03b43ea949bce6b9da2f2d0063672c9b9b16db06"
+  integrity sha512-P6o26TvjStT8V8+8EF+yq9Pp7ZFV00bpiUMbssr76XbIZGxaB+NNWeBp6WNxOrR9gp0JPzvJueCKHpOs5LE9PQ==
+
 "@napi-rs/wasm-runtime@^0.2.11":
   version "0.2.12"
   resolved "https://registry.yarnpkg.com/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz#3e78a8b96e6c33a6c517e1894efbd5385a7cb6f2"
@@ -1677,31 +1683,31 @@
 
 "@noble/curves@2.0.0":
   version "2.0.0"
-  resolved "https://registry.npmjs.org/@noble/curves/-/curves-2.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-2.0.0.tgz#1b1d75b447e5ccfaa6a4a3c34280f0c02a763f57"
   integrity sha512-RiwZZeJnsTnhT+/gg2KvITJZhK5oagQrpZo+yQyd3mv3D5NAG2qEeEHpw7IkXRlpkoD45wl2o4ydHAvY9wyEfw==
   dependencies:
     "@noble/hashes" "2.0.0"
 
 "@noble/curves@2.0.1", "@noble/curves@~2.0.0":
   version "2.0.1"
-  resolved "https://registry.npmjs.org/@noble/curves/-/curves-2.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-2.0.1.tgz#64ba8bd5e8564a02942655602515646df1cdb3ad"
   integrity sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw==
   dependencies:
     "@noble/hashes" "2.0.1"
 
 "@noble/hashes@2.0.0":
   version "2.0.0"
-  resolved "https://registry.npmjs.org/@noble/hashes/-/hashes-2.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-2.0.0.tgz#5c39388259a0868cadb17d688cd8cf07eae344a4"
   integrity sha512-h8VUBlE8R42+XIDO229cgisD287im3kdY6nbNZJFjc6ZvKIXPYXe6Vc/t+kyjFdMFyt5JpapzTsEg8n63w5/lw==
 
 "@noble/hashes@2.0.1", "@noble/hashes@^2.0.1", "@noble/hashes@~2.0.0":
   version "2.0.1"
-  resolved "https://registry.npmjs.org/@noble/hashes/-/hashes-2.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-2.0.1.tgz#fc1a928061d1232b0a52bb754393c37a5216c89e"
   integrity sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==
 
 "@noble/secp256k1@3.0.0":
   version "3.0.0"
-  resolved "https://registry.npmjs.org/@noble/secp256k1/-/secp256k1-3.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@noble/secp256k1/-/secp256k1-3.0.0.tgz#29711361db8f37b1b7e0b8d80c933013fc887475"
   integrity sha512-NJBaR352KyIvj3t6sgT/+7xrNyF9Xk9QlLSIqUGVUYlsnDTAUqY8LOmwpcgEx4AMJXRITQ5XEVHD+mMaPfr3mg==
 
 "@nodelib/fs.scandir@2.1.5":
@@ -3250,7 +3256,7 @@
 
 "@scure/base@2.0.0", "@scure/base@~2.0.0":
   version "2.0.0"
-  resolved "https://registry.npmjs.org/@scure/base/-/base-2.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@scure/base/-/base-2.0.0.tgz#ba6371fddf92c2727e88ad6ab485db6e624f9a98"
   integrity sha512-3E1kpuZginKkek01ovG8krQ0Z44E3DHPjc5S2rjJw9lZn3KSQOs8S7wqikF/AH7iRanHypj85uGyxk0XAyC37w==
 
 "@scure/bip32@^2.0.1":
@@ -3272,7 +3278,7 @@
 
 "@scure/btc-signer@2.0.1":
   version "2.0.1"
-  resolved "https://registry.npmjs.org/@scure/btc-signer/-/btc-signer-2.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/@scure/btc-signer/-/btc-signer-2.0.1.tgz#06267325f80c8c6880dd846620ed859fea908a1e"
   integrity sha512-vk5a/16BbSFZkhh1JIJ0+4H9nceZVo5WzKvJGGWiPp3sQOExeW+L53z3dI6u0adTPoE8ZbL+XEb6hEGzVZSvvQ==
   dependencies:
     "@noble/curves" "~2.0.0"
@@ -4239,7 +4245,7 @@ binary-extensions@^2.0.0:
 
 bip68@1.0.4:
   version "1.0.4"
-  resolved "https://registry.npmjs.org/bip68/-/bip68-1.0.4.tgz"
+  resolved "https://registry.yarnpkg.com/bip68/-/bip68-1.0.4.tgz#78a95c7a43fad183957995cc2e08d79b0c372c4d"
   integrity sha512-O1htyufFTYy3EO0JkHg2CLykdXEtV2ssqw47Gq9A0WByp662xpJnMEB9m43LZjsSDjIAOozWRExlFQk2hlV1XQ==
 
 bluebird@^3.0.6:
@@ -7234,7 +7240,7 @@ metro@0.83.3, metro@^0.83.1:
 
 micro-packed@~0.8.0:
   version "0.8.0"
-  resolved "https://registry.npmjs.org/micro-packed/-/micro-packed-0.8.0.tgz"
+  resolved "https://registry.yarnpkg.com/micro-packed/-/micro-packed-0.8.0.tgz#fe516c50b7150fd84728b8456731f79e2925eaf8"
   integrity sha512-AKb8znIvg9sooythbXzyFeChEY0SkW0C6iXECpy/ls0e5BtwXO45J9wD9SLzBztnS4XmF/5kwZknsq+jyynd/A==
   dependencies:
     "@scure/base" "2.0.0"
