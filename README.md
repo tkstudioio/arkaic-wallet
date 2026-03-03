@@ -212,6 +212,76 @@ yarn lint
 
 # Reset completo del progetto
 yarn reset-project
+
+# Genera changelog automaticamente
+yarn changelog
+
+# Rilascia una nuova versione
+yarn release:major    # Incremento versione major (es. 0.1.0 → 1.0.0)
+yarn release:minor    # Incremento versione minor (es. 0.1.0 → 0.2.0)
+yarn release:patch    # Incremento versione patch (es. 0.1.0 → 0.1.1)
+```
+
+---
+
+## 📝 Versionamento Automatico
+
+Il progetto integra un sistema di **generazione changelog automatica** basato sui commit utilizzando [`generate-changelog`](https://github.com/lob/generate-changelog). Il changelog viene automaticamente generato dal file `CHANGELOG.md` analizzando i messaggi di commit che seguono lo standard Conventional Commits.
+
+### Come Funziona
+
+Il sistema classifica automaticamente i commit in base al loro tipo:
+
+- **`feat` commits** → sezione "Features"
+- **`fix` commits** → sezione "Fixes"
+- **`refactor`, `style`, `perf`, etc.** → raggruppati per tipo
+- **Breaking changes** (indicati da `!` prima di `:`) → evidenziati nel changelog
+
+### Processo di Rilascio
+
+Quando usi `yarn release:*`:
+
+1. **Genera** il changelog basato sui nuovi commit
+2. **Aggiorna** il file `CHANGELOG.md`
+3. **Fa il commit** del changelog
+4. **Incrementa** la versione in `package.json`
+5. **Crea** un git tag con il numero di versione
+
+Esempio di workflow:
+
+```bash
+# Dopo aver fatto diversi commit seguendo Conventional Commits
+git log --oneline
+# feat: add payment history
+# fix: correct balance display
+# style: update button colors
+
+# Esegui il rilascio
+yarn release:minor
+
+# Risultato:
+# - CHANGELOG.md aggiornato con le nuove feature e fix
+# - package.json versione: 0.1.0 → 0.2.0
+# - nuovo git commit e tag 0.2.0
+```
+
+### Esempio di Changelog Generato
+
+```markdown
+# [0.2.0](https://github.com/tkstudio/arkaic-wallet/compare/0.1.0...0.2.0) (2025-03-03)
+
+## Features
+
+- **ui**: add payment history display ([abc1234](https://github.com/tkstudio/arkaic-wallet/commit/abc1234))
+- **wallet**: improve balance calculation accuracy ([def5678](https://github.com/tkstudio/arkaic-wallet/commit/def5678))
+
+## Fixes
+
+- **display**: correct balance rounding in sats display ([ghi9012](https://github.com/tkstudio/arkaic-wallet/commit/ghi9012))
+
+## Style
+
+- **ui**: update button colors for better visibility ([jkl3456](https://github.com/tkstudio/arkaic-wallet/commit/jkl3456))
 ```
 
 ---

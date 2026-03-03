@@ -143,6 +143,47 @@ Category value is not required but recommended.
 
 **Important**: Never add "Co-Authored-By: Claude" or any AI attribution to commit messages.
 
+## Versioning System
+
+Arkaic integrates **automatic changelog generation** based on commits using [`generate-changelog`](https://github.com/lob/generate-changelog). The system automatically generates `CHANGELOG.md` from commit messages following the Conventional Commits standard.
+
+### Release Commands
+
+Release commands automatically:
+1. Generate/update `CHANGELOG.md` based on commits
+2. Stage and commit the changelog
+3. Bump the version in `package.json` and `package-lock.json`
+4. Create a git tag
+
+**Release commands**:
+
+```bash
+yarn release:major    # Major version bump (e.g., 0.1.0 → 1.0.0)
+yarn release:minor    # Minor version bump (e.g., 0.1.0 → 0.2.0)
+yarn release:patch    # Patch version bump (e.g., 0.1.0 → 0.1.1)
+```
+
+**Manual changelog generation** (without version bump):
+
+```bash
+yarn changelog        # Generate changelog from commits
+```
+
+### How It Works
+
+- **`feat` commits** → `## Features` section
+- **`fix` commits** → `## Fixes` section
+- **`refactor`, `style`, `perf`, etc.** → grouped by type
+- **Breaking changes** (indicated by `!` before `:`) → highlighted in changelog
+
+Example:
+```
+feat(ui): add dark mode support
+fix!: change API response format (breaking change)
+```
+
+The changelog is automatically included in git history, making version history transparent and reproducible.
+
 ## Language
 
 All code, comments, and content in this repository — including future updates to this file — must be written in **English**.
