@@ -10,9 +10,9 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "changelog": "changelog",
-    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'bumped major' && npm version major",
-    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'bumped minor' && npm version minor",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'bumped patch' && npm version patch",
+    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'bumped major' && npm version major && git push origin && git push origin --tags",
+    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'bumped minor' && npm version minor && git push origin && git push origin --tags",
+    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'bumped patch' && npm version patch && git push origin && git push origin --tags",
     "version": "node scripts/sync-app-version.js && git add app.json",
     "prepare": "husky"
   },
