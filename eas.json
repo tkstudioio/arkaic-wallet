@@ -17,5 +17,12 @@
       "distribution": "internal"
     },
     "production": {}
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6759912451"
+      }
+    }
   }
 }
