@@ -6,7 +6,7 @@ import { match } from "ts-pattern";
 import { AccountListItem } from "./account-list-item";
 import { CreateAccount } from "./create-account";
 
-import { Large } from "./ui/typography";
+import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function Home() {
