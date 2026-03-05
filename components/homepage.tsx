@@ -6,7 +6,7 @@ import { match } from "ts-pattern";
 import { AccountListItem } from "./account-list-item";
 import { CreateAccount } from "./create-account";
 
-import { Large, Muted } from "./ui/typography";
+import { Large } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function Home() {
@@ -18,26 +18,20 @@ export function Home() {
       <VStack space={"4xl"}>
         <NoAccountsImage
           height={Dimensions.get("window").height * 0.3}
-          width="100%"
+          width='100%'
         />
         <VStack>
-          <Large className='text-center'>
-            No accounts found
-          </Large>
-          <Muted className='text-center'>
+          <Large className='text-center'>No accounts found</Large>
+          <P className='text-center'>
             create a new account or restore from private key to get started with
             arkaic wallet
-          </Muted>
+          </P>
         </VStack>
         <CreateAccount />
       </VStack>
     ))
     .otherwise((accounts) => (
       <VStack className='w-full h-full' space={"3xl"}>
-        <VStack className='items-center w-full' space={"xs"}>
-          <Large>Login to one of your accounts</Large>
-          <Muted>tap on an account and log in</Muted>
-        </VStack>
         <ScrollView
           className='flex-1'
           style={{ width: "100%" }}

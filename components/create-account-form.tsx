@@ -38,7 +38,7 @@ import { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { match } from "ts-pattern";
 import { Card } from "./ui/card";
-import { Large, Muted, P, Small } from "./ui/typography";
+import { Large, P, Small } from "./ui/typography";
 
 type WordCount = 12 | 24;
 
@@ -175,10 +175,10 @@ export default function CreateOrRestoreAccountForm(props: {
         <VStack space='4xl' className='items-center flex-1 justify-center'>
           <VStack className='items-center' space='xs'>
             <Large>Passphrase</Large>
-            <Muted className='text-center'>
+            <P className='text-center'>
               Add an optional passphrase for extra security. Leave empty if you
               {"don't want one."}
-            </Muted>
+            </P>
           </VStack>
 
           <VStack space='xs' className='w-full'>
@@ -215,10 +215,10 @@ export default function CreateOrRestoreAccountForm(props: {
           <VStack space='xl' className='items-center flex-1 justify-center'>
             <VStack className='items-center' space='xs'>
               <Large>Your seed phrase</Large>
-              <Muted className='text-center'>
+              <P className='text-center'>
                 Write down these words in order. This is the only way to recover
                 your wallet.
-              </Muted>
+              </P>
             </VStack>
             <Card className='w-full' variant='ghost'>
               <HStack className='flex-wrap gap-2 justify-center'>
@@ -257,9 +257,9 @@ export default function CreateOrRestoreAccountForm(props: {
           <VStack space='4xl' className='items-center flex-1 justify-center'>
             <VStack className='items-center' space='xs'>
               <Large>Verify backup</Large>
-              <Muted className='text-center'>
+              <P className='text-center'>
                 Enter the correct word for each position to verify your backup.
-              </Muted>
+              </P>
             </VStack>
 
             <VStack space={"xl"}>
@@ -306,9 +306,9 @@ export default function CreateOrRestoreAccountForm(props: {
       <ScrollView style={{ width: "100%" }} contentContainerStyle={{ gap: 32 }}>
         <VStack className='items-center' space='xs'>
           <Large>Enter seed phrase</Large>
-          <Muted className='text-center'>
+          <P className='text-center'>
             Enter your {wordCount}-word seed phrase to restore your wallet.
-          </Muted>
+          </P>
         </VStack>
         <VStack space='sm'>
           {restoreWords.map((word, i) => (
@@ -356,9 +356,9 @@ export default function CreateOrRestoreAccountForm(props: {
           />
           <VStack className='items-center' space='xs'>
             <Large>Account info</Large>
-            <Muted className='text-center'>
+            <P className='text-center'>
               Give your account a name and select an ASP to connect to.
-            </Muted>
+            </P>
           </VStack>
         </VStack>
         <Formik
@@ -418,7 +418,7 @@ export default function CreateOrRestoreAccountForm(props: {
                     />
                   </Input>
                   {touched.name && errors.name && (
-                    <Muted className='text-error-500'>{errors.name}</Muted>
+                    <P className='text-error-500'>{errors.name}</P>
                   )}
                 </VStack>
                 <VStack space='xs'>

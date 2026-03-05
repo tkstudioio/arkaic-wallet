@@ -14,7 +14,7 @@ import { Transaction } from "./transaction";
 import { Divider } from "./ui/divider";
 import { HStack } from "./ui/hstack";
 import { Switch } from "./ui/switch";
-import { Large, Muted, P, Small } from "./ui/typography";
+import { Large, P, Small } from "./ui/typography";
 
 export function Transactions() {
   const { detailedTransactions, toggleDetailedTransactions } =
@@ -62,9 +62,9 @@ export function Transactions() {
               return (
                 <VStack>
                   <Large className='text-center'>No transactions</Large>
-                  <Muted className='text-center'>
+                  <P className='text-center'>
                     press &quot;receive&quot; to request a payment
-                  </Muted>
+                  </P>
                 </VStack>
               );
             })
