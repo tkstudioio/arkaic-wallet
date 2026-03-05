@@ -1,5 +1,4 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
 import { Camera, ClipboardPaste, QrCode, Send } from "lucide-react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -21,6 +20,7 @@ import { View } from "react-native";
 import { match } from "ts-pattern";
 import { ArkaicPayment } from "../types/arkaic";
 
+import { AmountComponent } from "./amount";
 import PosComponent from "./pos";
 import { Badge, BadgeText } from "./ui/badge";
 import { Divider } from "./ui/divider";
@@ -114,25 +114,32 @@ export function SendActionSheet() {
       </Button>
       <Actionsheet isOpen={open} onClose={() => setOpen(false)}>
         <ActionsheetBackdrop />
-        <ActionsheetContent className='gap-8'>
+        <ActionsheetContent className='gap-4'>
           <ActionsheetDragIndicatorWrapper>
             <ActionsheetDragIndicator />
           </ActionsheetDragIndicatorWrapper>
-
+          {arkaicPayment ? (
+            <>
+              <Badge action={isIntrapayment ? "success" : "warning"}>
+                <BadgeText>
+                  {isIntrapayment ? "Ark payment" : "Onchain payment"}
+                </BadgeText>
+              </Badge>
+              <AmountComponent amount={posValue} size='6xl' />
+              <Divider />
+            </>
+          ) : (
+            <VStack className='items-center'>
+              <Large>Pay an invoice</Large>
+              <P>Scan a QR or paste the invoice</P>
+            </VStack>
+          )}
           {match(sendBitcoinMutation)
             .with({ isSuccess: true }, () => (
               <>
                 <VStack className='items-center'>
                   <Large>Payment sent!</Large>
                 </VStack>
-                <Badge action={isIntrapayment ? "success" : "warning"}>
-                  <BadgeText>
-                    {isIntrapayment ? "Ark payment" : "Onchain payment"}
-                  </BadgeText>
-                </Badge>
-                <HStack className='items-center' space={"sm"}>
-                  <Text size='6xl'>{Intl.NumberFormat().format(posValue)}</Text>
-                </HStack>
                 <P className='text-center'>
                   {arkaicPayment
                     ? isIntrapayment
@@ -195,7 +202,8 @@ export function SendActionSheet() {
 
                 {!arkaicPayment ? (
                   <Button
-                    size='sm'
+                    action={"neutral"}
+                    variant={"outline"}
                     onPress={() => {
                       setScanning(false);
                       pasteFromClipboard(undefined, {
@@ -210,7 +218,10 @@ export function SendActionSheet() {
 
                 {arkaicPayment ? (
                   <VStack className='items-center' space={"2xl"}>
-                    <VStack className='items-center' space={"sm"}>
+                    <HStack
+                      className='items-between justify-between w-full'
+                      space={"sm"}
+                    >
                       <Large>Sending to:</Large>
                       <P className='text-center'>
                         {isIntrapayment
@@ -219,30 +230,6 @@ export function SendActionSheet() {
                             ? shortenAddress(arkaicPayment.lightningInvoice)
                             : shortenAddress(arkaicPayment.onchainAddress)}
                       </P>
-                      <Badge
-                        action={
-                          isIntrapayment
-                            ? "success"
-                            : arkaicPayment.lightningInvoice
-                              ? "info"
-                              : "warning"
-                        }
-                      >
-                        <BadgeText>
-                          {isIntrapayment
-                            ? "Ark payment"
-                            : arkaicPayment.lightningInvoice
-                              ? "Lightning Swap"
-                              : "Onchain payment"}
-                        </BadgeText>
-                      </Badge>
-                    </VStack>
-                    <Divider />
-
-                    <HStack className='items-center' space={"sm"}>
-                      <Text size='6xl'>
-                        {Intl.NumberFormat().format(posValue)}
-                      </Text>
                     </HStack>
 
                     {match(sendBitcoinMutation)
@@ -270,7 +257,7 @@ export function SendActionSheet() {
                               onChange={(value) => setPosValue(value || 0)}
                             />
                           )}
-                          <Divider />
+
                           <VStack space={"md"}>
                             <Button
                               className='w-max'
