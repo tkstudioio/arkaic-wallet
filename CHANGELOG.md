@@ -1,3 +1,31 @@
+#### 0.2.1 (2026-03-05)
+
+##### Continuous Integration
+
+* **ios:**  add App Store Connect submit profile to eas.json (fc452393)
+
+##### Documentation Changes
+
+* **agents:**  add prompt fallback when no task file exists (9110a912)
+
+##### Bug Fixes
+
+* **wallet:**  remove thresholdPercentage from VtxoManager config (469ad559)
+
+##### Refactors
+
+* **send:**  rework send action sheet layout (54ba02c6)
+* **receive:**  rework receive action sheet layout and flow (d52b97c8)
+* **qr-carousel:**  move controls below QR and add type badges (b15680e1)
+* **ui:**  replace Muted with P component across views (2d7707da)
+* **fonts:**  drop Ubuntu font family, use UbuntuMono only (a95cd418)
+
+##### Code Style Changes
+
+* **pos:**  update numpad button variants and sizes (a5fee39e)
+* **button:**  refine solid shadow and neutral/outline variant styles (7d86e2ac)
+* **theme:**  darken arkaic-border color token (88bf682f)
+
 ### 0.2.0 (2026-03-03)
 
 ##### Chores
