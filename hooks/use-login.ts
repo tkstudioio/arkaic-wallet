@@ -55,8 +55,8 @@ export function useLoginMutation() {
 
       const vtxoManager = new VtxoManager(wallet, {
         enabled: true,
-        thresholdPercentage: 10,
       });
+
       setStore({
         account: { ...account, privateKey },
         wallet,
