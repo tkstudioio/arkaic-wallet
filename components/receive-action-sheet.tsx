@@ -1,6 +1,5 @@
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { LayoutDashboard, Plus } from "lucide-react-native";
+import { Copy, Plus } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 
 import {
@@ -10,7 +9,7 @@ import {
   ActionsheetDragIndicator,
   ActionsheetDragIndicatorWrapper,
 } from "@/components/ui/actionsheet";
-import { useRouter } from "expo-router";
+
 import PosComponent from "./pos";
 
 import { usePaymentAddress } from "@/hooks/use-payment-address";
@@ -21,17 +20,18 @@ import { map, toString } from "lodash";
 import { match } from "ts-pattern";
 import { Input, InputField } from "./ui/input";
 import { Spinner } from "./ui/spinner";
-import { Large, Muted, P } from "./ui/typography";
+import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { Toast } from "toastify-react-native";
+import { AmountComponent } from "./amount";
 import { QrCarousel } from "./qr-carousel";
 import { HStack } from "./ui/hstack";
+import { CloseIcon } from "./ui/icon";
 
 export function ReceiveActionSheet() {
   const { arkadeLightning } = useAccountStore();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const walletAddressMutation = usePaymentAddress();
   const { mutate: copyToClipboard } = useCopyToClipboard();
@@ -46,19 +46,16 @@ export function ReceiveActionSheet() {
   const [amountInSats, setAmountInSats] = useState<number>(0);
   const [currentAddress, setCurrentAddress] = useState<string | undefined>();
 
-  function backToDashboard() {
-    queryClient.invalidateQueries({ queryKey: ["balance"] });
-    queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    router.replace("/dashboard");
-    setOpen(false);
-  }
-
   useEffect(() => {
     if (!wallet) return;
-    const stopListening = wallet.notifyIncomingFunds(setTransaction);
+    const stopListening = wallet.notifyIncomingFunds((transaction) => {
+      queryClient.invalidateQueries({ queryKey: ["balance"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      setTransaction(transaction);
+    });
 
     return () => {
-      stopListening.then((fn) => fn?.());
+      stopListening.then();
     };
   }, [wallet]);
 
@@ -110,7 +107,7 @@ export function ReceiveActionSheet() {
           {!showQrCode ? (
             <VStack className='items-center'>
               <Large>Select amount</Large>
-              <Muted>Type an amount or leave empty</Muted>
+              <P>Type an amount or leave empty</P>
             </VStack>
           ) : transaction ? (
             <VStack className='items-center'>
@@ -120,35 +117,39 @@ export function ReceiveActionSheet() {
           ) : (
             <VStack className='items-center'>
               <Large>Payment</Large>
-              <Muted>Show payment request</Muted>
+              <P>Show payment request</P>
             </VStack>
           )}
 
           {!showQrCode ? (
             <VStack space={"4xl"}>
               <VStack space={"md"} className='items-end'>
-                <HStack className='items-center' space={"sm"}>
-                  <Text size='6xl'>
-                    {Intl.NumberFormat().format(amountInSats)}
-                  </Text>
-                </HStack>
-                <PosComponent value={amountInSats} onChange={setAmountInSats} />
+                <AmountComponent size='5xl' amount={amountInSats} />
+                <PosComponent
+                  value={amountInSats}
+                  onChange={(amount) => setAmountInSats(amount || 0)}
+                />
               </VStack>
               <VStack space={"md"}>
-                <Button onPress={() => setShowQrCode(true)} action={"positive"}>
+                <Button
+                  onPress={() => setShowQrCode(true)}
+                  action={"positive"}
+                  variant={"outline"}
+                >
                   <ButtonText>
                     {amountInSats ? "Show QR" : "Show without amount"}
                   </ButtonText>
                 </Button>
                 <Button
+                  action='neutral'
                   variant={"link"}
-                  action='negative'
                   onPress={() => {
                     setOpen(false);
                     setAmountInSats(0);
                   }}
                 >
-                  <ButtonText>Cancel</ButtonText>
+                  <ButtonIcon as={CloseIcon} />
+                  <ButtonText>Close</ButtonText>
                 </Button>
               </VStack>
             </VStack>
@@ -165,44 +166,7 @@ export function ReceiveActionSheet() {
                 if (!data) return <P>No wallet generated</P>;
                 return (
                   <VStack space={"xl"} className='w-full'>
-                    {!transaction ? (
-                      <>
-                        <QrCarousel
-                          onAddressChange={setCurrentAddress}
-                          paymentOptions={[
-                            {
-                              type: "normal",
-                              address: data.paymentAddress,
-                            },
-                            ...(data.lnInvoice?.invoice
-                              ? [
-                                  {
-                                    type: "ln invoice" as const,
-                                    address: data.lnInvoice.invoice,
-                                  },
-                                ]
-                              : []),
-                          ]}
-                        />
-
-                        <Button
-                          disabled={true}
-                          variant={"link"}
-                          action='secondary'
-                        >
-                          <Spinner />
-                          <ButtonText>Waiting payment notification</ButtonText>
-                        </Button>
-                        {currentAddress && (
-                          <Button
-                            variant={"outline"}
-                            onPress={() => copyToClipboard(currentAddress)}
-                          >
-                            <ButtonText>Copy to clipboard</ButtonText>
-                          </Button>
-                        )}
-                      </>
-                    ) : (
+                    {
                       <>
                         {match(transaction)
                           .with({ type: "utxo" }, (coin) => (
@@ -220,10 +184,10 @@ export function ReceiveActionSheet() {
                                   />
                                 </Input>
                               ))}
-                              <Button onPress={backToDashboard}>
+                              {/* <Button onPress={backToDashboard}>
                                 <ButtonText>Back to dashboard</ButtonText>
                                 <ButtonIcon as={LayoutDashboard} />
-                              </Button>
+                              </Button> */}
                             </>
                           ))
                           .with({ type: "vtxo" }, (coin) =>
@@ -241,13 +205,47 @@ export function ReceiveActionSheet() {
                               </Input>
                             )),
                           )
+                          .with(undefined, () => (
+                            <>
+                              <QrCarousel
+                                onAddressChange={setCurrentAddress}
+                                paymentOptions={[
+                                  {
+                                    type: "normal",
+                                    address: data.paymentAddress,
+                                  },
+                                  ...(data.lnInvoice?.invoice
+                                    ? [
+                                        {
+                                          type: "ln invoice" as const,
+                                          address: data.lnInvoice.invoice,
+                                        },
+                                      ]
+                                    : []),
+                                ]}
+                              />
+
+                              {currentAddress && (
+                                <Button
+                                  action={"neutral"}
+                                  variant={"outline"}
+                                  onPress={() =>
+                                    copyToClipboard(currentAddress)
+                                  }
+                                >
+                                  <ButtonText>Copy to clipboard</ButtonText>
+                                  <ButtonIcon as={Copy} />
+                                </Button>
+                              )}
+                              <HStack space={"md"} className='mx-auto'>
+                                <Spinner />
+                                <P>Waiting payment notification</P>
+                              </HStack>
+                            </>
+                          ))
                           .otherwise(() => null)}
-                        <Button onPress={backToDashboard}>
-                          <ButtonText>Back to dashboard</ButtonText>
-                          <ButtonIcon as={LayoutDashboard} />
-                        </Button>
                       </>
-                    )}
+                    }
                   </VStack>
                 );
               })
