@@ -52,7 +52,6 @@ export function OnboardButton(
                   <VStack>
                     <Button
                       variant={"link"}
-                      variant={"outline"}
                       onPress={() =>
                         Linking.openURL(
                           `https://mempool.space/it/tx/${commitmentTxid}`,
