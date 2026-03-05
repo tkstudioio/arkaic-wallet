@@ -27,21 +27,21 @@ export const H1 = createTypographyComponent(
 );
 
 export const P = createTypographyComponent(
-  "font-body text-base text-arkaic-foreground leading-relaxed",
+  "font-body text-base text-arkaic-muted leading-relaxed",
   "P",
 );
 
 export const Large = createTypographyComponent(
-  "font-sans-medium text-[20px] text-arkaic-foreground",
+  "font-body text-[20px] text-arkaic-foreground",
   "Large",
 );
 
 export const Small = createTypographyComponent(
-  "font-sans-light text-sm text-arkaic-foreground",
+  "font-body text-sm text-arkaic-foreground",
   "Small",
 );
 
 export const Muted = createTypographyComponent(
-  "font-sans-light text-sm text-arkaic-muted",
+  "font-body text-sm text-arkaic-muted",
   "Muted",
 );

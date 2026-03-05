@@ -2,7 +2,6 @@ import * as Crypto from "expo-crypto";
 
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
-import { Ubuntu_300Light, Ubuntu_500Medium } from "@expo-google-fonts/ubuntu";
 import {
   UbuntuMono_400Regular,
   UbuntuMono_700Bold,
@@ -23,8 +22,6 @@ export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     UbuntuMono_400Regular,
     UbuntuMono_700Bold,
-    Ubuntu_300Light,
-    Ubuntu_500Medium,
   });
 
   useEffect(() => {
