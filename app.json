@@ -2,13 +2,13 @@
   "expo": {
     "name": "Arkaic Wallet",
     "slug": "arkaic",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "orientation": "portrait",
     "scheme": "arkaic",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
     "ios": {
-      "buildNumber": "0.2.0",
+      "buildNumber": "0.2.1",
       "icon": "./assets/icon.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.tkstudio.arkaicwallet",
