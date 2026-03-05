@@ -22,6 +22,8 @@ Use it as the source of truth for architecture, conventions, stack, and constrai
 Primary input is a task file in `.claude/tasks/developer/*.md`.
 If multiple task files exist and no specific one is given, choose the lowest pending task id by filename order (`01-...`, `02-...`, etc.) and state which file you are executing.
 
+If no file is found just execute the prompt given without any other task related instructions.
+
 ---
 
 ## Workflow
