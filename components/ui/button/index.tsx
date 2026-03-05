@@ -49,12 +49,12 @@ const buttonStyle = tva({
       negative:
         "bg-arkaic-negative border-arkaic-border data-[hover=true]:bg-arkaic-negative/90 data-[active=true]:bg-arkaic-negative/80 data-[focus-visible=true]:web:ring-indicator-info",
       neutral:
-        "bg-arkaic-muted border-arkaic-muted data-[hover=true]:bg-arkaic-muted/90 data-[active=true]:bg-arkaic-muted/80 data-[focus-visible=true]:web:ring-indicator-info",
+        "bg-arkaic-muted data-[hover=true]:bg-arkaic-muted/90 data-[active=true]:bg-arkaic-muted/80 data-[focus-visible=true]:web:ring-indicator-info",
     },
     variant: {
       link: "px-0",
       outline: "border",
-      solid: "shadow-arkaic",
+      solid: "",
     },
 
     size: {
@@ -64,6 +64,7 @@ const buttonStyle = tva({
     },
   },
   compoundVariants: [
+    { action: "primary", variant: "solid", class: "shadow-arkaic" },
     {
       action: "primary",
       variant: "link",
@@ -122,13 +123,13 @@ const buttonStyle = tva({
       action: "neutral",
       variant: "outline",
       class:
-        "bg-arkaic-fill border-arkaic-muted data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-arkaic-fill",
+        "bg-arkaic-fill border-arkaic-border data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-arkaic-fill",
     },
   ],
 });
 
 const buttonTextStyle = tva({
-  base: "text-arkaic-primary-foreground font-semibold web:select-none",
+  base: "text-arkaic-primary-foreground font-body font-semibold web:select-none",
   parentVariants: {
     action: {
       primary:
