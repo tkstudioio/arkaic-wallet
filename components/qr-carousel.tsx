@@ -8,7 +8,10 @@ import QRCode from "react-native-qrcode-skia";
 import { useSharedValue } from "react-native-reanimated";
 
 import { colors } from "@/theme/tokens";
-import { Button, ButtonGroup, ButtonText } from "./ui/button";
+
+import { Triangle, Zap } from "lucide-react-native";
+import { Badge, BadgeText } from "./ui/badge";
+import { Button, ButtonGroup, ButtonIcon, ButtonText } from "./ui/button";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
 
@@ -22,6 +25,7 @@ export function QrCarousel(props: {
   const progress = useSharedValue<number>(0);
   const width = Dimensions.get("window").width;
   const qrSize = width - 48;
+  const carouselHeight = qrSize + 56; // qr + badge (~28px) + mb-4 (16px) + extra
 
   const currentAddress = props.paymentOptions[index]?.address;
 
@@ -36,28 +40,10 @@ export function QrCarousel(props: {
 
   return (
     <VStack space={"xl"} className='items-center'>
-      <HStack space={"sm"}>
-        <ButtonGroup flexDirection='row'>
-          {map(props.paymentOptions, (option, i) => (
-            <Button
-              key={option.type}
-              action={i === index ? "primary" : "secondary"}
-              isDisabled={i === index}
-              onPress={() => goToSlide(i)}
-              className='w-min'
-            >
-              <ButtonText>
-                {option.type === "normal" ? "Arkaic payment" : "Lightning swap"}
-              </ButtonText>
-            </Button>
-          ))}
-        </ButtonGroup>
-      </HStack>
-
       <Carousel
         ref={ref}
         width={qrSize}
-        height={qrSize}
+        height={carouselHeight}
         loop={false}
         enabled={false}
         onSnapToItem={setIndex}
@@ -72,18 +58,26 @@ export function QrCarousel(props: {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              paddingHorizontal: 16,
             }}
           >
+            <Badge
+              size={"xl"}
+              action={option.type === "normal" ? "success" : "warning"}
+              className='mb-4'
+            >
+              <BadgeText>
+                {option.type === "normal" ? "Ark payment" : "Lightning swap"}
+              </BadgeText>
+            </Badge>
             <QRCode
               value={option.address || ""}
-              size={qrSize - 32}
+              size={qrSize}
               color={colors.foreground}
               shapeOptions={{
                 shape: "square",
                 eyePatternShape: "square",
                 eyePatternGap: 0,
-                gap: 0,
+                gap: 0.5,
               }}
             />
           </View>
@@ -91,7 +85,23 @@ export function QrCarousel(props: {
         onProgressChange={progress}
         renderItem={({ item }) => item}
       />
-
+      <HStack space={"sm"}>
+        <ButtonGroup flexDirection='row' className='w-full'>
+          {map(props.paymentOptions, (option, i) => (
+            <Button
+              key={option.type}
+              isDisabled={i === index}
+              onPress={() => goToSlide(i)}
+              className='flex-1'
+            >
+              <ButtonText>
+                {option.type === "normal" ? "Arkaic payment" : "Lightning swap"}
+              </ButtonText>
+              <ButtonIcon as={option.type === "normal" ? Triangle : Zap} />
+            </Button>
+          ))}
+        </ButtonGroup>
+      </HStack>
     </VStack>
   );
 }
