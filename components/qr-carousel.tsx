@@ -1,13 +1,12 @@
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import React, { useEffect, useState } from "react";
 
 import { map } from "lodash";
 import { Dimensions, View } from "react-native";
 import QRCode from "react-native-qrcode-skia";
 import { useSharedValue } from "react-native-reanimated";
-
-import { colors } from "@/theme/tokens";
 
 import { Triangle, Zap } from "lucide-react-native";
 import { Badge, BadgeText } from "./ui/badge";
@@ -21,7 +20,9 @@ export function QrCarousel(props: {
 }) {
   const [index, setIndex] = useState<number>(0);
   const ref = React.useRef<ICarouselInstance>(null);
+  const colorScheme = useColorScheme();
 
+  const fillColor = colorScheme === "dark" ? "#F8FAFC" : "#0F172A";
   const progress = useSharedValue<number>(0);
   const width = Dimensions.get("window").width;
   const qrSize = width - 48;
@@ -72,7 +73,7 @@ export function QrCarousel(props: {
             <QRCode
               value={option.address || ""}
               size={qrSize}
-              color={colors.foreground}
+              color={fillColor}
               shapeOptions={{
                 shape: "square",
                 eyePatternShape: "square",
