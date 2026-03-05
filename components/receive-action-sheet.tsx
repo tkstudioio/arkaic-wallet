@@ -23,6 +23,7 @@ import { Spinner } from "./ui/spinner";
 import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
+import { useAspInfo } from "@/hooks/use-asp-info";
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { Toast } from "toastify-react-native";
 import { AmountComponent } from "./amount";
@@ -36,6 +37,7 @@ export function ReceiveActionSheet() {
   const walletAddressMutation = usePaymentAddress();
   const { mutate: copyToClipboard } = useCopyToClipboard();
   const { wallet } = useAccountStore();
+  const { data: aspInfo } = useAspInfo();
 
   const [open, setOpen] = useState<boolean>(false);
   const [showQrCode, setShowQrCode] = useState<boolean>(false);
@@ -132,7 +134,16 @@ export function ReceiveActionSheet() {
               </VStack>
               <VStack space={"md"}>
                 <Button
-                  onPress={() => setShowQrCode(true)}
+                  onPress={() => {
+                    if (amountInSats > 0 && aspInfo?.dust != null) {
+                      const dustLimit = Number(aspInfo.dust);
+                      if (amountInSats < dustLimit) {
+                        Toast.error(`Amount must be at least ${dustLimit} sats`);
+                        return;
+                      }
+                    }
+                    setShowQrCode(true);
+                  }}
                   action={"positive"}
                   variant={"outline"}
                 >
