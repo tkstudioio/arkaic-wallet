@@ -35,7 +35,7 @@ export default function RootLayout() {
   }
 
   return (
-    <GluestackUIProvider mode='light'>
+    <GluestackUIProvider mode='system'>
       <Stack>
         <Stack.Screen
           name='index'
@@ -62,7 +62,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-      <StatusBar style='light' />
+      <StatusBar style='auto' />
     </GluestackUIProvider>
   );
 }
