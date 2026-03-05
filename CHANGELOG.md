@@ -1,3 +1,24 @@
+#### 0.2.2 (2026-03-05)
+
+##### New Features
+
+* **receive:**  validate amount against ASP dust limit (b346b795)
+
+##### Bug Fixes
+
+* **ui:**  remove duplicate variant prop on onboard button (3be4446a)
+
+##### Refactors
+
+* **ui:**
+  *  make QR code fill color respond to color scheme (dda653d2)
+  *  make logo fill color respond to color scheme (3c3158d0)
+
+##### Code Style Changes
+
+* **ui:**  use P typography component in homepage (9e0dc2b5)
+* **theme:**  add light mode tokens and switch to system color scheme (0b63528a)
+
 #### 0.2.1 (2026-03-05)
 
 ##### Continuous Integration
