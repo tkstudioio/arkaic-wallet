@@ -13,6 +13,7 @@
 - **Zustand** - State management
 - **TailwindCSS + Nativewind** - Styling responsive
 - **React Navigation** - Navigazione tra schermate
+- **Ubuntu Mono** - Unico font utilizzato (regular + bold)
 - **React Query** - Data fetching e caching
 
 ### Piattaforme Supportate
