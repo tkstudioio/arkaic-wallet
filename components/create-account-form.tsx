@@ -1,8 +1,8 @@
 import AccountInfoImage from "@/assets/images/account-info.svg";
 import SeedPhraseImage from "@/assets/images/seedphrase.svg";
+import SeedPhraseGrid from "@/components/seed-phrase-grid";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
-import SeedPhraseGrid from "@/components/seed-phrase-grid";
 import {
   Select,
   SelectBackdrop,
@@ -190,7 +190,7 @@ export default function CreateOrRestoreAccountForm(props: {
                 your wallet.
               </P>
             </VStack>
-            <SeedPhraseGrid words={words} />
+            <SeedPhraseGrid words={words} isDisabled />
           </VStack>
           <VStack space='md' className='w-full'>
             <Button size='lg' onPress={handleStartVerification}>
@@ -276,11 +276,7 @@ export default function CreateOrRestoreAccountForm(props: {
             Enter your {wordCount}-word seed phrase to restore your wallet.
           </P>
         </VStack>
-        <SeedPhraseGrid
-          words={restoreWords}
-          editable
-          onWordChange={updateRestoreWord}
-        />
+        <SeedPhraseGrid words={restoreWords} onWordChange={updateRestoreWord} />
         <VStack space='md'>
           {restoreSubmitAttempted && !restoreMnemonicValid && (
             <P className='text-error-500 text-center'>

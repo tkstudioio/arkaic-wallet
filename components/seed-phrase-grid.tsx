@@ -1,17 +1,18 @@
-import { Input, InputField } from "@/components/ui/input";
 import { HStack } from "@/components/ui/hstack";
+import { Input, InputField } from "@/components/ui/input";
+import { Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
-import { P, Small } from "@/components/ui/typography";
+import { toLower, toUpper } from "lodash";
 
 type SeedPhraseGridProps = {
   words: string[];
-  editable?: boolean;
+  isDisabled?: boolean;
   onWordChange?: (index: number, value: string) => void;
 };
 
 export default function SeedPhraseGrid({
   words,
-  editable = false,
+  isDisabled = false,
   onWordChange,
 }: SeedPhraseGridProps) {
   const half = Math.ceil(words.length / 2);
@@ -19,46 +20,31 @@ export default function SeedPhraseGrid({
   const rightColumn = words.slice(half);
 
   return (
-    <HStack space='sm' className='w-full'>
-      <VStack space='sm' className='flex-1'>
-        {leftColumn.map((word, i) =>
-          editable ? (
-            <EditableCell
-              key={i}
-              index={i}
-              number={i + 1}
-              value={word}
-              onWordChange={onWordChange}
-            />
-          ) : (
-            <DisplayCell key={i} number={i + 1} word={word} />
-          ),
-        )}
+    <HStack space='lg' className='w-full'>
+      <VStack space='md' className='flex-1'>
+        {leftColumn.map((word, i) => (
+          <EditableCell
+            key={i}
+            index={i}
+            number={i + 1}
+            value={word}
+            onWordChange={onWordChange}
+            isDisabled={isDisabled}
+          />
+        ))}
       </VStack>
-      <VStack space='sm' className='flex-1'>
-        {rightColumn.map((word, i) =>
-          editable ? (
-            <EditableCell
-              key={half + i}
-              index={half + i}
-              number={half + i + 1}
-              value={word}
-              onWordChange={onWordChange}
-            />
-          ) : (
-            <DisplayCell key={half + i} number={half + i + 1} word={word} />
-          ),
-        )}
+      <VStack space='md' className='flex-1'>
+        {rightColumn.map((word, i) => (
+          <EditableCell
+            key={half + i}
+            index={half + i}
+            number={half + i + 1}
+            value={word}
+            onWordChange={onWordChange}
+            isDisabled
+          />
+        ))}
       </VStack>
-    </HStack>
-  );
-}
-
-function DisplayCell({ number, word }: { number: number; word: string }) {
-  return (
-    <HStack space='xs' className='items-center rounded-md border border-outline-200 bg-background-50 px-3 py-2.5'>
-      <Small className='text-typography-400'>{number}.</Small>
-      <P className='text-sm'>{word}</P>
     </HStack>
   );
 }
@@ -68,19 +54,21 @@ function EditableCell({
   number,
   value,
   onWordChange,
+  isDisabled,
 }: {
   index: number;
   number: number;
   value: string;
   onWordChange?: (index: number, value: string) => void;
+  isDisabled?: boolean;
 }) {
   return (
-    <HStack space='xs' className='items-center'>
-      <Small className='text-typography-400 w-7'>{number}.</Small>
-      <Input size='sm' className='flex-1'>
+    <HStack className='items-center'>
+      <Small className='text-typography-400 w-7'>{number}</Small>
+      <Input size='lg' className='flex-1' isDisabled={isDisabled}>
         <InputField
-          value={value}
-          onChangeText={(val: string) => onWordChange?.(index, val)}
+          value={toUpper(value)}
+          onChangeText={(val: string) => onWordChange?.(index, toLower(val))}
           autoCapitalize='none'
           autoCorrect={false}
         />
