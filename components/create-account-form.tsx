@@ -1,9 +1,8 @@
 import AccountInfoImage from "@/assets/images/account-info.svg";
 import SeedPhraseImage from "@/assets/images/seedphrase.svg";
-import { Badge, BadgeText } from "@/components/ui/badge";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
-import { HStack } from "@/components/ui/hstack";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
+import SeedPhraseGrid from "@/components/seed-phrase-grid";
 import {
   Select,
   SelectBackdrop,
@@ -40,7 +39,6 @@ import {
 import { useMemo, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { match } from "ts-pattern";
-import { Card } from "./ui/card";
 import { Large, P, Small } from "./ui/typography";
 
 type WordCount = 12 | 24;
@@ -192,17 +190,7 @@ export default function CreateOrRestoreAccountForm(props: {
                 your wallet.
               </P>
             </VStack>
-            <Card className='w-full' variant='ghost'>
-              <HStack className='flex-wrap gap-2 justify-center'>
-                {words.map((word, i) => (
-                  <Badge key={i} action='muted' size='lg' className='px-3 py-2'>
-                    <BadgeText>
-                      {i + 1}. {word}
-                    </BadgeText>
-                  </Badge>
-                ))}
-              </HStack>
-            </Card>
+            <SeedPhraseGrid words={words} />
           </VStack>
           <VStack space='md' className='w-full'>
             <Button size='lg' onPress={handleStartVerification}>
@@ -288,22 +276,11 @@ export default function CreateOrRestoreAccountForm(props: {
             Enter your {wordCount}-word seed phrase to restore your wallet.
           </P>
         </VStack>
-        <VStack space='sm'>
-          {restoreWords.map((word, i) => (
-            <HStack key={i} space='sm' className='items-center'>
-              <Small className='w-8 text-right'>{i + 1}.</Small>
-              <Input size='xl' className='flex-1'>
-                <InputField
-                  placeholder={`Word ${i + 1}`}
-                  value={word}
-                  onChangeText={(val: string) => updateRestoreWord(i, val)}
-                  autoCapitalize='none'
-                  autoCorrect={false}
-                />
-              </Input>
-            </HStack>
-          ))}
-        </VStack>
+        <SeedPhraseGrid
+          words={restoreWords}
+          editable
+          onWordChange={updateRestoreWord}
+        />
         <VStack space='md'>
           {restoreSubmitAttempted && !restoreMnemonicValid && (
             <P className='text-error-500 text-center'>
