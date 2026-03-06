@@ -18,9 +18,11 @@ import {
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
+import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { useCreateAccount } from "@/hooks/use-create-account";
 import {
   generateMnemonic,
+  getMasterFingerprint,
   getRandomVerificationIndices,
   mnemonicToPrivateKey,
   validateMnemonic,
@@ -29,12 +31,13 @@ import { useRouter } from "expo-router";
 import { Formik } from "formik";
 import {
   ChevronDown,
+  Fingerprint,
   ListCheck,
   Shield,
   ShieldCheck,
   User,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { match } from "ts-pattern";
 import { Card } from "./ui/card";
@@ -55,6 +58,7 @@ export default function CreateOrRestoreAccountForm(props: {
   const router = useRouter();
   const createAccountMutation = useCreateAccount();
 
+  const { mutate: copyToClipboard } = useCopyToClipboard();
   const [step, setStep] = useState<Step>("wordCount");
   const [wordCount, setWordCount] = useState<WordCount>(12);
   const [mnemonic, setMnemonic] = useState("");
@@ -127,6 +131,12 @@ export default function CreateOrRestoreAccountForm(props: {
     });
   };
 
+  const fingerprint = useMemo(
+    () =>
+      mnemonic ? getMasterFingerprint(mnemonic, passphrase || undefined) : "",
+    [mnemonic, passphrase],
+  );
+
   const restoreMnemonicValid =
     restoreWords.length > 0 &&
     validateMnemonic(restoreWords.map((w) => w.trim().toLowerCase()).join(" "));
@@ -151,11 +161,20 @@ export default function CreateOrRestoreAccountForm(props: {
             <ButtonIcon as={Shield} />
             <ButtonText>12 words</ButtonText>
           </Button>
-          <Button size='lg' variant='outline' onPress={() => handleSelectWordCount(24)}>
+          <Button
+            size='lg'
+            variant='outline'
+            onPress={() => handleSelectWordCount(24)}
+          >
             <ButtonIcon as={ShieldCheck} />
             <ButtonText>24 words</ButtonText>
           </Button>
-          <Button size='lg' variant='link' action='negative' onPress={router.back}>
+          <Button
+            size='lg'
+            variant='link'
+            action='negative'
+            onPress={router.back}
+          >
             <ButtonText>Go back</ButtonText>
           </Button>
         </VStack>
@@ -190,7 +209,11 @@ export default function CreateOrRestoreAccountForm(props: {
               <ButtonIcon as={ListCheck} />
               <ButtonText>Verify backup</ButtonText>
             </Button>
-            <Button size='lg' variant='outline' onPress={() => setStep("accountInfo")}>
+            <Button
+              size='lg'
+              variant='outline'
+              onPress={() => setStep("accountInfo")}
+            >
               <ButtonText>Skip</ButtonText>
             </Button>
             <Button
@@ -417,6 +440,16 @@ export default function CreateOrRestoreAccountForm(props: {
                   </Input>
                 </VStack>
               </VStack>
+              {fingerprint && (
+                <Button
+                  variant={"link"}
+                  action={"neutral"}
+                  onPress={() => copyToClipboard(fingerprint)}
+                >
+                  <ButtonIcon as={Fingerprint} />
+                  <ButtonText>{fingerprint}</ButtonText>
+                </Button>
+              )}
               <VStack space='md' className='w-full'>
                 {match(createAccountMutation)
                   .with({ isError: true }, () => (

@@ -28,7 +28,7 @@ import {
   ModalHeader,
 } from "../ui/modal";
 import { Spinner } from "../ui/spinner";
-import { Large, P } from "../ui/typography";
+import { Large, Muted, P } from "../ui/typography";
 import { VStack } from "../ui/vstack";
 
 export default function AppLayout(props: PropsWithChildren) {
@@ -44,7 +44,7 @@ export default function AppLayout(props: PropsWithChildren) {
 
 function AppLayoutContent(props: PropsWithChildren) {
   const router = useRouter();
-  const { account, logout } = useAccountStore();
+  const { account, fingerprint, logout } = useAccountStore();
   const deleteAccountMutation = useDeleteAccount();
   const [showDrawer, setShowDrawer] = useState(false);
   const [showBackupModal, setShowBackupModal] = useState(false);
@@ -175,7 +175,12 @@ function AppLayoutContent(props: PropsWithChildren) {
         <DrawerBackdrop />
         <DrawerContent>
           <DrawerHeader>
-            <Large>Menu</Large>
+            <VStack space='xs'>
+              <Large>Menu</Large>
+              {fingerprint && (
+                <Muted>Fingerprint: {fingerprint}</Muted>
+              )}
+            </VStack>
           </DrawerHeader>
           <DrawerBody>
             <VStack space={"lg"}>

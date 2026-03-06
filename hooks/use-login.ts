@@ -1,6 +1,6 @@
 import useAccountStore from "@/stores/account";
 import { ArkaicAccount } from "@/types/arkaic";
-import { mnemonicToPrivateKey } from "@/utils/mnemonic";
+import { getMasterFingerprint, mnemonicToPrivateKey } from "@/utils/mnemonic";
 import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
 import {
@@ -57,6 +57,10 @@ export function useLoginMutation() {
         enabled: true,
       });
 
+      const fingerprint = account.mnemonic
+        ? getMasterFingerprint(account.mnemonic, passphrase)
+        : undefined;
+
       setStore({
         account: { ...account, privateKey },
         wallet,
@@ -64,6 +68,7 @@ export function useLoginMutation() {
         indexerProvider,
         vtxoManager,
         arkadeLightning,
+        fingerprint,
       });
 
       router.push("/dashboard");

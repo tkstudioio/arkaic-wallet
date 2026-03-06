@@ -15,6 +15,7 @@ type AccountStore = {
   indexerProvider?: IndexerProvider;
   vtxoManager?: VtxoManager;
   wallet?: Wallet;
+  fingerprint?: string;
   showTransactionsList: boolean;
   setShowTransactionsList: (showTransactionsList: boolean) => void;
   logout: () => void;
@@ -45,6 +46,7 @@ const useAccountStore = create<AccountStore>((set) => ({
       vtxoManager: undefined,
       arkadeLightning: undefined,
       account: undefined,
+      fingerprint: undefined,
     });
   },
 
