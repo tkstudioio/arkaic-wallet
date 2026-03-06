@@ -156,15 +156,15 @@ export default function CreateOrRestoreAccountForm(props: {
           </VStack>
         </VStack>
         <VStack space='md' className='w-full'>
-          <Button onPress={() => handleSelectWordCount(12)}>
+          <Button size='lg' onPress={() => handleSelectWordCount(12)}>
             <ButtonIcon as={Shield} />
             <ButtonText>12 words</ButtonText>
           </Button>
-          <Button variant='outline' onPress={() => handleSelectWordCount(24)}>
+          <Button size='lg' variant='outline' onPress={() => handleSelectWordCount(24)}>
             <ButtonIcon as={ShieldCheck} />
             <ButtonText>24 words</ButtonText>
           </Button>
-          <Button variant='link' action='negative' onPress={router.back}>
+          <Button size='lg' variant='link' action='negative' onPress={router.back}>
             <ButtonText>Go back</ButtonText>
           </Button>
         </VStack>
@@ -195,10 +195,11 @@ export default function CreateOrRestoreAccountForm(props: {
         </VStack>
 
         <VStack space='md' className='w-full'>
-          <Button onPress={handlePassphraseContinue}>
+          <Button size='lg' onPress={handlePassphraseContinue}>
             <ButtonText>Continue</ButtonText>
           </Button>
           <Button
+            size='lg'
             variant='link'
             action='negative'
             onPress={() => setStep("wordCount")}
@@ -233,14 +234,15 @@ export default function CreateOrRestoreAccountForm(props: {
             </Card>
           </VStack>
           <VStack space='md' className='w-full'>
-            <Button onPress={handleStartVerification}>
+            <Button size='lg' onPress={handleStartVerification}>
               <ButtonIcon as={ListCheck} />
               <ButtonText>Verify backup</ButtonText>
             </Button>
-            <Button variant='outline' onPress={() => setStep("accountInfo")}>
+            <Button size='lg' variant='outline' onPress={() => setStep("accountInfo")}>
               <ButtonText>Skip</ButtonText>
             </Button>
             <Button
+              size='lg'
               variant='link'
               action='negative'
               onPress={() => setStep("passphrase")}
@@ -288,10 +290,11 @@ export default function CreateOrRestoreAccountForm(props: {
             )}
           </VStack>
           <VStack space='md' className='w-full'>
-            <Button onPress={handleVerify}>
+            <Button size='lg' onPress={handleVerify}>
               <ButtonText>Confirm</ButtonText>
             </Button>
             <Button
+              size='lg'
               variant='link'
               action='negative'
               onPress={() => setStep("showMnemonic")}
@@ -334,10 +337,11 @@ export default function CreateOrRestoreAccountForm(props: {
                 : "The seed phrase is invalid, please check the words"}
             </P>
           )}
-          <Button onPress={handleRestoreWordsContinue}>
+          <Button size='lg' onPress={handleRestoreWordsContinue}>
             <ButtonText>Continue</ButtonText>
           </Button>
           <Button
+            size='lg'
             variant='link'
             action='negative'
             onPress={() => setStep("wordCount")}
@@ -458,6 +462,7 @@ export default function CreateOrRestoreAccountForm(props: {
                         Error creating account
                       </P>
                       <Button
+                        size='lg'
                         variant='link'
                         action='negative'
                         onPress={router.back}
@@ -469,6 +474,7 @@ export default function CreateOrRestoreAccountForm(props: {
                   .otherwise(({ isPending }) => (
                     <>
                       <Button
+                        size='lg'
                         onPress={() => handleSubmit()}
                         disabled={isPending || !!errors.name}
                       >
@@ -480,6 +486,7 @@ export default function CreateOrRestoreAccountForm(props: {
                       </Button>
                       {!isPending && (
                         <Button
+                          size='lg'
                           variant='link'
                           action='negative'
                           onPress={() =>
