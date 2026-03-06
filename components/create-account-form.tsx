@@ -44,7 +44,6 @@ type WordCount = 12 | 24;
 
 type Step =
   | "wordCount"
-  | "passphrase"
   | "showMnemonic"
   | "verify"
   | "restoreWords"
@@ -74,15 +73,7 @@ export default function CreateOrRestoreAccountForm(props: {
       setRestoreWords(new Array(count).fill(""));
       setStep("restoreWords");
     } else {
-      setStep("passphrase");
-    }
-  };
-
-  const handlePassphraseContinue = () => {
-    if (isRestore) {
-      setStep("accountInfo");
-    } else {
-      const newMnemonic = generateMnemonic(wordCount);
+      const newMnemonic = generateMnemonic(count);
       setMnemonic(newMnemonic);
       setStep("showMnemonic");
     }
@@ -117,7 +108,7 @@ export default function CreateOrRestoreAccountForm(props: {
       return;
     }
     setMnemonic(joined);
-    setStep("passphrase");
+    setStep("accountInfo");
   };
 
   const updateRestoreWord = (index: number, value: string) => {
@@ -170,45 +161,6 @@ export default function CreateOrRestoreAccountForm(props: {
         </VStack>
       </VStack>
     ))
-    .with("passphrase", () => (
-      <VStack className='flex-1 w-full justify-between'>
-        <VStack space='4xl' className='items-center flex-1 justify-center'>
-          <VStack className='items-center' space='xs'>
-            <Large>Passphrase</Large>
-            <P className='text-center'>
-              Add an optional passphrase for extra security. Leave empty if you
-              {"don't want one."}
-            </P>
-          </VStack>
-
-          <VStack space='xs' className='w-full'>
-            <Small>Passphrase (optional)</Small>
-            <Input size='xl'>
-              <InputField
-                placeholder='Enter passphrase'
-                value={passphrase}
-                onChangeText={setPassphrase}
-                secureTextEntry
-              />
-            </Input>
-          </VStack>
-        </VStack>
-
-        <VStack space='md' className='w-full'>
-          <Button size='lg' onPress={handlePassphraseContinue}>
-            <ButtonText>Continue</ButtonText>
-          </Button>
-          <Button
-            size='lg'
-            variant='link'
-            action='negative'
-            onPress={() => setStep("wordCount")}
-          >
-            <ButtonText>Go back</ButtonText>
-          </Button>
-        </VStack>
-      </VStack>
-    ))
     .with("showMnemonic", () => {
       const words = mnemonic.split(" ");
       return (
@@ -245,7 +197,7 @@ export default function CreateOrRestoreAccountForm(props: {
               size='lg'
               variant='link'
               action='negative'
-              onPress={() => setStep("passphrase")}
+              onPress={() => setStep("wordCount")}
             >
               <ButtonText>Go back</ButtonText>
             </Button>
@@ -453,6 +405,17 @@ export default function CreateOrRestoreAccountForm(props: {
                     </SelectPortal>
                   </Select>
                 </VStack>
+                <VStack space='xs'>
+                  <Small>Passphrase (optional)</Small>
+                  <Input size='xl'>
+                    <InputField
+                      placeholder='Enter passphrase'
+                      value={passphrase}
+                      onChangeText={setPassphrase}
+                      secureTextEntry
+                    />
+                  </Input>
+                </VStack>
               </VStack>
               <VStack space='md' className='w-full'>
                 {match(createAccountMutation)
@@ -490,7 +453,7 @@ export default function CreateOrRestoreAccountForm(props: {
                           variant='link'
                           action='negative'
                           onPress={() =>
-                            setStep(isRestore ? "passphrase" : "showMnemonic")
+                            setStep(isRestore ? "restoreWords" : "showMnemonic")
                           }
                         >
                           <ButtonText>Go back</ButtonText>
