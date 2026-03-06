@@ -56,7 +56,7 @@ The file saved in `.claude/tasks/developer` must follow this structure:
 - **Stack**: React Native + Expo SDK 54, TypeScript, expo-router, Zustand, React Query, Gluestack UI, NativeWind/Tailwind
 - **Ark SDK**: `@arkade-os/sdk` v0.3.0 — `Wallet`, `SingleKey`, `VtxoManager`, `ArkProvider`, `IndexerProvider`
 - **Lightning**: `@arkade-os/boltz-swap` — `ArkadeLightning`, `BoltzSwapProvider`
-- **Fonts**: Ubuntu Mono (heading/body/mono) + Ubuntu (sans-medium/sans-light) loaded in `app/_layout.tsx`
+- **Fonts**: Ubuntu Mono only — `font-heading` (bold), `font-body`/`font-mono`/`font-sans` (regular) — loaded in `app/_layout.tsx`
 - **Typography components**: `components/ui/typography/index.tsx` — `H1`, `P`, `Large`, `Small`, `Muted`
 - **Path alias**: `@/*` → project root
 - **Persistence**: AsyncStorage (`"accounts"` key), expo-secure-store available

@@ -22,6 +22,8 @@ Use it as the source of truth for architecture, conventions, stack, and constrai
 Primary input is a task file in `.claude/tasks/developer/*.md`.
 If multiple task files exist and no specific one is given, choose the lowest pending task id by filename order (`01-...`, `02-...`, etc.) and state which file you are executing.
 
+**Task execution order is mandatory**: tasks must always be executed in strict numerical order by filename prefix (`01-...` before `02-...` before `03-...`, etc.). Never skip ahead or pick a higher-numbered task when a lower-numbered one is still pending.
+
 If no file is found just execute the prompt given without any other task related instructions.
 
 ---
@@ -35,7 +37,8 @@ If no file is found just execute the prompt given without any other task related
 5. **Validate acceptance criteria one by one** with code checks and local commands.
 6. **Run project checks** for changed scope (typecheck/tests/lint when available and relevant).
 7. **Create reviewer handoff** in `.claude/tasks/reviewer/` with touched files, implemented changes, and a test flow to verify behavior (when applicable).
-8. **Report completion** with what was changed, validation performed, and any remaining risks.
+8. **Run the committer agent** — once the implementation is complete and logically verified, invoke the agent defined in `.claude/agents/committer.md` to commit the changes. You are authorized to do this without asking for confirmation.
+9. **Report completion** with what was changed, validation performed, and any remaining risks.
 
 ---
 
