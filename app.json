@@ -38,6 +38,9 @@
         "projectId": "96e801b5-f76b-4848-b915-7cf0ec9961c6"
       }
     },
-    "owner": "tkstudioio"
+    "owner": "tkstudioio",
+    "android": {
+      "package": "com.tkstudio.arkaicwallet"
+    }
   }
 }
