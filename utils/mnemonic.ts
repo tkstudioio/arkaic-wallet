@@ -29,6 +29,15 @@ export function mnemonicToPrivateKey(
   return bytesToHex(child.privateKey);
 }
 
+export function getMasterFingerprint(
+  mnemonic: string,
+  passphrase?: string,
+): string {
+  const seed = mnemonicToSeedSync(mnemonic, passphrase);
+  const hdKey = HDKey.fromMasterSeed(seed);
+  return hdKey.fingerprint.toString(16).padStart(8, "0");
+}
+
 export function validateMnemonic(mnemonic: string): boolean {
   return _validateMnemonic(mnemonic, wordlist);
 }
