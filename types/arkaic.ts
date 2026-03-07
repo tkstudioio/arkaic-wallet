@@ -4,6 +4,7 @@ export type ArkaicAccount = {
   arkadeServerUrl: string;
   avatar?: string;
   mnemonic?: string;
+  customVtxoScripts?: string[];
 };
 
 export type ArkaicPayment = {
