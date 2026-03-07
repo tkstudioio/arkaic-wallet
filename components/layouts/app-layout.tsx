@@ -1,4 +1,5 @@
 import LogoFull from "@/components/icons/logo";
+import SeedPhraseGrid from "@/components/seed-phrase-grid";
 import {
   Drawer,
   DrawerBackdrop,
@@ -7,8 +8,10 @@ import {
   DrawerFooter,
   DrawerHeader,
 } from "@/components/ui/drawer";
-import { useDeleteAccount } from "@/hooks/use-delete-account";
+import { useDeleteAccount } from "@/hooks/arkade/use-delete-account";
 import useAccountStore from "@/stores/account";
+import { SingleKey, Transaction } from "@arkade-os/sdk";
+import { base64 } from "@scure/base";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import {
@@ -20,13 +23,11 @@ import {
 } from "lucide-react-native";
 import { PropsWithChildren, useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { SingleKey, Transaction } from "@arkade-os/sdk";
-import { base64 } from "@scure/base";
 import ToastManager from "toastify-react-native";
-import SeedPhraseGrid from "@/components/seed-phrase-grid";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { Heading } from "../ui/heading";
 import { HStack } from "../ui/hstack";
+import { Input, InputField } from "../ui/input";
 import {
   Modal,
   ModalBackdrop,
@@ -36,7 +37,6 @@ import {
   ModalHeader,
 } from "../ui/modal";
 import { Spinner } from "../ui/spinner";
-import { Input, InputField } from "../ui/input";
 import { Large, Muted, P } from "../ui/typography";
 import { VStack } from "../ui/vstack";
 
@@ -222,7 +222,9 @@ function AppLayoutContent(props: PropsWithChildren) {
           </ModalHeader>
           <ModalBody>
             <VStack space='md'>
-              <P>Paste a base64-encoded PSBT to sign with this account's key.</P>
+              <P>
+                Paste a base64-encoded PSBT to sign with this account's key.
+              </P>
               <Input size='md' className='h-max py-3'>
                 <InputField
                   placeholder='Base64 PSBT...'
@@ -269,9 +271,7 @@ function AppLayoutContent(props: PropsWithChildren) {
           <DrawerHeader>
             <VStack space='xs'>
               <Large>Menu</Large>
-              {fingerprint && (
-                <Muted>Fingerprint: {fingerprint}</Muted>
-              )}
+              {fingerprint && <Muted>Fingerprint: {fingerprint}</Muted>}
             </VStack>
           </DrawerHeader>
           <DrawerBody>

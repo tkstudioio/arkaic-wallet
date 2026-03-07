@@ -1,5 +1,5 @@
 import { AccountBalance } from "@/components/account-balance";
-import AppLayout from "@/components/layout/app-layout";
+import AppLayout from "@/components/layouts/app-layout";
 import { ReceiveActionSheet } from "@/components/receive-action-sheet";
 import { SendActionSheet } from "@/components/send-action-sheet";
 import { Transactions } from "@/components/transactions";

@@ -36,32 +36,7 @@ export default function RootLayout() {
 
   return (
     <GluestackUIProvider mode='system'>
-      <Stack>
-        <Stack.Screen
-          name='index'
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name='dashboard'
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name='account/create'
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name='account/restore'
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack>
+      <Stack screenOptions={{ headerShown: false }} />
       <StatusBar style='auto' />
     </GluestackUIProvider>
   );

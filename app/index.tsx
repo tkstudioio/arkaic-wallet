@@ -1,5 +1,5 @@
 import { Home } from "@/components/homepage";
-import AuthLayout from "@/components/layout/auth-layout";
+import AuthLayout from "@/components/layouts/auth-layout";
 
 import React from "react";
 
