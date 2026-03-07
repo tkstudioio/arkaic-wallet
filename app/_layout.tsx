@@ -13,8 +13,10 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
 if (!global.crypto) global.crypto = {} as any;
-// @ts-expect-error
-global.crypto.getRandomValues = Crypto.getRandomValues;
+if (!global.crypto.getRandomValues) {
+  // @ts-expect-error
+  global.crypto.getRandomValues = Crypto.getRandomValues;
+}
 
 SplashScreen.preventAutoHideAsync();
 
