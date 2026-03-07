@@ -11,11 +11,19 @@ import { useDeleteAccount } from "@/hooks/use-delete-account";
 import useAccountStore from "@/stores/account";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { FileKey2, LogOut, MenuIcon, TrashIcon } from "lucide-react-native";
+import {
+  FileKey2,
+  LogOut,
+  MenuIcon,
+  PenTool,
+  TrashIcon,
+} from "lucide-react-native";
 import { PropsWithChildren, useMemo, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { SingleKey, Transaction } from "@arkade-os/sdk";
+import { base64 } from "@scure/base";
 import ToastManager from "toastify-react-native";
-import { Badge, BadgeText } from "../ui/badge";
+import SeedPhraseGrid from "@/components/seed-phrase-grid";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { Heading } from "../ui/heading";
 import { HStack } from "../ui/hstack";
@@ -28,6 +36,7 @@ import {
   ModalHeader,
 } from "../ui/modal";
 import { Spinner } from "../ui/spinner";
+import { Input, InputField } from "../ui/input";
 import { Large, Muted, P } from "../ui/typography";
 import { VStack } from "../ui/vstack";
 
@@ -49,6 +58,10 @@ function AppLayoutContent(props: PropsWithChildren) {
   const [showDrawer, setShowDrawer] = useState(false);
   const [showBackupModal, setShowBackupModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showSignPsbtModal, setShowSignPsbtModal] = useState(false);
+  const [psbtInput, setPsbtInput] = useState("");
+  const [psbtError, setPsbtError] = useState<string>();
+  const [isSigning, setIsSigning] = useState(false);
 
   const mnemonicWords = account?.mnemonic?.split(" ") ?? [];
 
@@ -61,6 +74,41 @@ function AppLayoutContent(props: PropsWithChildren) {
         router.replace("/");
       },
     });
+  };
+
+  const handleSignPsbt = async () => {
+    if (!account?.privateKey) {
+      setPsbtError("No private key available");
+      return;
+    }
+
+    const trimmed = psbtInput.trim();
+    if (!trimmed) {
+      setPsbtError("Please enter a PSBT");
+      return;
+    }
+
+    setIsSigning(true);
+    setPsbtError(undefined);
+
+    try {
+      const psbtBytes = base64.decode(trimmed);
+      const tx = Transaction.fromPSBT(psbtBytes);
+      const identity = SingleKey.fromHex(account.privateKey);
+      const signedTx = await identity.sign(tx);
+      const signedPsbt = base64.encode(signedTx.toPSBT());
+
+      console.log("=== SIGNED PSBT ===");
+      console.log(signedPsbt);
+      console.log("===================");
+
+      setPsbtInput("");
+      setShowSignPsbtModal(false);
+    } catch (e) {
+      setPsbtError(e instanceof Error ? e.message : "Failed to sign PSBT");
+    } finally {
+      setIsSigning(false);
+    }
   };
 
   return (
@@ -95,21 +143,15 @@ function AppLayoutContent(props: PropsWithChildren) {
             <Heading size='md'>Seed phrase backup</Heading>
           </ModalHeader>
           <ModalBody>
-            <VStack space='md'>
-              <P>
-                Write down these {mnemonicWords.length} words in order. Do not
-                share them with anyone.
-              </P>
-              <HStack className='flex-wrap gap-2 justify-center'>
-                {mnemonicWords.map((word, i) => (
-                  <Badge key={i} action='muted' size='lg' className='px-3 py-2'>
-                    <BadgeText>
-                      {i + 1}. {word}
-                    </BadgeText>
-                  </Badge>
-                ))}
-              </HStack>
-            </VStack>
+            <ScrollView>
+              <VStack space='md'>
+                <P>
+                  Write down these {mnemonicWords.length} words in order. Do not
+                  share them with anyone.
+                </P>
+                <SeedPhraseGrid words={mnemonicWords} isDisabled />
+              </VStack>
+            </ScrollView>
           </ModalBody>
           <ModalFooter>
             <Button onPress={() => setShowBackupModal(false)}>
@@ -164,6 +206,56 @@ function AppLayoutContent(props: PropsWithChildren) {
         </ModalContent>
       </Modal>
 
+      <Modal
+        isOpen={showSignPsbtModal}
+        onClose={() => {
+          setShowSignPsbtModal(false);
+          setPsbtError(undefined);
+          setPsbtInput("");
+        }}
+        size='lg'
+      >
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Heading size='md'>Sign PSBT</Heading>
+          </ModalHeader>
+          <ModalBody>
+            <VStack space='md'>
+              <P>Paste a base64-encoded PSBT to sign with this account's key.</P>
+              <Input size='md' className='h-max py-3'>
+                <InputField
+                  placeholder='Base64 PSBT...'
+                  value={psbtInput}
+                  onChangeText={setPsbtInput}
+                  multiline
+                />
+              </Input>
+              {psbtError && <Muted className='text-red-500'>{psbtError}</Muted>}
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <VStack space='md'>
+              <Button onPress={handleSignPsbt} disabled={isSigning}>
+                {isSigning ? <Spinner /> : <ButtonText>Sign</ButtonText>}
+              </Button>
+              <Button
+                variant='link'
+                action='negative'
+                onPress={() => {
+                  setShowSignPsbtModal(false);
+                  setPsbtError(undefined);
+                  setPsbtInput("");
+                }}
+                disabled={isSigning}
+              >
+                <ButtonText>Cancel</ButtonText>
+              </Button>
+            </VStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       <Drawer
         isOpen={showDrawer}
         size='lg'
@@ -204,6 +296,17 @@ function AppLayoutContent(props: PropsWithChildren) {
               >
                 <ButtonIcon as={TrashIcon} />
                 <ButtonText>Delete account</ButtonText>
+              </Button>
+
+              <Button
+                variant={"outline"}
+                action={"neutral"}
+                onPress={() => {
+                  setShowSignPsbtModal(true);
+                }}
+              >
+                <ButtonIcon as={PenTool} />
+                <ButtonText>Sign PSBT</ButtonText>
               </Button>
             </VStack>
           </DrawerBody>
