@@ -1,4 +1,4 @@
-import PublicLayout from "@/components/layouts/public-layout";
+import AppLayout from "@/components/layouts/app-layout";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -31,7 +31,7 @@ export default function ProductsList() {
   const router = useRouter();
 
   return (
-    <PublicLayout>
+    <AppLayout>
       <ScrollView className='flex-1 p-4'>
         <VStack space='lg'>
           <Large className='font-heading'>Products</Large>
@@ -43,6 +43,6 @@ export default function ProductsList() {
           <Productssss />
         </VStack>
       </ScrollView>
-    </PublicLayout>
+    </AppLayout>
   );
 }
