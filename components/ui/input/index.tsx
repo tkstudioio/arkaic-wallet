@@ -34,7 +34,7 @@ cssInterop(PrimitiveIcon, {
 });
 
 const inputStyle = tva({
-  base: "px-3 rounded-arkaic-input placeholder-muted border border-arkaic-muted focus:border-arkaic-foreground border-dashed rounded-input flex-row overflow-hidden content-center items-center",
+  base: "px-3 rounded-arkaic-input placeholder-muted border border-arkaic-border focus:border-arkaic-foreground border-dashed rounded-input flex-row overflow-hidden content-center items-center",
 
   variants: {
     size: {
