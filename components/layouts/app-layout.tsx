@@ -24,6 +24,7 @@ import {
 import { PropsWithChildren, useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 import ToastManager from "toastify-react-native";
+import NavigationMenu from "../navigation-menu";
 import { Button, ButtonIcon, ButtonText } from "../ui/button";
 import { Heading } from "../ui/heading";
 import { HStack } from "../ui/hstack";
@@ -131,6 +132,8 @@ function AppLayoutContent(props: PropsWithChildren) {
           {props.children}
         </VStack>
       </View>
+
+      <NavigationMenu />
 
       <Modal
         isOpen={showBackupModal}
