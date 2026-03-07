@@ -12,6 +12,8 @@ export function useWallet(account: ArkaicAccount) {
     queryFn: async () => {
       const arkProvider = new ExpoArkProvider(account.arkadeServerUrl);
       const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
+      if (!account.privateKey) throw new Error("missing account private key");
+
       const identity = SingleKey.fromHex(account.privateKey);
 
       return await Wallet.create({

@@ -1,5 +1,5 @@
 import NoAccountsImage from "@/assets/images/no-accounts.svg";
-import { useAccounts } from "@/hooks/use-accounts";
+import { useAccounts } from "@/hooks/arkade/use-accounts";
 import { map } from "lodash";
 import { Dimensions, ScrollView } from "react-native";
 import { match } from "ts-pattern";

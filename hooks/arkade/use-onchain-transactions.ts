@@ -1,6 +1,6 @@
-import { useTransactions } from "@/hooks/use-transactions";
-import { useMemo } from "react";
+import { useTransactions } from "@/hooks/arkade/use-transactions";
 import { filter } from "lodash";
+import { useMemo } from "react";
 
 export function useOnchainTransactions() {
   const transactionsQuery = useTransactions();
@@ -8,9 +8,9 @@ export function useOnchainTransactions() {
     () =>
       filter(
         transactionsQuery.data,
-        (transaction) => transaction.key.boardingTxid !== ""
+        (transaction) => transaction.key.boardingTxid !== "",
       ),
-    [transactionsQuery.data]
+    [transactionsQuery.data],
   );
   return { ...transactionsQuery, data };
 }

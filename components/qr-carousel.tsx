@@ -1,6 +1,6 @@
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useColorScheme } from "@/hooks/arkade/use-color-scheme";
 import React, { useEffect, useState } from "react";
 
 import { map } from "lodash";

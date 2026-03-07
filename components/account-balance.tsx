@@ -1,6 +1,6 @@
-import { useBalance } from "@/hooks/use-balance";
+import { useBalance } from "@/hooks/arkade/use-balance";
 
-import { useWallet } from "@/hooks/use-wallet";
+import { useWallet } from "@/hooks/arkade/use-wallet";
 import { ArkaicAccount } from "@/types/arkaic";
 
 import useAccountStore from "@/stores/account";

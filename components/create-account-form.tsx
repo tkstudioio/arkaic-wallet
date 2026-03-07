@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
-import { useCopyToClipboard } from "@/hooks/use-clipboard";
-import { useCreateAccount } from "@/hooks/use-create-account";
+import { useCopyToClipboard } from "@/hooks/arkade/use-clipboard";
+import { useCreateAccount } from "@/hooks/arkade/use-create-account";
 import {
   generateMnemonic,
   getMasterFingerprint,

@@ -12,7 +12,7 @@ import {
 
 import PosComponent from "./pos";
 
-import { usePaymentAddress } from "@/hooks/use-payment-address";
+import { usePaymentAddress } from "@/hooks/arkade/use-payment-address";
 import useAccountStore from "@/stores/account";
 import { IncomingFunds } from "@arkade-os/sdk";
 import { useQueryClient } from "@tanstack/react-query";
@@ -23,8 +23,8 @@ import { Spinner } from "./ui/spinner";
 import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
-import { useAspInfo } from "@/hooks/use-asp-info";
-import { useCopyToClipboard } from "@/hooks/use-clipboard";
+import { useAspInfo } from "@/hooks/arkade/use-asp-info";
+import { useCopyToClipboard } from "@/hooks/arkade/use-clipboard";
 import { Toast } from "toastify-react-native";
 import { AmountComponent } from "./amount";
 import { QrCarousel } from "./qr-carousel";
@@ -138,7 +138,9 @@ export function ReceiveActionSheet() {
                     if (amountInSats > 0 && aspInfo?.dust != null) {
                       const dustLimit = Number(aspInfo.dust);
                       if (amountInSats < dustLimit) {
-                        Toast.error(`Amount must be at least ${dustLimit} sats`);
+                        Toast.error(
+                          `Amount must be at least ${dustLimit} sats`,
+                        );
                         return;
                       }
                     }

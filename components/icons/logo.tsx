@@ -1,4 +1,4 @@
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useColorScheme } from "@/hooks/arkade/use-color-scheme";
 import * as React from "react";
 import Svg, { Path, SvgProps } from "react-native-svg";
 const LogoFull = (props: SvgProps) => {
