@@ -6,7 +6,6 @@ import { Large, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useProducts } from "@/hooks/products/use-products";
 import { useRouter } from "expo-router";
-import { ScrollView } from "react-native";
 import { match } from "ts-pattern";
 
 function Productssss() {
@@ -22,6 +21,7 @@ function Productssss() {
         <Card key={product.id} className='p-4'>
           <Large>{product.nome}</Large>
           <Small className='mt-1'>Price: {product.prezzo} sats</Small>
+          <Small className='mt-1'>Seller: {product.sellerPubkey} sats</Small>
         </Card>
       )),
     );
@@ -32,17 +32,21 @@ export default function ProductsList() {
 
   return (
     <AppLayout>
-      <ScrollView className='flex-1 p-4'>
-        <VStack space='lg'>
-          <Large className='font-heading'>Products</Large>
+      <VStack space='lg'>
+        <Large className='font-heading'>Products</Large>
 
-          <Button onPress={() => router.push("/products/create")}>
-            <ButtonText>Create Product</ButtonText>
-          </Button>
-
-          <Productssss />
+        <Button
+          onPress={() => router.push("/products/create")}
+          className='w-max'
+        >
+          <ButtonText>Create Product</ButtonText>
+        </Button>
+        <VStack>
+          <VStack space={"sm"}>
+            <Productssss />
+          </VStack>
         </VStack>
-      </ScrollView>
+      </VStack>
     </AppLayout>
   );
 }
