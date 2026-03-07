@@ -16,12 +16,16 @@ export default function NavigationMenu() {
   const { bottom } = useSafeAreaInsets();
 
   return (
-    <View className='flex-row bg-arkaic-fill' style={{ paddingBottom: bottom }}>
+    <View
+      className='flex-row bg-arkaic-fill w-max'
+      style={{ paddingBottom: bottom }}
+    >
       {map(tabs, (tab) => {
         const isActive = pathname.startsWith(tab.path);
 
         return (
           <Button
+            className='flex-shrink-0'
             key={tab.path}
             action={isActive ? "primary" : "secondary"}
             onPress={() => router.push(tab.path)}
