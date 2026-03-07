@@ -36,6 +36,11 @@ export function useLoginMutation() {
       const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
 
       const identity = SingleKey.fromHex(privateKey);
+      const pubkeyBytes = await identity.compressedPublicKey();
+      const pubkey = Array.from(pubkeyBytes)
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      console.log("Logged in with pubkey:", pubkey);
       const wallet = await Wallet.create({
         identity,
         arkProvider,
