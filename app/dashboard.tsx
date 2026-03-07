@@ -13,12 +13,10 @@ import { View } from "react-native";
 const DashboardPage = () => {
   const { account } = useAccountStore();
 
-  if (!account) return;
-
   return (
     <AppLayout>
       <VStack className='px-arkaic-md flex-1' space={"4xl"}>
-        <AccountBalance account={account} />
+        <AccountBalance account={account!} />
         <HStack className='gap-6 w-full'>
           <View className='flex-1'>
             <ReceiveActionSheet />

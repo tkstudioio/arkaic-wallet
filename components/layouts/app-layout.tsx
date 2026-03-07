@@ -55,6 +55,7 @@ export default function AppLayout(props: PropsWithChildren) {
 function AppLayoutContent(props: PropsWithChildren) {
   const router = useRouter();
   const { account, fingerprint, logout } = useAccountStore();
+
   const deleteAccountMutation = useDeleteAccount();
   const [showDrawer, setShowDrawer] = useState(false);
   const [showBackupModal, setShowBackupModal] = useState(false);
@@ -112,6 +113,8 @@ function AppLayoutContent(props: PropsWithChildren) {
     }
   };
 
+  if (!account) router.replace("/");
+
   return (
     <>
       <View className='flex-1 pt-16 bg-arkaic-background'>
@@ -128,8 +131,9 @@ function AppLayoutContent(props: PropsWithChildren) {
               <ButtonIcon as={MenuIcon} />
             </Button>
           </HStack>
-
-          {props.children}
+          <ScrollView className='flex-1 p-4 w-full'>
+            {props.children}
+          </ScrollView>
         </VStack>
       </View>
 
@@ -226,7 +230,8 @@ function AppLayoutContent(props: PropsWithChildren) {
           <ModalBody>
             <VStack space='md'>
               <P>
-                Paste a base64-encoded PSBT to sign with this account's key.
+                Paste a base64-encoded PSBT to sign with this account&apos;s
+                key.
               </P>
               <Input size='md' className='h-max py-3'>
                 <InputField
