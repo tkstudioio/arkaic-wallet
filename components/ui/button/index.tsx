@@ -64,7 +64,7 @@ const buttonStyle = tva({
     },
   },
   compoundVariants: [
-    { action: "primary", variant: "solid", class: "shadow-arkaic" },
+    { action: "primary", variant: "solid" },
     {
       action: "primary",
       variant: "link",

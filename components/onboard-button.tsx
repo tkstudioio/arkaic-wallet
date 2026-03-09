@@ -82,7 +82,7 @@ export function OnboardButton(
           <VStack className='w-full items-center' space='md'>
             {match(onboardUtxos)
               .with({ isPending: true }, () => (
-                <Button disabled variant='link' action='secondary'>
+                <Button disabled>
                   <ButtonIcon as={Spinner} />
                   <ButtonText>Onboarding funds</ButtonText>
                 </Button>

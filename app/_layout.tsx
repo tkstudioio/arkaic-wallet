@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import * as Crypto from "expo-crypto";
 
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
@@ -11,6 +12,8 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+
+if (typeof global.Buffer === "undefined") global.Buffer = Buffer;
 
 if (!global.crypto) global.crypto = {} as any;
 if (!global.crypto.getRandomValues) {
