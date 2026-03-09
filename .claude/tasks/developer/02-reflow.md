@@ -6,14 +6,15 @@ The backend collaborative escrow flow has been restructured. The collaborative p
 
 ### New backend endpoints (all under `/products/:id`)
 
-| Endpoint                   | Method | Who calls it | What it does                                                                                                                                    |
-| -------------------------- | ------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/collaborate-psbts`       | GET    | Seller       | Returns unsigned `collaboratePsbt` and `recipientAddress`                                                                                       |
-| `/collaborate`             | POST   | Seller       | Body:`{ signedPsbt }`. Saves seller-signed PSBT, sets status → `sellerReady`. Returns `{ success: true }`                                       |
-| `/collab-status`           | GET    | Buyer        | Returns `{ status, collaboratePsbt }` when `sellerReady` (the PSBT has seller's signature)                                                      |
-| `/confirm-collaborate`     | POST   | Buyer        | Body:`{ signedPsbt }` (PSBT with **both** buyer + seller sigs). Calls `submitTx`, saves checkpoints. Returns `{ arkTxid, signedCheckpointTxs }` |
-| `/collab-checkpoints`      | GET    | Seller       | Returns `{ status, arkTxid, checkpointTxs }` when available (after buyer confirms). Returns `{ status, checkpointTxs: null }` if not ready yet  |
-| `/collaborate-checkpoints` | POST   | Seller       | Body:`{ signedCheckpointTxs }`. Calls `finalizeTx`, sets status → `payed`. Returns `{ success: true, arkTxid }`                                 |
+| Endpoint                   | Method | Who calls it | What it does                                                                                                                                                  |
+| -------------------------- | ------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/collaborate-psbts`       | GET    | Seller       | Returns unsigned `collaboratePsbt` and `recipientAddress`                                                                                                     |
+| `/collaborate`             | POST   | Seller       | Body:`{ signedPsbt }`. Saves seller-signed PSBT, sets status → `sellerReady`. Returns `{ success: true }`                                                     |
+| `/collab-status`           | GET    | Buyer        | Returns `{ status, collaboratePsbt }` when `sellerReady` (the PSBT has seller's signature)                                                                    |
+| `/confirm-collaborate`     | POST   | Buyer        | Body:`{ signedPsbt }` (PSBT with **both** buyer + seller sigs). Calls `submitTx`, saves server-signed checkpoints. Returns `{ arkTxid, signedCheckpointTxs }` |
+| `/buyer-sign-checkpoints`  | POST   | Buyer        | Body:`{ signedCheckpointTxs }` (buyer-signed checkpoints). Saves buyer+server signed checkpoints. Returns `{ success: true }`                                 |
+| `/collab-checkpoints`      | GET    | Seller       | Returns `{ status, arkTxid, checkpointTxs }` when available (after buyer signs checkpoints). Returns `{ status, checkpointTxs: null }` if not ready yet       |
+| `/collaborate-checkpoints` | POST   | Seller       | Body:`{ signedCheckpointTxs }`. Calls `finalizeTx`, sets status → `payed`. Returns `{ success: true, arkTxid }`                                               |
 
 ### Tech stack
 
@@ -62,7 +63,7 @@ async mutationFn(product: Product) {
 
 ### 3. Buyer hook: `useBuyerConfirmCollaborate`
 
-New hook for the buyer to add their signature and submit:
+New hook for the buyer to add their signature, submit, and sign checkpoints:
 
 ```typescript
 // Pseudocode
@@ -71,7 +72,10 @@ async mutationFn(product: Product) {
   //    (poll or call when status is sellerReady)
   // 2. Decode PSBT, sign with wallet.identity.sign(tx) — adds buyer sig on top of seller sig
   // 3. POST /products/:id/confirm-collaborate with { signedPsbt }
-  // Returns { arkTxid, signedCheckpointTxs }
+  //    → { arkTxid, signedCheckpointTxs }
+  // 4. For each checkpoint: decode from base64, Transaction.fromPSBT(), wallet.identity.sign(), encode back
+  // 5. POST /products/:id/buyer-sign-checkpoints with { signedCheckpointTxs }
+  // Returns { success: true }
 }
 ```
 
@@ -82,7 +86,7 @@ Remove the old hook entirely since it's replaced by the three hooks above.
 ## Acceptance Criteria
 
 - [ ] `useSellerSignCollaborate` — seller signs PSBT and sends to backend (no submitTx involved)
-- [ ] `useBuyerConfirmCollaborate` — buyer adds signature to seller-signed PSBT and submits (triggers `submitTx` on backend)
+- [ ] `useBuyerConfirmCollaborate` — buyer adds signature to seller-signed PSBT, submits (triggers `submitTx`), then signs checkpoints and sends to backend
 - [ ] `useSellerSignCheckpoints` — seller retrieves checkpoints, signs them, sends back (triggers `finalizeTx` on backend)
 - [ ] Old `useSellerCollaborate` hook is removed
 - [ ] All hooks follow the same pattern as existing hooks (useMutation, axios, base64 encode/decode, Transaction.fromPSBT, wallet.identity.sign)
