@@ -5,25 +5,26 @@
 
 ## Touched Files
 
-- `components/navigation-menu.tsx` (created)
+- `components/navigation-menu.tsx` (rewritten)
 - `components/layouts/app-layout.tsx` (modified)
 
 ## Changes Summary
 
-### `components/navigation-menu.tsx` (new)
-- Standalone bottom tab bar component with two tabs: Wallet (`/dashboard`) and Products (`/products`)
-- Uses `usePathname()` from expo-router to detect active route
-- Uses `useRouter()` for navigation on tab press
-- Lucide icons: `Wallet` and `Package`
-- Text labels below icons using `Small` typography component
-- Active state: `text-arkaic-primary` / themed primary icon color
-- Inactive state: `text-arkaic-muted` / themed muted icon color
-- Safe area insets via `useSafeAreaInsets()` for home indicator padding
-- Theme-aware icon colors using `useColorScheme()`
+### `components/navigation-menu.tsx`
 
-### `components/layouts/app-layout.tsx` (modified)
-- Imported `NavigationMenu` component
-- Rendered `<NavigationMenu />` below the main content `View` and above modals/drawers in `AppLayoutContent`
+- Replaced `Button`/`ButtonText` with `Pressable` + direct lucide icon + `Small` typography
+- Added `cssInterop` for `Wallet` and `Package` lucide icons so NativeWind color classes work
+- Each tab renders icon (20px) + label stacked vertically
+- Active tab: `text-arkaic-primary` + `font-heading` (bold); inactive: `text-arkaic-muted`
+- Removed `lodash` `map` dependency (native `.map()`)
+- Safe area bottom inset via `useSafeAreaInsets()`
+- Top border separates tab bar from content
+
+### `components/layouts/app-layout.tsx`
+
+- Wrapped `AppLayoutContent` + `NavigationMenu` in a `View` with `flex-1 bg-arkaic-background`
+- Ensures tab bar stays fixed at bottom while content scrolls above
+- `ToastManager` remains outside (renders as overlay)
 
 ## Test Flow
 
@@ -39,8 +40,8 @@
 
 ## Commands Executed
 
-- `npx tsc --noEmit` — pass (no errors in changed files; pre-existing errors in Gluestack actionsheet component unrelated)
+- `npx tsc --noEmit` — pass (no errors in changed files; pre-existing errors in Gluestack UI components only)
 
 ## Known Limitations
 
-- Icon colors use hardcoded RGB values matching the CSS variables for `arkaic-primary` and `arkaic-muted` since Lucide icons require a `color` string prop (not NativeWind classes)
+- `cssInterop` calls for lucide icons are local to `navigation-menu.tsx`; if more icons need NativeWind className support elsewhere, a shared utility may be needed

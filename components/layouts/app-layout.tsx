@@ -46,7 +46,10 @@ export default function AppLayout(props: PropsWithChildren) {
 
   return (
     <QueryClientProvider client={client}>
-      <AppLayoutContent>{props.children}</AppLayoutContent>
+      <View className='flex-1 bg-arkaic-background'>
+        <AppLayoutContent>{props.children}</AppLayoutContent>
+        <NavigationMenu />
+      </View>
       <ToastManager />
     </QueryClientProvider>
   );
@@ -136,8 +139,6 @@ function AppLayoutContent(props: PropsWithChildren) {
           </ScrollView>
         </VStack>
       </View>
-
-      <NavigationMenu />
 
       <Modal
         isOpen={showBackupModal}

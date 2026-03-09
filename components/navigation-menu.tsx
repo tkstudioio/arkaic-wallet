@@ -1,9 +1,22 @@
 import { usePathname, useRouter } from "expo-router";
-import { map } from "lodash";
 import { Package, Wallet } from "lucide-react-native";
-import { View } from "react-native";
+import { cssInterop } from "nativewind";
+import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Button, ButtonText } from "./ui/button";
+import { Small } from "./ui/typography";
+
+cssInterop(Wallet, {
+  className: {
+    target: "style",
+    nativeStyleToProp: { color: true },
+  },
+});
+cssInterop(Package, {
+  className: {
+    target: "style",
+    nativeStyleToProp: { color: true },
+  },
+});
 
 const tabs = [
   { label: "Wallet", icon: Wallet, path: "/dashboard" },
@@ -11,27 +24,41 @@ const tabs = [
 ] as const;
 
 export default function NavigationMenu() {
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
   const { bottom } = useSafeAreaInsets();
 
   return (
     <View
-      className='flex-row bg-arkaic-fill w-max'
+      className='flex-row bg-arkaic-fill border-t border-arkaic-border'
       style={{ paddingBottom: bottom }}
     >
-      {map(tabs, (tab) => {
+      {tabs.map((tab) => {
         const isActive = pathname.startsWith(tab.path);
+        const Icon = tab.icon;
 
         return (
-          <Button
-            className='flex-shrink-0'
+          <Pressable
             key={tab.path}
-            action={isActive ? "primary" : "secondary"}
+            className='flex-1 items-center justify-center py-3 gap-1'
             onPress={() => router.push(tab.path)}
           >
-            <ButtonText>{tab.label}</ButtonText>
-          </Button>
+            <Icon
+              size={20}
+              className={
+                isActive ? "text-arkaic-primary" : "text-arkaic-muted"
+              }
+            />
+            <Small
+              className={
+                isActive
+                  ? "text-arkaic-primary font-heading"
+                  : "text-arkaic-muted"
+              }
+            >
+              {tab.label}
+            </Small>
+          </Pressable>
         );
       })}
     </View>
