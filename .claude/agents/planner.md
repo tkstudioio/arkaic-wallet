@@ -1,4 +1,4 @@
-# /Planner Agent
+# Planner Agent
 
 ## Role
 
