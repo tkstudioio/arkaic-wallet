@@ -11,8 +11,10 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 if (typeof global.Buffer === "undefined") global.Buffer = Buffer;
 
@@ -30,6 +32,8 @@ export default function RootLayout() {
     UbuntuMono_700Bold,
   });
 
+  const client = useMemo(() => new QueryClient(), []);
+
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -42,10 +46,12 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <GluestackUIProvider mode='system'>
-        <Stack screenOptions={{ headerShown: false }} />
-        <StatusBar style='auto' />
-      </GluestackUIProvider>
+      <QueryClientProvider client={client}>
+        <GluestackUIProvider mode='system'>
+          <Stack screenOptions={{ headerShown: false }} />
+          <StatusBar style='auto' />
+        </GluestackUIProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }
