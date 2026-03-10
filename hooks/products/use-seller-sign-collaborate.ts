@@ -13,7 +13,7 @@ export function useSellerSignCollaborate() {
       if (!wallet) throw new Error("Missing wallet");
 
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/collaborate-psbts`,
+        `http://localhost:3000/products/${product.id}/collaborate/seller-psbt`,
       );
 
       const { collaboratePsbt } = data;
@@ -26,7 +26,7 @@ export function useSellerSignCollaborate() {
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
       const { data: collaborateData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/collaborate`,
+        `http://localhost:3000/products/${product.id}/collaborate/seller-submit-psbt`,
         { signedPsbt },
       );
 

@@ -13,7 +13,7 @@ export function useBuyerConfirmCollaborate() {
       if (!wallet) throw new Error("Missing wallet");
 
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/collab-status`,
+        `http://localhost:3000/products/${product.id}/collaborate/buyer-psbt`,
       );
 
       const { collaboratePsbt } = data;
@@ -26,7 +26,7 @@ export function useBuyerConfirmCollaborate() {
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
       const { data: confirmData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/confirm-collaborate`,
+        `http://localhost:3000/products/${product.id}/collaborate/buyer-submit-psbt`,
         { signedPsbt },
       );
 
@@ -43,7 +43,7 @@ export function useBuyerConfirmCollaborate() {
       );
 
       const { data: checkpointsData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/buyer-sign-checkpoints`,
+        `http://localhost:3000/products/${product.id}/collaborate/buyer-sign-checkpoints`,
         { signedCheckpointTxs: buyerSignedCheckpoints },
       );
 

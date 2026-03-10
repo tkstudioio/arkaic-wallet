@@ -13,7 +13,7 @@ export function useSellerSignCheckpoints() {
       if (!wallet) throw new Error("Missing wallet");
 
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/collab-checkpoints`,
+        `http://localhost:3000/products/${product.id}/collaborate/seller-checkpoints`,
       );
 
       const { checkpointTxs } = data;
@@ -30,7 +30,7 @@ export function useSellerSignCheckpoints() {
       );
 
       const { data: checkpointsData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/collaborate-checkpoints`,
+        `http://localhost:3000/products/${product.id}/collaborate/seller-sign-checkpoints`,
         { signedCheckpointTxs: signedCheckpoints },
       );
 

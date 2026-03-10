@@ -14,7 +14,7 @@ export function useRefund() {
       if (!arkProvider) throw new Error("Missing arkProvider");
 
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/get-psbts`,
+        `http://localhost:3000/products/${product.id}/refund/psbt`,
       );
 
       const { refundPsbt } = data;
@@ -28,13 +28,12 @@ export function useRefund() {
 
       // Step 1: Submit signed PSBT, get back checkpoint txs to co-sign
       const { data: refundData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/refund`,
+        `http://localhost:3000/products/${product.id}/refund/submit-signed-psbt`,
         { signedPsbt },
       );
 
       const { arkTxid, signedCheckpointTxs } = refundData;
 
-      console.log(arkTxid);
       // Step 2: Sign each checkpoint tx with buyer key
       const buyerSignedCheckpoints = await Promise.all(
         signedCheckpointTxs.map(async (cp: string) => {
@@ -47,7 +46,7 @@ export function useRefund() {
 
       // Step 3: Finalize refund with buyer-signed checkpoints
       const { data: finalizeData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/finalize-refund`,
+        `http://localhost:3000/products/${product.id}/refund/finalize`,
         { arkTxid, signedCheckpointTxs: buyerSignedCheckpoints },
       );
 

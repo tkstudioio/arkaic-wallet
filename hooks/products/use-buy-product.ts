@@ -61,7 +61,6 @@ export function useBuyProduct() {
         `http://localhost:3000/products/${product.id}/check-payment`,
         {
           params: {
-            escrowAddress: escrowAddress,
             buyerPubkey: hex.encode(buyerPubkey),
             timelockExpiry,
           },
