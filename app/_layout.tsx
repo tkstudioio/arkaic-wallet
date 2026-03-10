@@ -12,6 +12,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 if (typeof global.Buffer === "undefined") global.Buffer = Buffer;
 
@@ -40,9 +41,11 @@ export default function RootLayout() {
   }
 
   return (
-    <GluestackUIProvider mode='system'>
-      <Stack screenOptions={{ headerShown: false }} />
-      <StatusBar style='auto' />
-    </GluestackUIProvider>
+    <SafeAreaProvider>
+      <GluestackUIProvider mode='system'>
+        <Stack screenOptions={{ headerShown: false }} />
+        <StatusBar style='auto' />
+      </GluestackUIProvider>
+    </SafeAreaProvider>
   );
 }
