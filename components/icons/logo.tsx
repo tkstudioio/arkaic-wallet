@@ -1,13 +1,18 @@
 import { useColorScheme } from "@/hooks/arkade/use-color-scheme";
 import * as React from "react";
 import Svg, { Path, SvgProps } from "react-native-svg";
+const ASPECT_RATIO = 122 / 33;
+
 const LogoFull = (props: SvgProps) => {
   const colorScheme = useColorScheme();
   const fillColor = colorScheme === "dark" ? "#F8FAFC" : "#0F172A";
+  const height = props.height ?? 33;
+  const width = props.width ?? Number(height) * ASPECT_RATIO;
   return (
     <Svg
       viewBox='0 0 122 33'
-      height={33}
+      height={height}
+      width={width}
       preserveAspectRatio='xMidYMid meet'
       {...props}
     >
