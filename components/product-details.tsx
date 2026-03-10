@@ -79,13 +79,14 @@ export function ProductDetailsComponent({ id }: { id: number }) {
                   </ButtonText>
                 </Button>
 
-                {isAfter(new Date(), product.timelockExpiry) && (
-                  <Button onPress={() => refund(product)}>
-                    <ButtonText>
-                      Buyer - claim refund {isPending && <Spinner />}
-                    </ButtonText>
-                  </Button>
-                )}
+                <Button
+                  onPress={() => refund(product)}
+                  isDisabled={!isAfter(new Date(), product.timelockExpiry)}
+                >
+                  <ButtonText>
+                    Buyer - claim refund {isPending && <Spinner />}
+                  </ButtonText>
+                </Button>
               </>
             )}
           </>
