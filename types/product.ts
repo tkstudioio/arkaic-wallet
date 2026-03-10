@@ -1,3 +1,20 @@
+export type ProductStatus =
+  | "awaitingFunds"
+  | "fundLocked"
+  | "sellerReady"
+  | "buyerSubmitted"
+  | "buyerCheckpointsSigned"
+  | "payed"
+  | "refunded";
+
+export type ProductEvent = {
+  id: number;
+  productId: number;
+  action: string;
+  createdAt: string;
+  metadata: Record<string, string> | null;
+};
+
 export type Product = {
   id: number;
   nome: string;
@@ -8,5 +25,6 @@ export type Product = {
   buyerPubkey: string;
   refundRecipientAddress: string;
   timelockExpiry: number;
-  status: string;
+  status: ProductStatus;
+  events?: ProductEvent[];
 };
