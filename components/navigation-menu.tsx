@@ -1,5 +1,5 @@
 import { usePathname, useRouter } from "expo-router";
-import { Package, Wallet } from "lucide-react-native";
+import { Package, Settings, Wallet } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,10 +17,17 @@ cssInterop(Package, {
     nativeStyleToProp: { color: true },
   },
 });
+cssInterop(Settings, {
+  className: {
+    target: "style",
+    nativeStyleToProp: { color: true },
+  },
+});
 
 const tabs = [
   { label: "Wallet", icon: Wallet, path: "/dashboard" },
   { label: "Products", icon: Package, path: "/products" },
+  { label: "Settings", icon: Settings, path: "/settings" },
 ] as const;
 
 export default function NavigationMenu() {
