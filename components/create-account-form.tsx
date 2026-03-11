@@ -3,40 +3,19 @@ import SeedPhraseImage from "@/assets/images/seedphrase.svg";
 import SeedPhraseGrid from "@/components/seed-phrase-grid";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
-import {
-  Select,
-  SelectBackdrop,
-  SelectContent,
-  SelectDragIndicator,
-  SelectDragIndicatorWrapper,
-  SelectIcon,
-  SelectInput,
-  SelectItem,
-  SelectPortal,
-  SelectTrigger,
-} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
-import { useCopyToClipboard } from "@/hooks/arkade/use-clipboard";
 import { useCreateAccount } from "@/hooks/arkade/use-create-account";
 import {
   generateMnemonic,
-  getMasterFingerprint,
   getRandomVerificationIndices,
   mnemonicToPrivateKey,
   validateMnemonic,
 } from "@/utils/mnemonic";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
-import {
-  ChevronDown,
-  Fingerprint,
-  ListCheck,
-  Shield,
-  ShieldCheck,
-  User,
-} from "lucide-react-native";
-import { useMemo, useState } from "react";
+import { ListCheck, Shield, ShieldCheck, User } from "lucide-react-native";
+import { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { match } from "ts-pattern";
 import { Large, P, Small } from "./ui/typography";
@@ -56,7 +35,6 @@ export default function CreateOrRestoreAccountForm(props: {
   const router = useRouter();
   const createAccountMutation = useCreateAccount();
 
-  const { mutate: copyToClipboard } = useCopyToClipboard();
   const [step, setStep] = useState<Step>("wordCount");
   const [wordCount, setWordCount] = useState<WordCount>(12);
   const [mnemonic, setMnemonic] = useState("");
@@ -128,12 +106,6 @@ export default function CreateOrRestoreAccountForm(props: {
       return next;
     });
   };
-
-  const fingerprint = useMemo(
-    () =>
-      mnemonic ? getMasterFingerprint(mnemonic, passphrase || undefined) : "",
-    [mnemonic, passphrase],
-  );
 
   const restoreMnemonicValid =
     restoreWords.length > 0 &&
@@ -316,7 +288,6 @@ export default function CreateOrRestoreAccountForm(props: {
         <Formik
           initialValues={{
             name: "",
-            arkadeServerUrl: "https://arkade.computer",
           }}
           validate={(values) => {
             const errors: { name?: string } = {};
@@ -335,14 +306,13 @@ export default function CreateOrRestoreAccountForm(props: {
               {
                 account: {
                   name: values.name,
-                  arkadeServerUrl: values.arkadeServerUrl,
                   mnemonic,
                 },
                 privateKey,
               },
               {
                 onSuccess: () => {
-                  router.replace("/dashboard");
+                  router.replace("/account/dashboard");
                 },
               },
             );
@@ -374,34 +344,6 @@ export default function CreateOrRestoreAccountForm(props: {
                   )}
                 </VStack>
                 <VStack space='xs'>
-                  <Small>Arkade server URL</Small>
-                  <Select
-                    selectedValue={values.arkadeServerUrl}
-                    onValueChange={handleChange("arkadeServerUrl")}
-                  >
-                    <SelectTrigger size='xl'>
-                      <SelectInput placeholder='Select ASP server' />
-                      <SelectIcon as={ChevronDown} />
-                    </SelectTrigger>
-                    <SelectPortal>
-                      <SelectBackdrop />
-                      <SelectContent>
-                        <SelectDragIndicatorWrapper>
-                          <SelectDragIndicator />
-                        </SelectDragIndicatorWrapper>
-                        <SelectItem
-                          label='mainnet — arkade.computer'
-                          value='https://arkade.computer'
-                        />
-                        <SelectItem
-                          label='Mutinynet — mutinynet.arkade.sh'
-                          value='https://mutinynet.arkade.sh'
-                        />
-                      </SelectContent>
-                    </SelectPortal>
-                  </Select>
-                </VStack>
-                <VStack space='xs'>
                   <Small>Passphrase (optional)</Small>
                   <Input size='xl'>
                     <InputField
@@ -413,16 +355,7 @@ export default function CreateOrRestoreAccountForm(props: {
                   </Input>
                 </VStack>
               </VStack>
-              {fingerprint && (
-                <Button
-                  variant={"link"}
-                  action={"neutral"}
-                  onPress={() => copyToClipboard(fingerprint)}
-                >
-                  <ButtonIcon as={Fingerprint} />
-                  <ButtonText>{fingerprint}</ButtonText>
-                </Button>
-              )}
+
               <VStack space='md' className='w-full'>
                 {match(createAccountMutation)
                   .with({ isError: true }, () => (

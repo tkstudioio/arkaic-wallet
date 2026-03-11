@@ -1,10 +1,10 @@
 import { AccountBalance } from "@/components/account-balance";
-import AppLayout from "@/components/layouts/app-layout";
 import { ReceiveActionSheet } from "@/components/receive-action-sheet";
 import { SendActionSheet } from "@/components/send-action-sheet";
 import { Transactions } from "@/components/transactions";
+import { Card } from "@/components/ui/card";
 import { HStack } from "@/components/ui/hstack";
-import { VStack } from "@/components/ui/vstack";
+import { H1 } from "@/components/ui/typography";
 import useAccountStore from "@/stores/account";
 
 import React from "react";
@@ -14,10 +14,11 @@ const DashboardPage = () => {
   const { account } = useAccountStore();
 
   return (
-    <AppLayout>
-      <VStack className='px-arkaic-md flex-1' space={"4xl"}>
-        <AccountBalance account={account!} />
-        <HStack className='gap-6 w-full'>
+    <>
+      <H1>Dashbooard</H1>
+      <AccountBalance account={account!} />
+      <Card variant={"ghost"}>
+        <HStack className='w-full' space={"md"}>
           <View className='flex-1'>
             <ReceiveActionSheet />
           </View>
@@ -25,9 +26,9 @@ const DashboardPage = () => {
             <SendActionSheet />
           </View>
         </HStack>
-        <Transactions />
-      </VStack>
-    </AppLayout>
+      </Card>
+      <Transactions />
+    </>
   );
 };
 export default DashboardPage;

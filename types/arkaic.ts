@@ -1,7 +1,6 @@
 export type ArkaicAccount = {
   name: string;
   privateKey?: string;
-  arkadeServerUrl: string;
   avatar?: string;
   mnemonic?: string;
   customVtxoScripts?: string[];

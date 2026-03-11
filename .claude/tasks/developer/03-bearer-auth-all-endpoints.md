@@ -18,17 +18,17 @@ The wallet instance is available from the Zustand store: `useAccountStore()`.
 
 ### Current state of each hook
 
-| Hook file | Endpoints | Has Bearer? |
-|-----------|-----------|-------------|
-| `use-products.ts` | `GET /products` | YES |
-| `use-product.ts` | `GET /products/:id` | NO |
-| `use-account-products.ts` | `GET /account/selling`, `GET /account/buying` | YES |
-| `use-create-product.ts` | `POST /products` | NO |
-| `use-buy-product.ts` | `GET /products/:id/check-payment` | NO |
-| `use-seller-sign-collaborate.ts` | `GET .../seller-psbt`, `POST .../seller-submit-psbt` | NO |
-| `use-seller-sign-checkpoints.ts` | `GET .../seller-checkpoints`, `POST .../seller-sign-checkpoints` | NO |
-| `use-buyer-confirm-collaborate.ts` | `GET .../buyer-psbt`, `POST .../buyer-submit-psbt`, `POST .../buyer-sign-checkpoints` | NO |
-| `use-refund.ts` | `GET .../refund/psbt`, `POST .../refund/submit-signed-psbt`, `POST .../refund/finalize` | NO |
+| Hook file                          | Endpoints                                                                               | Has Bearer? |
+| ---------------------------------- | --------------------------------------------------------------------------------------- | ----------- |
+| `use-products.ts`                  | `GET /products`                                                                         | YES         |
+| `use-product.ts`                   | `GET /products/:id`                                                                     | NO          |
+| `use-account-products.ts`          | `GET /account/selling`, `GET /account/buying`                                           | YES         |
+| `use-create-product.ts`            | `POST /products`                                                                        | NO          |
+| `use-buy-product.ts`               | `GET /products/:id/check-payment`                                                       | NO          |
+| `use-seller-sign-collaborate.ts`   | `GET .../seller-psbt`, `POST .../seller-submit-psbt`                                    | NO          |
+| `use-seller-sign-checkpoints.ts`   | `GET .../seller-checkpoints`, `POST .../seller-sign-checkpoints`                        | NO          |
+| `use-buyer-confirm-collaborate.ts` | `GET .../buyer-psbt`, `POST .../buyer-submit-psbt`, `POST .../buyer-sign-checkpoints`   | NO          |
+| `use-refund.ts`                    | `GET .../refund/psbt`, `POST .../refund/submit-signed-psbt`, `POST .../refund/finalize` | NO          |
 
 ### HTTP client inconsistency
 
@@ -39,6 +39,7 @@ Some hooks use raw `fetch`, others use `axios`. Both are present in the codebase
 1. **Every HTTP request** to the backend must include the `Authorization: Bearer <compressedPubkeyHex>` header.
 2. Extract the pubkey-derivation logic into a shared helper to avoid duplicating the same 4-line snippet in every hook.
 3. Remove the `sellerPubkey` field from the `POST /products` request body — the backend should derive the seller identity from the Bearer token instead.
+4. use axios anywhere. You should create an axios instance containing the baseUrl somwhere in lib directory. Then use that axios instance everywhere. The axios instance should generate the pubkey and send it to the backend via bearer tokenw
 
 ## Acceptance Criteria
 

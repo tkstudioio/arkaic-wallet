@@ -12,9 +12,13 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useMemo } from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { View } from "react-native";
 
 if (typeof global.Buffer === "undefined") global.Buffer = Buffer;
 
@@ -27,6 +31,8 @@ if (!global.crypto.getRandomValues) {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { top: paddingTop, bottom: paddingBottom } = useSafeAreaInsets();
+
   const [fontsLoaded] = useFonts({
     UbuntuMono_400Regular,
     UbuntuMono_700Bold,
@@ -45,13 +51,24 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider client={client}>
-        <GluestackUIProvider mode='system'>
-          <Stack screenOptions={{ headerShown: false }} />
-          <StatusBar style='auto' />
-        </GluestackUIProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
+    <QueryClientProvider client={client}>
+      <GluestackUIProvider mode='system'>
+        <View
+          style={{ paddingTop, paddingBottom }}
+          className='h-full bg-arkaic-background px-arkaic-md'
+        >
+          <SafeAreaProvider>
+            <Stack
+              screenOptions={{
+                animation: "none",
+                headerShown: false,
+                contentStyle: { backgroundColor: "transparent" },
+              }}
+            />
+            <StatusBar style='auto' />
+          </SafeAreaProvider>
+        </View>
+      </GluestackUIProvider>
+    </QueryClientProvider>
   );
 }

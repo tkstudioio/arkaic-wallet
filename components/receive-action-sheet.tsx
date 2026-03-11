@@ -25,7 +25,6 @@ import { VStack } from "./ui/vstack";
 
 import { useAspInfo } from "@/hooks/arkade/use-asp-info";
 import { useCopyToClipboard } from "@/hooks/arkade/use-clipboard";
-import { Link } from "expo-router";
 import { Toast } from "toastify-react-native";
 import { AmountComponent } from "./amount";
 import { QrCarousel } from "./qr-carousel";
@@ -91,11 +90,7 @@ export function ReceiveActionSheet() {
 
   return (
     <>
-      <Button
-        action={"primary"}
-        onPress={() => setOpen(true)}
-        className='flex-shrink-0'
-      >
+      <Button action={"primary"} onPress={() => setOpen(true)}>
         <ButtonIcon as={Plus} />
         <ButtonText>Receive</ButtonText>
       </Button>
@@ -106,11 +101,6 @@ export function ReceiveActionSheet() {
           <ActionsheetDragIndicatorWrapper>
             <ActionsheetDragIndicator />
           </ActionsheetDragIndicatorWrapper>
-          <Link href={"/products"}>
-            <Button>
-              <ButtonText>Boh</ButtonText>
-            </Button>
-          </Link>
 
           {!showQrCode ? (
             <VStack className='items-center'>

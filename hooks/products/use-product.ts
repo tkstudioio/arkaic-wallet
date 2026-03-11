@@ -25,7 +25,7 @@ export function useProduct(id: number) {
       if (!response.ok) throw new Error("Failed to fetch product");
       return response.json();
     },
-    refetchInterval: 1000,
+    refetchInterval: 1000 * 15,
     enabled: !!id && !!wallet,
   });
 }

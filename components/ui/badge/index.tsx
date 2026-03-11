@@ -14,7 +14,7 @@ import { Svg } from "react-native-svg";
 const SCOPE = "BADGE";
 
 export const badgeStyle = tva({
-  base: "flex-row rounded-full items-center data-[disabled=true]:opacity-50 px-2 py-1 gap-1",
+  base: "flex-row self-start rounded-full items-center data-[disabled=true]:opacity-50 px-2 py-1 gap-1",
   variants: {
     action: {
       error: "bg-arkaic-negative/15 border-arkaic-negative/50",

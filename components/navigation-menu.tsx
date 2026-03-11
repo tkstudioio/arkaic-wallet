@@ -1,9 +1,17 @@
-import { usePathname, useRouter } from "expo-router";
-import { Package, Settings, Wallet } from "lucide-react-native";
+import { Href, usePathname, useRouter } from "expo-router";
+import { toString } from "lodash";
+import {
+  LucideIcon,
+  Package,
+  Plus,
+  Settings,
+  ShoppingBag,
+  ShoppingCart,
+  Wallet,
+} from "lucide-react-native";
 import { cssInterop } from "nativewind";
-import { Pressable, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Small } from "./ui/typography";
+import { Button, ButtonIcon } from "./ui/button";
+import { Card } from "./ui/card";
 
 cssInterop(Wallet, {
   className: {
@@ -23,51 +31,51 @@ cssInterop(Settings, {
     nativeStyleToProp: { color: true },
   },
 });
+cssInterop(ShoppingBag, {
+  className: {
+    target: "style",
+    nativeStyleToProp: { color: true },
+  },
+});
+cssInterop(ShoppingCart, {
+  className: {
+    target: "style",
+    nativeStyleToProp: { color: true },
+  },
+});
 
 const tabs = [
-  { label: "Wallet", icon: Wallet, path: "/dashboard" },
+  { label: "Wallet", icon: Wallet, path: "/account/dashboard" },
   { label: "Products", icon: Package, path: "/products" },
-  { label: "Settings", icon: Settings, path: "/settings" },
-] as const;
+  { label: "Sell", icon: Plus, path: "/products/create" },
+  { label: "Selling", icon: ShoppingBag, path: "/account/selling" },
+  { label: "Buying", icon: ShoppingCart, path: "/account/buying" },
+  { label: "Settings", icon: Settings, path: "/account/settings" },
+] as { label: string; icon: LucideIcon; path: Href }[];
 
 export default function NavigationMenu() {
   const pathname = usePathname();
   const router = useRouter();
-  const { bottom } = useSafeAreaInsets();
 
   return (
-    <View
-      className='flex-row bg-arkaic-fill border-t border-arkaic-border'
-      style={{ paddingBottom: bottom }}
-    >
+    <Card className='flex-row'>
       {tabs.map((tab) => {
-        const isActive = pathname.startsWith(tab.path);
+        const isActive = pathname === toString(tab.path);
         const Icon = tab.icon;
 
         return (
-          <Pressable
-            key={tab.path}
-            className='flex-1 items-center justify-center py-3 gap-1'
+          <Button
+            variant={isActive ? undefined : "link"}
+            action={isActive ? undefined : "neutral"}
+            key={toString(tab.path)}
+            size="sm"
+            className={"flex-1 items-center justify-center"}
             onPress={() => router.push(tab.path)}
           >
-            <Icon
-              size={20}
-              className={
-                isActive ? "text-arkaic-primary" : "text-arkaic-muted"
-              }
-            />
-            <Small
-              className={
-                isActive
-                  ? "text-arkaic-primary font-heading"
-                  : "text-arkaic-muted"
-              }
-            >
-              {tab.label}
-            </Small>
-          </Pressable>
+            <ButtonIcon as={Icon} size="sm" />
+          </Button>
         );
       })}
-    </View>
+    </Card>
   );
 }

@@ -1,5 +1,4 @@
 import SeedPhraseGrid from "@/components/seed-phrase-grid";
-import AppLayout from "@/components/layouts/app-layout";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import {
@@ -46,8 +45,8 @@ export default function SettingsPage() {
   };
 
   return (
-    <AppLayout>
-      <VStack className='px-arkaic-md flex-1' space={"4xl"}>
+    <>
+      <VStack space={"4xl"}>
         <VStack space={"md"}>
           <H1>Settings</H1>
           {account && <P>Account: {account.name}</P>}
@@ -153,6 +152,6 @@ export default function SettingsPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </AppLayout>
+    </>
   );
 }

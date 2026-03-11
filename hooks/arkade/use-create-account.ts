@@ -1,5 +1,6 @@
 import useAccountStore, { StorageKeys } from "@/stores/account";
 import { ArkaicAccount } from "@/types/arkaic";
+import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
 import {
@@ -8,6 +9,7 @@ import {
 } from "@arkade-os/sdk/adapters/expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 type CreateAccountParams = {
   account: ArkaicAccount;
@@ -24,15 +26,14 @@ export function useCreateAccount() {
       const storedAccounts = await AsyncStorage.getItem(StorageKeys.Accounts);
       const currentAccounts = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-      await AsyncStorage.setItem(
-        StorageKeys.Accounts,
-        JSON.stringify([...currentAccounts, account]),
-      );
+      const {
+        data: { asp },
+      } = await axios.get<{ asp: string }>("http://localhost:4000/config");
 
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
 
-      const arkProvider = new ExpoArkProvider(account.arkadeServerUrl);
-      const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
+      const arkProvider = new ExpoArkProvider(asp);
+      const indexerProvider = new ExpoIndexerProvider(asp);
 
       const identity = SingleKey.fromHex(privateKey);
       const wallet = await Wallet.create({
@@ -40,6 +41,14 @@ export function useCreateAccount() {
         arkProvider,
         indexerProvider,
       });
+
+      const pubkey = await getPubkeyHex(wallet);
+
+      await axios.post<{ asp: string }>(
+        "http://localhost:4000/auth/create",
+        { accountName: account.name },
+        { headers: { Authorization: "Bearer " + pubkey } },
+      );
 
       const swapProvider = new BoltzSwapProvider({
         apiUrl: "https://api.ark.boltz.exchange",
@@ -54,7 +63,6 @@ export function useCreateAccount() {
 
       const vtxoManager = new VtxoManager(wallet, {
         enabled: true,
-        thresholdPercentage: 10,
       });
 
       setStore({
@@ -65,6 +73,11 @@ export function useCreateAccount() {
         vtxoManager,
         arkadeLightning,
       });
+
+      await AsyncStorage.setItem(
+        StorageKeys.Accounts,
+        JSON.stringify([...currentAccounts, account]),
+      );
 
       queryClient.invalidateQueries({ queryKey: ["balance"] });
     },

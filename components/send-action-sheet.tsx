@@ -104,11 +104,7 @@ export function SendActionSheet() {
 
   return (
     <>
-      <Button
-        variant={"outline"}
-        onPress={() => setOpen(true)}
-        className='flex-shrink-0'
-      >
+      <Button variant={"link"} action={"neutral"} onPress={() => setOpen(true)}>
         <ButtonIcon as={Send} />
         <ButtonText>Send</ButtonText>
       </Button>

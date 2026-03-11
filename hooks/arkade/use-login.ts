@@ -76,7 +76,7 @@ export function useLoginMutation() {
         fingerprint,
       });
 
-      router.push("/dashboard");
+      router.push("/account/dashboard");
     },
   });
 }

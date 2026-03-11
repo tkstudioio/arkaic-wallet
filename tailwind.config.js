@@ -201,9 +201,9 @@ module.exports = {
         "arkaic-xl": "64px",
       },
       borderRadius: {
-        "arkaic-button": "4px",
-        "arkaic-input": "2px",
-        "arkaic-card": "16px",
+        "arkaic-button": "12px",
+        "arkaic-input": "12px",
+        "arkaic-card": "24px",
         "arkaic-full": "100px",
       },
       fontFamily: {

@@ -6,19 +6,16 @@ import { VStack } from "./ui/vstack";
 export function CreateAccount() {
   const router = useRouter();
 
-  function onCreate() {
-    router.push("/account/create");
-  }
-  function onRestoreFromSeedPhrase() {
-    router.push("/account/restore");
-  }
-
   return (
     <VStack className='w-full' space={"md"}>
-      <Button size='lg' onPress={onCreate}>
+      <Button size='lg' onPress={() => router.push("/auth/create")}>
         <ButtonText>Create account</ButtonText>
       </Button>
-      <Button size='lg' onPress={onRestoreFromSeedPhrase} variant={"outline"}>
+      <Button
+        size='lg'
+        onPress={() => router.push("/auth/restore")}
+        variant={"outline"}
+      >
         <ButtonText>Restore account</ButtonText>
       </Button>
     </VStack>
