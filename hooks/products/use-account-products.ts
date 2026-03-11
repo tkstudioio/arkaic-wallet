@@ -1,10 +1,8 @@
 import useAccountStore from "@/stores/account";
+import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
 import { Product } from "@/types/product";
-import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
-// TODO: replace with actual API base URL
 
 export function useAccountSellingProducts() {
   const { wallet } = useAccountStore();
@@ -14,13 +12,11 @@ export function useAccountSellingProducts() {
     queryFn: async (): Promise<Product[]> => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const pubkey = await getPubkeyHex(wallet);
+      const headers = await getAuthHeaders(wallet);
 
       const { data } = await axios.get(
-        `http://localhost:4000/account/selling`,
-        {
-          headers: { Authorization: `Bearer ${pubkey}` },
-        },
+        `${API_BASE_URL}/account/selling`,
+        { headers },
       );
 
       return data;
@@ -37,10 +33,10 @@ export function useAccountBuyingProducts() {
     queryFn: async (): Promise<Product[]> => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const pubkey = await getPubkeyHex(wallet);
+      const headers = await getAuthHeaders(wallet);
 
-      const { data } = await axios.get(`http://localhost:4000/account/buying`, {
-        headers: { Authorization: `Bearer ${pubkey}` },
+      const { data } = await axios.get(`${API_BASE_URL}/account/buying`, {
+        headers,
       });
 
       return data;

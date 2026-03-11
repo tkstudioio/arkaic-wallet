@@ -1,14 +1,11 @@
 import useAccountStore from "@/stores/account";
+import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
 import { Product } from "@/types/product";
-import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// TODO: replace with actual API base URL
-const API_BASE_URL = "http://localhost:4000";
-
 type CreateProductParams = {
-  nome: string;
-  prezzo: number;
+  name: string;
+  price: number;
 };
 
 export function useCreateProduct() {
@@ -20,13 +17,13 @@ export function useCreateProduct() {
     mutationFn: async (params: CreateProductParams): Promise<Product> => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const pubkey = await getPubkeyHex(wallet);
+      const headers = await getAuthHeaders(wallet);
 
       const response = await fetch(`${API_BASE_URL}/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${pubkey}`,
+          ...headers,
         },
         body: JSON.stringify(params),
       });
