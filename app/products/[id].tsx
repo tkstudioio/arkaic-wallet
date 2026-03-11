@@ -1,22 +1,13 @@
-import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Large, Muted, P, Small } from "@/components/ui/typography";
-import { useBuyProduct } from "@/hooks/products/use-buy-product";
-import { useBuyerConfirmCollaborate } from "@/hooks/products/use-buyer-confirm-collaborate";
 import { useProduct } from "@/hooks/products/use-product";
-import { useRefund } from "@/hooks/products/use-refund";
-import { useSellerSignCheckpoints } from "@/hooks/products/use-seller-sign-checkpoints";
-import { useSellerSignCollaborate } from "@/hooks/products/use-seller-sign-collaborate";
-import useAccountStore from "@/stores/account";
 import { ProductEvent } from "@/types/product";
-import { hex } from "@scure/base";
-import { format, isAfter } from "date-fns";
+import { format } from "date-fns";
 
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
 import { useLocalSearchParams } from "expo-router";
 import { toNumber } from "lodash";
-import { useEffect, useState } from "react";
 import { View } from "react-native";
 
 const EVENT_LABELS: Record<string, string> = {
@@ -36,139 +27,18 @@ export default function ProductDetail() {
   const castedId = toNumber(id);
 
   if (isNaN(castedId)) throw new Error("Wrong id");
-  const { data: product } = useProduct(toNumber(id));
-  const { wallet } = useAccountStore();
+  const { data: product, isLoading } = useProduct(toNumber(id));
 
-  const [userCompressedPubkey, setUserCompressedPubkey] = useState<
-    string | null
-  >(null);
-  const [userXOnlyPubkey, setUserXOnlyPubkey] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!wallet) return;
-    wallet.identity.compressedPublicKey().then((bytes) => {
-      setUserCompressedPubkey(hex.encode(bytes));
-      setUserXOnlyPubkey(
-        hex.encode(bytes.length === 33 ? bytes.slice(1) : bytes),
-      );
-    });
-  }, [wallet]);
-
-  const { mutate: buyProduct, isPending: isBuying } = useBuyProduct();
-  const { mutate: refund, isPending: isRefunding } = useRefund();
-  const { mutate: sellerSignCollaborate, isPending: isSellerSigning } =
-    useSellerSignCollaborate();
-  const { mutate: sellerSignCheckpoints, isPending: isSellerCheckpoints } =
-    useSellerSignCheckpoints();
-  const { mutate: buyerConfirmCollaborate, isPending: isBuyerConfirming } =
-    useBuyerConfirmCollaborate();
-
+  if (isLoading) return <Spinner />;
   if (!product) return <P>No product</P>;
-
-  const isSeller =
-    userCompressedPubkey === product.sellerPubkey ||
-    userXOnlyPubkey === product.sellerPubkey;
-  const isBuyer =
-    userCompressedPubkey === product.buyerPubkey ||
-    userXOnlyPubkey === product.buyerPubkey;
-  const timelockExpired = isAfter(new Date(), product.timelockExpiry);
-  const status = product.status;
 
   return (
     <Card>
-      <Large>{product.nome}</Large>
-      <P>Price: {product.prezzo} sats</P>
-      <P>Seller: {product.sellerPubkey.slice(0, 7)}</P>
-      <P>Status: {status}</P>
+      <Large>{product.name}</Large>
+      <P>Price: {product.price} sats</P>
+      <P>Seller: {product.seller?.pubkey?.slice(0, 7) ?? "Unknown"}</P>
 
-      <VStack space='xl' className='mt-4'>
-        {/* awaitingFunds: seller waits, others can buy */}
-        {status === "awaitingFunds" &&
-          (isSeller ? (
-            <Muted>Waiting for a buyer…</Muted>
-          ) : (
-            <Button onPress={() => buyProduct(product)} isDisabled={isBuying}>
-              <ButtonText>Buy {isBuying && <Spinner />}</ButtonText>
-            </Button>
-          ))}
-
-        {/* fundLocked: seller signs collaborate, buyer can only refund (after timelock) */}
-        {status === "fundLocked" && (
-          <>
-            {isSeller && (
-              <Button
-                onPress={() => sellerSignCollaborate(product)}
-                isDisabled={isSellerSigning}
-              >
-                <ButtonText>
-                  Sign collaborate {isSellerSigning && <Spinner />}
-                </ButtonText>
-              </Button>
-            )}
-            {isBuyer && (
-              <Button
-                onPress={() => refund(product)}
-                isDisabled={!timelockExpired || isRefunding}
-              >
-                <ButtonText>
-                  Claim refund {isRefunding && <Spinner />}
-                </ButtonText>
-              </Button>
-            )}
-          </>
-        )}
-
-        {/* sellerReady: seller waits, buyer can collaborate or refund */}
-        {status === "sellerReady" && (
-          <>
-            {isSeller && <Muted>Waiting for buyer to collaborate…</Muted>}
-            {isBuyer && (
-              <>
-                <Button
-                  onPress={() => buyerConfirmCollaborate(product)}
-                  isDisabled={isBuyerConfirming}
-                >
-                  <ButtonText>
-                    Confirm collaborate {isBuyerConfirming && <Spinner />}
-                  </ButtonText>
-                </Button>
-                <Button
-                  onPress={() => refund(product)}
-                  isDisabled={!timelockExpired || isRefunding}
-                >
-                  <ButtonText>
-                    Claim refund {isRefunding && <Spinner />}
-                  </ButtonText>
-                </Button>
-              </>
-            )}
-          </>
-        )}
-
-        {/* buyerSubmitted / buyerCheckpointsSigned: seller signs checkpoints, buyer waits */}
-        {(status === "buyerSubmitted" ||
-          status === "buyerCheckpointsSigned") && (
-          <>
-            {isSeller && (
-              <Button
-                onPress={() => sellerSignCheckpoints(product)}
-                isDisabled={isSellerCheckpoints}
-              >
-                <ButtonText>
-                  Sign checkpoints {isSellerCheckpoints && <Spinner />}
-                </ButtonText>
-              </Button>
-            )}
-            {isBuyer && <Muted>Waiting for seller to finalize…</Muted>}
-          </>
-        )}
-
-        {/* payed: completed */}
-        {status === "payed" && <Muted>Transaction completed</Muted>}
-
-        {/* refunded: refunded */}
-        {status === "refunded" && <Muted>Funds refunded to buyer</Muted>}
-      </VStack>
+      {/* Chat and escrow UI — task 05/06 */}
 
       {product.events && <ActivityLog events={product.events} />}
     </Card>

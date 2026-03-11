@@ -12,8 +12,8 @@ export default function ProductCreate() {
   const createProduct = useCreateProduct();
   const { account, wallet } = useAccountStore();
 
-  const [nome, setNome] = useState("");
-  const [prezzo, setPrezzo] = useState("");
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
 
   if (!account?.privateKey || !wallet) {
     router.replace("/");
@@ -23,8 +23,8 @@ export default function ProductCreate() {
   const handleSubmit = () => {
     createProduct.mutate(
       {
-        nome: nome.trim(),
-        prezzo: Number(prezzo),
+        name: name.trim(),
+        price: Number(price),
       },
       { onSuccess: () => router.replace("/products") },
     );
@@ -39,8 +39,8 @@ export default function ProductCreate() {
         <Input>
           <InputField
             placeholder='Product name'
-            value={nome}
-            onChangeText={setNome}
+            value={name}
+            onChangeText={setName}
           />
         </Input>
       </VStack>
@@ -50,8 +50,8 @@ export default function ProductCreate() {
         <Input>
           <InputField
             placeholder='0'
-            value={prezzo}
-            onChangeText={setPrezzo}
+            value={price}
+            onChangeText={setPrice}
             keyboardType='numeric'
           />
         </Input>

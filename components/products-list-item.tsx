@@ -23,13 +23,13 @@ export function ProductsListItem({ product }: { product: Product }) {
       <Card className='justify-start w-full'>
         <Badge size={"lg"}>
           <BadgeIcon as={Fingerprint} />
-          <BadgeText>{product.sellerPubkey.slice(0, 7)}</BadgeText>
+          <BadgeText>{product.seller?.pubkey?.slice(0, 7) ?? "Unknown"}</BadgeText>
         </Badge>
 
-        <Large>{product.nome}</Large>
+        <Large>{product.name}</Large>
 
         <VStack className='w-full items-end'>
-          <AmountComponent size='4xl' amount={product.prezzo} />
+          <AmountComponent size='4xl' amount={product.price} />
         </VStack>
       </Card>
     </Link>
