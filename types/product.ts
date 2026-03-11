@@ -38,13 +38,14 @@ export type ProductEvent = {
 export type ProductChat = {
   id: number;
   productId: number;
+  product?: Product;
   buyerId: number;
   buyer?: Account;
   status: ChatStatus;
   createdAt: string;
   updatedAt: string;
   messages?: ChatMessage[];
-  escrow?: Escrow;
+  escrow?: Escrow | null;
 };
 
 export type ChatMessage = {

@@ -1,14 +1,21 @@
 import { Card } from "@/components/ui/card";
 import { Large, Muted, P, Small } from "@/components/ui/typography";
 import { useProduct } from "@/hooks/products/use-product";
+import { useProductChats } from "@/hooks/chats/use-product-chats";
+import { useOpenChat } from "@/hooks/chats/use-open-chat";
+import { ChatListItem } from "@/components/chat-list-item";
 import { ProductEvent } from "@/types/product";
+import { getPubkeyHex } from "@/utils/get-pubkey-hex";
+import useAccountStore from "@/stores/account";
 import { format } from "date-fns";
 
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
-import { useLocalSearchParams } from "expo-router";
+import { Button, ButtonText } from "@/components/ui/button";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { toNumber } from "lodash";
 import { View } from "react-native";
+import { useEffect, useState } from "react";
 
 const EVENT_LABELS: Record<string, string> = {
   created: "Product created",
@@ -23,25 +30,95 @@ const EVENT_LABELS: Record<string, string> = {
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const { wallet } = useAccountStore();
 
   const castedId = toNumber(id);
-
   if (isNaN(castedId)) throw new Error("Wrong id");
-  const { data: product, isLoading } = useProduct(toNumber(id));
+
+  const { data: product, isLoading } = useProduct(castedId);
+  const { data: chats } = useProductChats(castedId);
+  const openChat = useOpenChat();
+
+  const [userPubkey, setUserPubkey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!wallet) return;
+    getPubkeyHex(wallet).then(setUserPubkey);
+  }, [wallet]);
 
   if (isLoading) return <Spinner />;
   if (!product) return <P>No product</P>;
 
+  const isSeller = userPubkey === product.seller?.pubkey;
+
+  const handleOpenChat = () => {
+    openChat.mutate(
+      { productId: castedId },
+      {
+        onSuccess: (chat) => {
+          router.push({
+            pathname: "/chats/[chatId]",
+            params: { chatId: chat.id },
+          });
+        },
+      },
+    );
+  };
+
+  // Check if buyer already has a chat
+  const buyerChat = !isSeller && chats?.find(
+    (c) => c.buyer?.pubkey === userPubkey,
+  );
+
   return (
-    <Card>
-      <Large>{product.name}</Large>
-      <P>Price: {product.price} sats</P>
-      <P>Seller: {product.seller?.pubkey?.slice(0, 7) ?? "Unknown"}</P>
+    <VStack space='md'>
+      {/* Product info */}
+      <Card>
+        <Large>{product.name}</Large>
+        <P>Price: {product.price} sats</P>
+        <P>Seller: {product.seller?.pubkey?.slice(0, 7) ?? "Unknown"}</P>
+      </Card>
 
-      {/* Chat and escrow UI — task 05/06 */}
+      {/* Chat section */}
+      {isSeller && chats && chats.length > 0 && (
+        <VStack space='sm'>
+          <P className='font-heading'>Buyer chats</P>
+          {chats.map((chat) => (
+            <ChatListItem key={chat.id} chat={chat} />
+          ))}
+        </VStack>
+      )}
 
+      {!isSeller && (
+        <VStack space='sm'>
+          {buyerChat ? (
+            <Button
+              onPress={() =>
+                router.push({
+                  pathname: "/chats/[chatId]",
+                  params: { chatId: buyerChat.id },
+                })
+              }
+            >
+              <ButtonText>Open chat</ButtonText>
+            </Button>
+          ) : (
+            <Button
+              onPress={handleOpenChat}
+              isDisabled={openChat.isPending}
+            >
+              <ButtonText>
+                {openChat.isPending ? "Opening..." : "Chat with seller"}
+              </ButtonText>
+            </Button>
+          )}
+        </VStack>
+      )}
+
+      {/* Activity log */}
       {product.events && <ActivityLog events={product.events} />}
-    </Card>
+    </VStack>
   );
 }
 
