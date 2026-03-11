@@ -1,45 +1,30 @@
-import AppLayout from "@/components/layouts/app-layout";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
-import { Large, P, Small } from "@/components/ui/typography";
+import { H1, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCreateProduct } from "@/hooks/products/use-create-product";
 import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-function Bismillah() {
+export default function ProductCreate() {
   const router = useRouter();
   const createProduct = useCreateProduct();
   const { account, wallet } = useAccountStore();
 
   const [nome, setNome] = useState("");
   const [prezzo, setPrezzo] = useState("");
-  const [sellerPubkey, setSellerPubkey] = useState("");
 
-  useEffect(() => {
-    if (!account?.privateKey || !wallet) {
-      router.replace("/");
-      return;
-    }
-
-    const derivePublicKey = async () => {
-      const pubkeyBytes = await wallet.identity.compressedPublicKey();
-      const pubkey = Array.from(pubkeyBytes)
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-      setSellerPubkey(pubkey);
-    };
-
-    derivePublicKey();
-  }, [account?.privateKey]);
+  if (!account?.privateKey || !wallet) {
+    router.replace("/");
+    return null;
+  }
 
   const handleSubmit = () => {
     createProduct.mutate(
       {
         nome: nome.trim(),
         prezzo: Number(prezzo),
-        sellerPubkey,
       },
       { onSuccess: () => router.replace("/products") },
     );
@@ -47,7 +32,7 @@ function Bismillah() {
 
   return (
     <VStack space='lg'>
-      <Large className='font-heading'>Create Product</Large>
+      <H1 className='font-heading'>Create Product</H1>
 
       <VStack space='xs'>
         <Small>Name</Small>
@@ -86,13 +71,5 @@ function Bismillah() {
         <ButtonText>Back to List</ButtonText>
       </Button>
     </VStack>
-  );
-}
-
-export default function ProductCreate() {
-  return (
-    <AppLayout>
-      <Bismillah />
-    </AppLayout>
   );
 }

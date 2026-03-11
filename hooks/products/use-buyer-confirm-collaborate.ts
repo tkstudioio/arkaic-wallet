@@ -1,5 +1,6 @@
 import useAccountStore from "@/stores/account";
 import { Product } from "@/types/product";
+import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation } from "@tanstack/react-query";
@@ -12,8 +13,12 @@ export function useBuyerConfirmCollaborate() {
     mutationFn: async (product: Product) => {
       if (!wallet) throw new Error("Missing wallet");
 
+      const pubkey = await getPubkeyHex(wallet);
+      const authHeaders = { Authorization: `Bearer ${pubkey}` };
+
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/collaborate/buyer-psbt`,
+        `http://localhost:4000/products/${product.id}/collaborate/buyer-psbt`,
+        { headers: authHeaders },
       );
 
       const { collaboratePsbt } = data;
@@ -26,8 +31,9 @@ export function useBuyerConfirmCollaborate() {
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
       const { data: confirmData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/collaborate/buyer-submit-psbt`,
+        `http://localhost:4000/products/${product.id}/collaborate/buyer-submit-psbt`,
         { signedPsbt },
+        { headers: authHeaders },
       );
 
       const { signedCheckpointTxs } = confirmData;
@@ -43,8 +49,9 @@ export function useBuyerConfirmCollaborate() {
       );
 
       const { data: checkpointsData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/collaborate/buyer-sign-checkpoints`,
+        `http://localhost:4000/products/${product.id}/collaborate/buyer-sign-checkpoints`,
         { signedCheckpointTxs: buyerSignedCheckpoints },
+        { headers: authHeaders },
       );
 
       return checkpointsData;

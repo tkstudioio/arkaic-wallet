@@ -1,5 +1,6 @@
 import useAccountStore from "@/stores/account";
 import { Product } from "@/types/product";
+import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation } from "@tanstack/react-query";
@@ -12,8 +13,12 @@ export function useSellerSignCollaborate() {
     mutationFn: async (product: Product) => {
       if (!wallet) throw new Error("Missing wallet");
 
+      const pubkey = await getPubkeyHex(wallet);
+      const authHeaders = { Authorization: `Bearer ${pubkey}` };
+
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/collaborate/seller-psbt`,
+        `http://localhost:4000/products/${product.id}/collaborate/seller-psbt`,
+        { headers: authHeaders },
       );
 
       const { collaboratePsbt } = data;
@@ -26,8 +31,9 @@ export function useSellerSignCollaborate() {
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
       const { data: collaborateData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/collaborate/seller-submit-psbt`,
+        `http://localhost:4000/products/${product.id}/collaborate/seller-submit-psbt`,
         { signedPsbt },
+        { headers: authHeaders },
       );
 
       return collaborateData;

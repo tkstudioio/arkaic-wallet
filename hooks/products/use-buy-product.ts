@@ -1,5 +1,6 @@
 import useAccountStore from "@/stores/account";
 import { Product } from "@/types/product";
+import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import {
   CLTVMultisigTapscript,
   MultisigTapscript,
@@ -17,6 +18,8 @@ export function useBuyProduct() {
     mutationFn: async (product: Product) => {
       if (!wallet) throw new Error("Missing wallet");
       if (!arkProvider) throw new Error("Missing arkProvider");
+
+      const pubkey = await getPubkeyHex(wallet);
 
       const sellerPubkeyBytes = hex.decode(product.sellerPubkey);
       const sellerPubkey =
@@ -58,12 +61,13 @@ export function useBuyProduct() {
       });
 
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/check-payment`,
+        `http://localhost:4000/products/${product.id}/check-payment`,
         {
           params: {
             buyerPubkey: hex.encode(buyerPubkey),
             timelockExpiry,
           },
+          headers: { Authorization: `Bearer ${pubkey}` },
         },
       );
 

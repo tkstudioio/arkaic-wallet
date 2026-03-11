@@ -1,5 +1,6 @@
 import useAccountStore from "@/stores/account";
 import { Product } from "@/types/product";
+import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation } from "@tanstack/react-query";
@@ -13,8 +14,12 @@ export function useRefund() {
       if (!wallet) throw new Error("Missing wallet");
       if (!arkProvider) throw new Error("Missing arkProvider");
 
+      const pubkey = await getPubkeyHex(wallet);
+      const authHeaders = { Authorization: `Bearer ${pubkey}` };
+
       const { data } = await axios.get(
-        `http://localhost:3000/products/${product.id}/refund/psbt`,
+        `http://localhost:4000/products/${product.id}/refund/psbt`,
+        { headers: authHeaders },
       );
 
       const { refundPsbt } = data;
@@ -28,8 +33,9 @@ export function useRefund() {
 
       // Step 1: Submit signed PSBT, get back checkpoint txs to co-sign
       const { data: refundData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/refund/submit-signed-psbt`,
+        `http://localhost:4000/products/${product.id}/refund/submit-signed-psbt`,
         { signedPsbt },
+        { headers: authHeaders },
       );
 
       const { arkTxid, signedCheckpointTxs } = refundData;
@@ -46,8 +52,9 @@ export function useRefund() {
 
       // Step 3: Finalize refund with buyer-signed checkpoints
       const { data: finalizeData } = await axios.post(
-        `http://localhost:3000/products/${product.id}/refund/finalize`,
+        `http://localhost:4000/products/${product.id}/refund/finalize`,
         { arkTxid, signedCheckpointTxs: buyerSignedCheckpoints },
+        { headers: authHeaders },
       );
 
       return finalizeData;
