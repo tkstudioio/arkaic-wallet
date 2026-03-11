@@ -1,45 +1,43 @@
 import useAccountStore from "@/stores/account";
 import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
-import { Product } from "@/types/product";
+import { Product, ProductChat } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 export function useAccountSellingProducts() {
   const { wallet } = useAccountStore();
 
   return useQuery({
-    queryKey: ["account-products"],
+    queryKey: ["account-selling"],
     queryFn: async (): Promise<Product[]> => {
       if (!wallet) throw new Error("Missing wallet");
 
       const headers = await getAuthHeaders(wallet);
 
-      const { data } = await axios.get(
-        `${API_BASE_URL}/account/selling`,
-        { headers },
-      );
-
-      return data;
+      const response = await fetch(`${API_BASE_URL}/account/selling`, {
+        headers,
+      });
+      if (!response.ok) throw new Error("Failed to fetch selling products");
+      return response.json();
     },
     enabled: !!wallet,
   });
 }
 
-export function useAccountBuyingProducts() {
+export function useAccountBuyingChats() {
   const { wallet } = useAccountStore();
 
   return useQuery({
-    queryKey: ["account-products"],
-    queryFn: async (): Promise<Product[]> => {
+    queryKey: ["account-buying"],
+    queryFn: async (): Promise<ProductChat[]> => {
       if (!wallet) throw new Error("Missing wallet");
 
       const headers = await getAuthHeaders(wallet);
 
-      const { data } = await axios.get(`${API_BASE_URL}/account/buying`, {
+      const response = await fetch(`${API_BASE_URL}/account/buying`, {
         headers,
       });
-
-      return data;
+      if (!response.ok) throw new Error("Failed to fetch buying chats");
+      return response.json();
     },
     enabled: !!wallet,
   });
