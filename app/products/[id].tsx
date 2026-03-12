@@ -1,149 +1,202 @@
 import { Card } from "@/components/ui/card";
-import { Large, Muted, P, Small } from "@/components/ui/typography";
+import { Large, P, Small } from "@/components/ui/typography";
 import { useProduct } from "@/hooks/products/use-product";
-import { useProductChats } from "@/hooks/chats/use-product-chats";
-import { useOpenChat } from "@/hooks/chats/use-open-chat";
-import { ChatListItem } from "@/components/chat-list-item";
-import { ProductEvent } from "@/types/product";
-import { getPubkeyHex } from "@/utils/get-pubkey-hex";
-import useAccountStore from "@/stores/account";
-import { format } from "date-fns";
 
-import { Spinner } from "@/components/ui/spinner";
+import { AmountComponent } from "@/components/amount";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { HStack } from "@/components/ui/hstack";
+import { Input, InputField } from "@/components/ui/input";
+import { Menu, MenuItem, MenuItemLabel } from "@/components/ui/menu";
+import {
+  Modal,
+  ModalBackdrop,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@/components/ui/modal";
+import { Skeleton } from "@/components/ui/skeleton";
 import { VStack } from "@/components/ui/vstack";
-import { Button, ButtonText } from "@/components/ui/button";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { toNumber } from "lodash";
-import { View } from "react-native";
+import { useOpenChat } from "@/hooks/chats/use-open-chat";
+import { useProductChats } from "@/hooks/chats/use-product-chats";
+import { useSendMessage } from "@/hooks/chats/use-send-message";
+import useAccountStore from "@/stores/account";
+import { ChatMessage } from "@/types/product";
+import { getPubkeyHex } from "@/utils/get-pubkey-hex";
+import { formatDistanceToNowStrict } from "date-fns";
+import { useLocalSearchParams } from "expo-router";
+import { first, map } from "lodash";
+import { Handshake, Send } from "lucide-react-native";
 import { useEffect, useState } from "react";
-
-const EVENT_LABELS: Record<string, string> = {
-  created: "Product created",
-  funds_locked: "Funds locked by buyer",
-  seller_signed_psbt: "Seller signed collaborate PSBT",
-  buyer_signed_psbt: "Buyer signed collaborate PSBT",
-  buyer_signed_checkpoints: "Buyer signed checkpoints",
-  seller_signed_checkpoints: "Seller signed checkpoints — funds released",
-  refund_submitted: "Refund submitted",
-  refund_finalized: "Refund finalized",
-};
+import { match } from "ts-pattern";
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
-  const { wallet } = useAccountStore();
+  const productQuery = useProduct(id);
+  const { mutateAsync: openChat, isPending: isOpeningChat } = useOpenChat();
+  const { mutateAsync: sendMessage, isPending: isSending } = useSendMessage();
+  const productChatsQuery = useProductChats(id);
+  const [text, setText] = useState("");
+  const [showCounterOfferModal, setShowCounterOfferModal] = useState(false);
+  const [offerPrice, setOfferPrice] = useState("");
 
-  const castedId = toNumber(id);
-  if (isNaN(castedId)) throw new Error("Wrong id");
+  const chat = first(productChatsQuery.data);
 
-  const { data: product, isLoading } = useProduct(castedId);
-  const { data: chats } = useProductChats(castedId);
-  const openChat = useOpenChat();
+  const handleSend = (counterOffer?: number) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
 
-  const [userPubkey, setUserPubkey] = useState<string | null>(null);
+    const onSuccess = () => {
+      setText("");
+      setOfferPrice("");
+      setShowCounterOfferModal(false);
+    };
 
-  useEffect(() => {
-    if (!wallet) return;
-    getPubkeyHex(wallet).then(setUserPubkey);
-  }, [wallet]);
-
-  if (isLoading) return <Spinner />;
-  if (!product) return <P>No product</P>;
-
-  const isSeller = userPubkey === product.seller?.pubkey;
-
-  const handleOpenChat = () => {
-    openChat.mutate(
-      { productId: castedId },
-      {
-        onSuccess: (chat) => {
-          router.push({
-            pathname: "/chats/[chatId]",
-            params: { chatId: chat.id },
-          });
-        },
-      },
-    );
+    if (chat) {
+      sendMessage({
+        chatId: chat.id,
+        text: trimmed,
+        offerPrice: counterOffer,
+      }).then(onSuccess);
+    } else if (productQuery.data) {
+      openChat({
+        productId: productQuery.data.id,
+        text: trimmed,
+        offerPrice: counterOffer,
+      }).then(onSuccess);
+    }
   };
 
-  // Check if buyer already has a chat
-  const buyerChat = !isSeller && chats?.find(
-    (c) => c.buyer?.pubkey === userPubkey,
-  );
+  return match(productQuery)
+    .with({ data: undefined }, () => null)
+    .otherwise(({ data: product }) => (
+      <VStack space='md'>
+        <Card className='w-full'>
+          <P>{product.seller?.accountName}</P>
+          <Skeleton className='w-full h-max aspect-video' />
+          <Large>{product.name}</Large>
+          <P>Price: {product.price} sats</P>
+        </Card>
 
-  return (
-    <VStack space='md'>
-      {/* Product info */}
-      <Card>
-        <Large>{product.name}</Large>
-        <P>Price: {product.price} sats</P>
-        <P>Seller: {product.seller?.pubkey?.slice(0, 7) ?? "Unknown"}</P>
-      </Card>
-
-      {/* Chat section */}
-      {isSeller && chats && chats.length > 0 && (
-        <VStack space='sm'>
-          <P className='font-heading'>Buyer chats</P>
-          {chats.map((chat) => (
-            <ChatListItem key={chat.id} chat={chat} />
+        {chat &&
+          map(chat.messages, (message) => (
+            <Message key={message.id} message={message} />
           ))}
-        </VStack>
-      )}
 
-      {!isSeller && (
-        <VStack space='sm'>
-          {buyerChat ? (
-            <Button
-              onPress={() =>
-                router.push({
-                  pathname: "/chats/[chatId]",
-                  params: { chatId: buyerChat.id },
-                })
-              }
+        <Card>
+          <HStack className='w-full' space={"md"}>
+            <Input className='flex-1 h-full'>
+              <InputField
+                placeholder='Type message...'
+                value={text}
+                onChangeText={setText}
+                onSubmitEditing={() => handleSend()}
+              />
+            </Input>
+            <Menu
+              placement='top end'
+              trigger={(triggerProps) => (
+                <Button
+                  className='w-max'
+                  variant={"outline"}
+                  isDisabled={!text.trim() || isSending || isOpeningChat}
+                  {...triggerProps}
+                >
+                  <ButtonIcon as={Send} />
+                </Button>
+              )}
             >
-              <ButtonText>Open chat</ButtonText>
-            </Button>
-          ) : (
-            <Button
-              onPress={handleOpenChat}
-              isDisabled={openChat.isPending}
-            >
-              <ButtonText>
-                {openChat.isPending ? "Opening..." : "Chat with seller"}
-              </ButtonText>
-            </Button>
-          )}
-        </VStack>
-      )}
+              <MenuItem
+                key='send'
+                textValue='Invia'
+                onPress={() => handleSend()}
+              >
+                <MenuItemLabel>Invia</MenuItemLabel>
+              </MenuItem>
+              <MenuItem
+                key='counter-offer'
+                textValue='Invia con contro offerta'
+                onPress={() => setShowCounterOfferModal(true)}
+              >
+                <MenuItemLabel>Invia con contro offerta</MenuItemLabel>
+              </MenuItem>
+            </Menu>
+          </HStack>
+        </Card>
 
-      {/* Activity log */}
-      {product.events && <ActivityLog events={product.events} />}
-    </VStack>
-  );
+        <Modal
+          isOpen={showCounterOfferModal}
+          onClose={() => setShowCounterOfferModal(false)}
+        >
+          <ModalBackdrop />
+          <ModalContent>
+            <ModalHeader>
+              <Heading size='md'>Contro offerta</Heading>
+            </ModalHeader>
+            <ModalBody>
+              <Input>
+                <InputField
+                  keyboardType='numeric'
+                  placeholder='Prezzo in sats'
+                  value={offerPrice}
+                  onChangeText={setOfferPrice}
+                />
+              </Input>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onPress={() => handleSend(Number(offerPrice))}
+                isDisabled={
+                  !offerPrice || !text.trim() || isSending || isOpeningChat
+                }
+              >
+                <ButtonText>Conferma</ButtonText>
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </VStack>
+    ));
 }
 
-function ActivityLog({ events }: { events: ProductEvent[] }) {
-  if (events.length === 0) return null;
+function Message(props: { message: ChatMessage }) {
+  const [isSender, setIsSender] = useState<boolean | undefined>(false);
+  const { wallet } = useAccountStore();
+
+  useEffect(() => {
+    if (!wallet) throw new Error("Missing wallet");
+    getPubkeyHex(wallet).then((pubkey) => {
+      setIsSender(props.message.sender?.pubkey === pubkey);
+    });
+  }, [props.message.sender?.pubkey, wallet]);
 
   return (
-    <VStack space='sm' className='mt-4'>
-      <P className='font-heading'>Activity</P>
-      {events.map((event, index) => (
-        <View
-          key={event.id}
-          className='flex-row items-start gap-2 border-l-2 border-outline-200 pl-3'
-          style={
-            index === events.length - 1
-              ? { borderColor: "transparent" }
-              : undefined
-          }
-        >
-          <View className='flex-1'>
-            <Small>{EVENT_LABELS[event.action] ?? event.action}</Small>
-            <Muted>{format(new Date(event.createdAt), "MMM d, HH:mm")}</Muted>
-          </View>
-        </View>
-      ))}
-    </VStack>
+    <Card
+      variant={props.message?.offerPrice ? undefined : "outline"}
+      className='border-dashed'
+    >
+      {props.message?.offerPrice ? (
+        <VStack className={isSender ? "items-end" : "items-start"} space={"md"}>
+          <P>accountName offers</P>
+          <AmountComponent amount={1234} size='3xl' />
+          <VStack className='items-end'>
+            <Button variant={"outline"} action={"neutral"} className='w-max'>
+              <ButtonText>Accept offer</ButtonText>
+              <ButtonIcon as={Handshake} />
+            </Button>
+          </VStack>
+        </VStack>
+      ) : (
+        <VStack space={"md"}>
+          <P className={isSender ? "text-right" : "items-start"}>
+            {props.message.text}{" "}
+          </P>
+          <Small className={isSender ? "text-right" : "items-start"}>
+            {formatDistanceToNowStrict(props.message?.createdAt)}
+          </Small>
+        </VStack>
+      )}
+    </Card>
   );
 }
