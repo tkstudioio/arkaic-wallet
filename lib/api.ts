@@ -1,10 +1,20 @@
-import { Wallet } from "@arkade-os/sdk";
-import { getPubkeyHex } from "@/utils/get-pubkey-hex";
+import axios, { AxiosError } from "axios";
 
-// TODO: replace with actual API base URL
-export const API_BASE_URL = "http://localhost:4000";
+export const API_BASE_URL = "http://localhost:4000/v2";
 
-export async function getAuthHeaders(wallet: Wallet) {
-  const pubkey = await getPubkeyHex(wallet);
-  return { Authorization: `Bearer ${pubkey}` };
-}
+export const backend = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+backend.interceptors.request.use(async (config) => {
+  return config;
+});
+
+backend.interceptors.response.use(
+  function onFulfilled(response) {
+    return response;
+  },
+  async function onRejected(error: AxiosError<{ error: string }>) {
+    return Promise.reject(error);
+  },
+);

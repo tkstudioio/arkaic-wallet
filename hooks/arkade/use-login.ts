@@ -1,13 +1,18 @@
-import useAccountStore from "@/stores/account";
+import { backend } from "@/lib/api";
 import { ArkaicAccount } from "@/types/arkaic";
 import { getMasterFingerprint, mnemonicToPrivateKey } from "@/utils/mnemonic";
-import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
+import { schnorr } from "@noble/curves/secp256k1";
+import { hex } from "@scure/base";
+import { useMutation } from "@tanstack/react-query";
+
+import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import {
   ExpoArkProvider,
   ExpoIndexerProvider,
 } from "@arkade-os/sdk/adapters/expo";
-import { useMutation } from "@tanstack/react-query";
+
+import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
 
 type LoginParams = {
@@ -20,7 +25,7 @@ export function useLoginMutation() {
   const router = useRouter();
 
   return useMutation({
-    mutationKey: ["setAccount"],
+    mutationKey: ["login"],
     mutationFn: async ({ account, passphrase }: LoginParams) => {
       let privateKey = account.privateKey;
 
@@ -32,15 +37,36 @@ export function useLoginMutation() {
         throw new Error("No private key or mnemonic available");
       }
 
-      const arkProvider = new ExpoArkProvider(account.arkadeServerUrl);
-      const indexerProvider = new ExpoIndexerProvider(account.arkadeServerUrl);
-
       const identity = SingleKey.fromHex(privateKey);
+
       const pubkeyBytes = await identity.compressedPublicKey();
       const pubkey = Array.from(pubkeyBytes)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
-      console.log("Logged in with pubkey:", pubkey);
+
+      const { data: challenge } = await backend.post<{
+        nonce: string;
+        pubkey: string;
+        expirty: Date;
+      }>("/auth/challenge", { pubkey });
+
+      const loginMessage = new TextEncoder().encode(
+        `${challenge.nonce} ${pubkey}`,
+      );
+
+      const { data: token } = await backend.post<string>("/auth/login", {
+        pubkey,
+        nonce: challenge.nonce,
+        signature: hex.encode(
+          schnorr.sign(loginMessage, hex.decode(privateKey)),
+        ),
+      });
+
+      const arkProvider = new ExpoArkProvider("https://mutinynet.arkade.sh");
+      const indexerProvider = new ExpoIndexerProvider(
+        "https://mutinynet.arkade.sh",
+      );
+
       const wallet = await Wallet.create({
         identity,
         arkProvider,
@@ -69,6 +95,7 @@ export function useLoginMutation() {
       setStore({
         account: { ...account, privateKey },
         wallet,
+        token,
         arkProvider,
         indexerProvider,
         vtxoManager,
@@ -78,5 +105,6 @@ export function useLoginMutation() {
 
       router.push("/account/dashboard");
     },
+    onError: console.log,
   });
 }

@@ -9,6 +9,8 @@ export type EscrowStatus =
 
 export type ChatStatus = "active" | "concluded";
 
+export type OfferStatus = "awaitingAccept" | "accepted" | "rejected";
+
 export type Account = {
   id: number;
   pubkey: string;
@@ -42,6 +44,7 @@ export type ProductChat = {
   buyerId: number;
   buyer?: Account;
   status: ChatStatus;
+  agreedPrice?: number | null;
   createdAt: string;
   updatedAt: string;
   messages?: ChatMessage[];
@@ -51,9 +54,10 @@ export type ProductChat = {
 export type ChatMessage = {
   id: number;
   chatId: number;
-  sender: string;
+  senderId: number;
   text?: string | null;
   offerPrice?: number | null;
+  offerStatus?: OfferStatus | null;
   createdAt: string;
 };
 

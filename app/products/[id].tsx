@@ -18,17 +18,18 @@ import {
 } from "@/components/ui/modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VStack } from "@/components/ui/vstack";
+import { Badge, BadgeText } from "@/components/ui/badge";
 import { useOpenChat } from "@/hooks/chats/use-open-chat";
 import { useProductChats } from "@/hooks/chats/use-product-chats";
 import { useSendMessage } from "@/hooks/chats/use-send-message";
-import useAccountStore from "@/stores/account";
+import { useAcceptOfferMessage } from "@/hooks/chats/use-accept-offer-message";
+import { useRejectOfferMessage } from "@/hooks/chats/use-reject-offer-message";
 import { ChatMessage } from "@/types/product";
-import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
 import { first, map } from "lodash";
 import { Handshake, Send } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { match } from "ts-pattern";
 
 export default function ProductDetail() {
@@ -36,6 +37,8 @@ export default function ProductDetail() {
   const productQuery = useProduct(id);
   const { mutateAsync: openChat, isPending: isOpeningChat } = useOpenChat();
   const { mutateAsync: sendMessage, isPending: isSending } = useSendMessage();
+  const acceptOfferMessage = useAcceptOfferMessage();
+  const rejectOfferMessage = useRejectOfferMessage();
   const productChatsQuery = useProductChats(id);
   const [text, setText] = useState("");
   const [showCounterOfferModal, setShowCounterOfferModal] = useState(false);
@@ -81,7 +84,18 @@ export default function ProductDetail() {
 
         {chat &&
           map(chat.messages, (message) => (
-            <Message key={message.id} message={message} />
+            <Message
+              key={message.id}
+              message={message}
+              currentUserId={chat.buyerId}
+              onAcceptOffer={(messageId) =>
+                acceptOfferMessage.mutate({ chatId: chat.id, messageId })
+              }
+              onRejectOffer={(messageId) =>
+                rejectOfferMessage.mutate({ chatId: chat.id, messageId })
+              }
+              isPendingAction={acceptOfferMessage.isPending || rejectOfferMessage.isPending}
+            />
           ))}
 
         <Card>
@@ -160,16 +174,16 @@ export default function ProductDetail() {
     ));
 }
 
-function Message(props: { message: ChatMessage }) {
-  const [isSender, setIsSender] = useState<boolean | undefined>(false);
-  const { wallet } = useAccountStore();
-
-  useEffect(() => {
-    if (!wallet) throw new Error("Missing wallet");
-    getPubkeyHex(wallet).then((pubkey) => {
-      setIsSender(props.message.sender?.pubkey === pubkey);
-    });
-  }, [props.message.sender?.pubkey, wallet]);
+function Message(props: {
+  message: ChatMessage;
+  currentUserId?: number;
+  onAcceptOffer?: (messageId: number) => void;
+  onRejectOffer?: (messageId: number) => void;
+  isPendingAction?: boolean;
+}) {
+  const isSender = props.currentUserId != null && props.message.senderId === props.currentUserId;
+  const canRespond =
+    !isSender && props.message.offerStatus === "awaitingAccept";
 
   return (
     <Card
@@ -178,14 +192,54 @@ function Message(props: { message: ChatMessage }) {
     >
       {props.message?.offerPrice ? (
         <VStack className={isSender ? "items-end" : "items-start"} space={"md"}>
-          <P>accountName offers</P>
-          <AmountComponent amount={1234} size='3xl' />
-          <VStack className='items-end'>
-            <Button variant={"outline"} action={"neutral"} className='w-max'>
-              <ButtonText>Accept offer</ButtonText>
-              <ButtonIcon as={Handshake} />
-            </Button>
-          </VStack>
+          <HStack className='justify-between items-center w-full'>
+            <P>Price proposal</P>
+            {props.message.offerStatus && (
+              <Badge
+                size='sm'
+                action={
+                  props.message.offerStatus === "accepted"
+                    ? "success"
+                    : props.message.offerStatus === "rejected"
+                      ? "error"
+                      : "warning"
+                }
+              >
+                <BadgeText>
+                  {props.message.offerStatus === "accepted"
+                    ? "Accepted"
+                    : props.message.offerStatus === "rejected"
+                      ? "Rejected"
+                      : "Pending"}
+                </BadgeText>
+              </Badge>
+            )}
+          </HStack>
+          <AmountComponent amount={props.message.offerPrice} size='3xl' />
+          {props.message.text && <Small>{props.message.text}</Small>}
+          {canRespond && (
+            <HStack space='sm'>
+              <Button
+                variant={"outline"}
+                action={"positive"}
+                className='flex-1'
+                onPress={() => props.onAcceptOffer?.(props.message.id)}
+                isDisabled={props.isPendingAction}
+              >
+                <ButtonText>Accept</ButtonText>
+                <ButtonIcon as={Handshake} />
+              </Button>
+              <Button
+                variant={"outline"}
+                action={"negative"}
+                className='flex-1'
+                onPress={() => props.onRejectOffer?.(props.message.id)}
+                isDisabled={props.isPendingAction}
+              >
+                <ButtonText>Reject</ButtonText>
+              </Button>
+            </HStack>
+          )}
         </VStack>
       ) : (
         <VStack space={"md"}>

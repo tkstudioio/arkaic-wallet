@@ -3,29 +3,26 @@ import useAccountStore from "@/stores/account";
 import { ChatMessage } from "@/types/product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-type SendMessageParams = {
+type RejectOfferMessageParams = {
   chatId: number;
-  text?: string;
-  offerPrice?: number;
+  messageId: number;
 };
 
-export function useSendMessage() {
+export function useRejectOfferMessage() {
   const queryClient = useQueryClient();
   const { wallet } = useAccountStore();
 
   return useMutation({
-    mutationKey: ["send-message"],
+    mutationKey: ["reject-offer-message"],
     mutationFn: async ({
       chatId,
-      offerPrice,
-      text,
-    }: SendMessageParams): Promise<ChatMessage> => {
+      messageId,
+    }: RejectOfferMessageParams): Promise<ChatMessage> => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const { data } = await backend.post(`/chats/${chatId}/messages`, {
-        offerPrice,
-        text,
-      });
+      const { data } = await backend.post(
+        `/chats/${chatId}/offers/${messageId}/reject`,
+      );
 
       return data;
     },

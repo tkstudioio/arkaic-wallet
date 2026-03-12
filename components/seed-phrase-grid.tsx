@@ -41,7 +41,7 @@ export default function SeedPhraseGrid({
             number={half + i + 1}
             value={word}
             onWordChange={onWordChange}
-            isDisabled
+            isDisabled={isDisabled}
           />
         ))}
       </VStack>

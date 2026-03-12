@@ -18,8 +18,8 @@ export function ChatListItem({ chat }: ChatListItemProps) {
   return (
     <Link
       href={{
-        pathname: "/chats/[chatId]",
-        params: { chatId: chat.id },
+        pathname: "/chats/[id]",
+        params: { id: chat.id },
       }}
       className='w-full'
     >
@@ -41,7 +41,7 @@ export function ChatListItem({ chat }: ChatListItemProps) {
           {lastMessage && (
             <Small className='text-typography-500' numberOfLines={1}>
               {lastMessage.offerPrice != null
-                ? `Price proposal: ${lastMessage.offerPrice} sats`
+                ? `Price proposal: ${lastMessage.offerPrice} sats${lastMessage.offerStatus ? ` (${lastMessage.offerStatus})` : ""}`
                 : lastMessage.text ?? ""}
             </Small>
           )}

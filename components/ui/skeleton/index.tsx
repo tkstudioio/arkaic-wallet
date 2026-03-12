@@ -23,7 +23,6 @@ const Skeleton = forwardRef<
 >(function Skeleton(
   {
     className,
-
     children,
     startColor = "bg-arkaic-border",
     isLoaded = false,
@@ -63,7 +62,7 @@ const Skeleton = forwardRef<
     return (
       <Animated.View
         style={{ opacity: pulseAnim }}
-        className={`${startColor} ${skeletonStyle({
+        className={`rounded-arkaic-button ${startColor} ${skeletonStyle({
           class: className,
         })}`}
         {...props}

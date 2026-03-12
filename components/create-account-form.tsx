@@ -357,23 +357,8 @@ export default function CreateOrRestoreAccountForm(props: {
               </VStack>
 
               <VStack space='md' className='w-full'>
-                {match(createAccountMutation)
-                  .with({ isError: true }, () => (
-                    <>
-                      <P className='text-center text-error-500'>
-                        Error creating account
-                      </P>
-                      <Button
-                        size='lg'
-                        variant='link'
-                        action='negative'
-                        onPress={router.back}
-                      >
-                        <ButtonText>Go back</ButtonText>
-                      </Button>
-                    </>
-                  ))
-                  .otherwise(({ isPending }) => (
+                {match(createAccountMutation).otherwise(
+                  ({ isPending, isError }) => (
                     <>
                       <Button
                         size='lg'
@@ -385,6 +370,11 @@ export default function CreateOrRestoreAccountForm(props: {
                         ) : (
                           <ButtonText>Create and open</ButtonText>
                         )}
+                        {isError ? (
+                          <P className='text-center text-error-500'>
+                            Error creating account
+                          </P>
+                        ) : null}
                       </Button>
                       {!isPending && (
                         <Button
@@ -399,7 +389,8 @@ export default function CreateOrRestoreAccountForm(props: {
                         </Button>
                       )}
                     </>
-                  ))}
+                  ),
+                )}
               </VStack>
             </VStack>
           )}

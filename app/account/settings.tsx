@@ -13,6 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { H1, Muted, P } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useDeleteAccount } from "@/hooks/arkade/use-delete-account";
+import { useLogout } from "@/hooks/arkade/use-logout";
 import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
 import { FileKey2, LogOut, TrashIcon } from "lucide-react-native";
@@ -23,6 +24,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const { account, fingerprint, logout } = useAccountStore();
   const deleteAccountMutation = useDeleteAccount();
+  const logoutMutation = useLogout();
 
   const [showBackupModal, setShowBackupModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -72,7 +74,7 @@ export default function SettingsPage() {
             <ButtonText>Delete account</ButtonText>
           </Button>
 
-          <Button action={"negative"} onPress={handleLogout}>
+          <Button action={"negative"} onPress={() => logoutMutation.mutate()}>
             <ButtonIcon as={LogOut} />
             <ButtonText>Log out</ButtonText>
           </Button>

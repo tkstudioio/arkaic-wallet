@@ -1,6 +1,8 @@
 import { useChat } from "@/hooks/chats/use-chat";
 import { useSendMessage } from "@/hooks/chats/use-send-message";
 import { useAcceptOffer } from "@/hooks/chats/use-accept-offer";
+import { useAcceptOfferMessage } from "@/hooks/chats/use-accept-offer-message";
+import { useRejectOfferMessage } from "@/hooks/chats/use-reject-offer-message";
 import { useFundEscrow } from "@/hooks/escrows/use-fund-escrow";
 import { useSellerSignCollaborate } from "@/hooks/escrows/use-seller-sign-collaborate";
 import { useBuyerConfirmCollaborate } from "@/hooks/escrows/use-buyer-confirm-collaborate";
@@ -36,14 +38,16 @@ const ESCROW_STATUS_LABEL: Record<EscrowStatus, string> = {
 };
 
 export default function ChatDetail() {
-  const { chatId } = useLocalSearchParams<{ chatId: string }>();
-  const castedId = toNumber(chatId);
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const castedId = toNumber(id);
   if (isNaN(castedId)) throw new Error("Wrong chatId");
 
   const { wallet } = useAccountStore();
   const { data: chat, isLoading } = useChat(castedId);
   const sendMessage = useSendMessage();
   const acceptOffer = useAcceptOffer();
+  const acceptOfferMessage = useAcceptOfferMessage();
+  const rejectOfferMessage = useRejectOfferMessage();
   const fundEscrow = useFundEscrow();
   const sellerSignCollab = useSellerSignCollaborate();
   const buyerConfirmCollab = useBuyerConfirmCollaborate();
@@ -90,7 +94,9 @@ export default function ChatDetail() {
 
   const isSeller = userPubkey === chat.product?.seller?.pubkey;
   const isBuyer = userPubkey === chat.buyer?.pubkey;
+  const currentUserId = isBuyer ? chat.buyerId : chat.product?.sellerId;
   const hasEscrow = !!chat.escrow;
+  const hasAgreedPrice = chat.agreedPrice != null;
   const escrow = chat.escrow;
 
   const timelockExpired = escrow
@@ -116,6 +122,11 @@ export default function ChatDetail() {
         <VStack space='xs'>
           <Large>{chat.product?.name ?? "Product"}</Large>
           <P>{chat.product?.price ?? 0} sats</P>
+          {hasAgreedPrice && (
+            <Small className='text-green-600'>
+              Agreed price: {chat.agreedPrice} sats
+            </Small>
+          )}
           <Muted>
             {isSeller
               ? `Buyer: ${chat.buyer?.accountName ?? chat.buyer?.pubkey?.slice(0, 7) ?? "Unknown"}`
@@ -144,7 +155,16 @@ export default function ChatDetail() {
         renderItem={({ item }) => (
           <ChatMessageItem
             message={item}
-            isOwnMessage={item.sender === userPubkey}
+            isOwnMessage={item.senderId === currentUserId}
+            onAcceptOffer={(messageId) =>
+              acceptOfferMessage.mutate({ chatId: castedId, messageId })
+            }
+            onRejectOffer={(messageId) =>
+              rejectOfferMessage.mutate({ chatId: castedId, messageId })
+            }
+            isPendingAction={
+              acceptOfferMessage.isPending || rejectOfferMessage.isPending
+            }
           />
         )}
       />
@@ -265,7 +285,7 @@ export default function ChatDetail() {
         </Card>
       )}
 
-      {/* Accept button (buyer only, no escrow yet) */}
+      {/* Create escrow button (buyer only, no escrow yet) */}
       {isBuyer && !hasEscrow && chat.status === "active" && (
         <View className='px-arkaic-sm'>
           <Button
@@ -273,7 +293,7 @@ export default function ChatDetail() {
             isDisabled={acceptOffer.isPending}
           >
             <ButtonText>
-              {acceptOffer.isPending ? "Accepting..." : "Accept offer"}
+              {acceptOffer.isPending ? "Creating escrow..." : "Create escrow"}
             </ButtonText>
           </Button>
         </View>
@@ -303,13 +323,15 @@ export default function ChatDetail() {
                 />
               </Input>
             </View>
-            <Button
-              size='sm'
-              variant='outline'
-              onPress={() => setShowOfferInput(!showOfferInput)}
-            >
-              <ButtonText>$</ButtonText>
-            </Button>
+            {!hasAgreedPrice && (
+              <Button
+                size='sm'
+                variant='outline'
+                onPress={() => setShowOfferInput(!showOfferInput)}
+              >
+                <ButtonText>$</ButtonText>
+              </Button>
+            )}
             <Button
               size='sm'
               onPress={handleSend}

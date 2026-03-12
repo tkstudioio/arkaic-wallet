@@ -1,5 +1,5 @@
+import { backend } from "@/lib/api";
 import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
 import { Product } from "@/types/product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -14,21 +14,13 @@ export function useCreateProduct() {
 
   return useMutation({
     mutationKey: ["create-product"],
-    mutationFn: async (params: CreateProductParams): Promise<Product> => {
+    mutationFn: async (values: CreateProductParams): Promise<Product> => {
+      console.log(values);
       if (!wallet) throw new Error("Missing wallet");
 
-      const headers = await getAuthHeaders(wallet);
+      const { data } = await backend.post(`/products`, values);
 
-      const response = await fetch(`${API_BASE_URL}/products`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...headers,
-        },
-        body: JSON.stringify(params),
-      });
-      if (!response.ok) throw new Error("Failed to create product");
-      return response.json();
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });

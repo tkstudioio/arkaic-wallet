@@ -1,8 +1,13 @@
+import { cnBase } from "tailwind-variants";
 import Sats from "./icons/sats";
 import { HStack } from "./ui/hstack";
 import { Text } from "./ui/text";
 
-export function AmountComponent(props: { amount?: number; size?: string }) {
+export function AmountComponent(props: {
+  amount?: number;
+  size?: string;
+  className?: string;
+}) {
   const iconSize =
     props.size === "6xl"
       ? 28
@@ -13,7 +18,10 @@ export function AmountComponent(props: { amount?: number; size?: string }) {
           : 16;
 
   return (
-    <HStack className='items-center justify-center' space={"sm"}>
+    <HStack
+      className={cnBase("items-center justify-center", props.className)}
+      space={"sm"}
+    >
       <Text size={props.size}>
         {Intl.NumberFormat().format(props.amount || 0)}
       </Text>

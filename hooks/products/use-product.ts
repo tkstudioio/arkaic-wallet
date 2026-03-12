@@ -1,9 +1,9 @@
-import useAccountStore from "@/stores/account";
 import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
+import useAccountStore from "@/stores/account";
 import { Product } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
 
-export function useProduct(id: number) {
+export function useProduct(id: number | string) {
   const { wallet } = useAccountStore();
 
   return useQuery({

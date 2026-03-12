@@ -1,5 +1,5 @@
+import { backend } from "@/lib/api";
 import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
 import { ProductChat } from "@/types/product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -15,26 +15,21 @@ export function useOpenChat() {
 
   return useMutation({
     mutationKey: ["open-chat"],
-    mutationFn: async (params: OpenChatParams): Promise<ProductChat> => {
+    mutationFn: async ({
+      productId,
+      text,
+      offerPrice,
+    }: OpenChatParams): Promise<ProductChat> => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const headers = await getAuthHeaders(wallet);
+      const response = await backend.post(`/products/${productId}/chats`, {
+        text,
+        offerPrice,
+      });
 
-      const body: Record<string, unknown> = {};
-      if (params.text) body.text = params.text;
-      if (params.offerPrice !== undefined) body.offerPrice = params.offerPrice;
-
-      const response = await fetch(
-        `${API_BASE_URL}/products/${params.productId}/chats`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify(body),
-        },
-      );
-      if (!response.ok) throw new Error("Failed to open chat");
-      return response.json();
+      return response.data;
     },
+    onError: console.log,
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["product-chats", variables.productId],

@@ -10,6 +10,7 @@ import {
 
 import { ArkaicAccount } from "@/types/arkaic";
 type AccountStore = {
+  token?: string;
   arkadeLightning?: ArkadeLightning;
   arkProvider?: ArkProvider;
   indexerProvider?: IndexerProvider;

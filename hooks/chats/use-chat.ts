@@ -19,7 +19,7 @@ export function useChat(chatId: number) {
       if (!response.ok) throw new Error("Failed to fetch chat");
       return response.json();
     },
-    refetchInterval: 5000,
+    refetchInterval: 1000,
     enabled: !!chatId && !!wallet,
   });
 }

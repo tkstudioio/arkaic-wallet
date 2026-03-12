@@ -35,8 +35,8 @@ export function BuyingChatItem({ chat }: { chat: ProductChat }) {
   return (
     <Link
       href={{
-        pathname: "/chats/[chatId]",
-        params: { chatId: chat.id },
+        pathname: "/chats/[id]",
+        params: { id: chat.id },
       }}
       className='w-full'
     >
@@ -65,7 +65,7 @@ export function BuyingChatItem({ chat }: { chat: ProductChat }) {
           {lastMessage && (
             <Small className='text-typography-500' numberOfLines={1}>
               {lastMessage.offerPrice != null
-                ? `Price proposal: ${lastMessage.offerPrice} sats`
+                ? `Price proposal: ${lastMessage.offerPrice} sats${lastMessage.offerStatus ? ` (${lastMessage.offerStatus})` : ""}`
                 : lastMessage.text ?? ""}
             </Small>
           )}
