@@ -23,6 +23,8 @@ backend.interceptors.request.use(async (config) => {
   const method = config.method?.toUpperCase();
 
   if (method === "POST" || method === "PUT" || method === "PATCH") {
+    if (!config.data) config.data = {};
+
     const payload = new TextEncoder().encode(JSON.stringify(config.data));
 
     if (!account?.privateKey) return config;
