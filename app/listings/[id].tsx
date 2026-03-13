@@ -57,8 +57,9 @@ function SellerListingChats(props: { listingId: number }) {
         const lastMessage = first(chat.messages);
         return (
           <Link
+            key={chat.id}
             asChild
-            href={{ pathname: "/chats/[id]", params: { id: chat.id } }}
+            href={{ pathname: "/chats/[id]", params: { id: String(chat.id) } }}
           >
             <Card>
               <Large>{chat.buyer?.username}</Large>
