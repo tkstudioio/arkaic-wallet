@@ -1,34 +1,31 @@
 import { backend } from "@/lib/api";
-import useAccountStore from "@/stores/account";
-import { ChatMessage } from "@/types/product";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type SendMessageParams = {
   chatId: number;
-  text?: string;
+  message?: string;
   offerPrice?: number;
 };
 
 export function useSendMessage() {
   const queryClient = useQueryClient();
-  const { wallet } = useAccountStore();
 
   return useMutation({
     mutationKey: ["send-message"],
     mutationFn: async ({
       chatId,
       offerPrice,
-      text,
-    }: SendMessageParams): Promise<ChatMessage> => {
-      if (!wallet) throw new Error("Missing wallet");
-
-      const { data } = await backend.post(`/chats/${chatId}/messages`, {
+      message,
+    }: SendMessageParams): Promise<unknown> => {
+      const { data } = await backend.post(`/messages/${chatId}`, {
         offerPrice,
-        text,
+        message,
       });
 
       return data;
     },
+
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["chat", variables.chatId],

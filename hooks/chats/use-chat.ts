@@ -1,25 +1,14 @@
-import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
-import { ProductChat } from "@/types/product";
+import { backend } from "@/lib/api";
+import { Chat } from "@/types/backend";
+
 import { useQuery } from "@tanstack/react-query";
 
 export function useChat(chatId: number) {
-  const { wallet } = useAccountStore();
-
   return useQuery({
     queryKey: ["chat", chatId],
-    queryFn: async (): Promise<ProductChat> => {
-      if (!wallet) throw new Error("Missing wallet");
-
-      const headers = await getAuthHeaders(wallet);
-
-      const response = await fetch(`${API_BASE_URL}/chats/${chatId}`, {
-        headers,
-      });
-      if (!response.ok) throw new Error("Failed to fetch chat");
-      return response.json();
+    queryFn: async (): Promise<Chat | null> => {
+      const { data } = await backend.get<Chat | null>("/chats/" + chatId);
+      return data;
     },
-    refetchInterval: 1000,
-    enabled: !!chatId && !!wallet,
   });
 }
