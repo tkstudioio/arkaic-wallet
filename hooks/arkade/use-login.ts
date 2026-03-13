@@ -93,6 +93,7 @@ export function useLoginMutation() {
         : undefined;
 
       setStore({
+        pubkey,
         account: { ...account, privateKey },
         wallet,
         token,

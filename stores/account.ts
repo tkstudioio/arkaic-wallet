@@ -10,6 +10,7 @@ import {
 
 import { ArkaicAccount } from "@/types/arkaic";
 type AccountStore = {
+  pubkey?: string;
   token?: string;
   arkadeLightning?: ArkadeLightning;
   arkProvider?: ArkProvider;
