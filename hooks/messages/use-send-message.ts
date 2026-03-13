@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 type SendMessageParams = {
   chatId: number;
   message?: string;
-  offerPrice?: number;
+  offeredPrice?: number;
 };
 
 export function useSendMessage() {
@@ -15,11 +15,11 @@ export function useSendMessage() {
     mutationKey: ["send-message"],
     mutationFn: async ({
       chatId,
-      offerPrice,
+      offeredPrice,
       message,
     }: SendMessageParams): Promise<unknown> => {
       const { data } = await backend.post(`/messages/${chatId}`, {
-        offerPrice,
+        offeredPrice,
         message,
       });
 
