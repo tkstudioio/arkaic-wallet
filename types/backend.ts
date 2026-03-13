@@ -74,7 +74,7 @@ export type Message = {
   id: number;
   chatId: number;
   chat?: Chat;
-  message: string;
+  message: string | null;
   senderPubkey: string;
   sender?: Account;
   signature: string;
