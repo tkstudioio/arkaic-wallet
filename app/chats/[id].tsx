@@ -1,6 +1,7 @@
 import { AmountComponent } from "@/components/amount";
+import { ChatActions } from "@/components/chat/chat-actions";
 import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
-import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Divider } from "@/components/ui/divider";
 import { HStack } from "@/components/ui/hstack";
@@ -12,25 +13,22 @@ import { VStack } from "@/components/ui/vstack";
 
 import { useChat } from "@/hooks/chats/use-chat";
 import { useSendMessage } from "@/hooks/messages/use-send-message";
+import { useActiveOffer } from "@/hooks/offers/use-active-offer";
 import useAccountStore from "@/stores/account";
-import { Chat, Message } from "@/types/backend";
+import { Chat, Message, Offer } from "@/types/backend";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { first, map } from "lodash";
-import {
-  ArrowLeft,
-  EllipsisVertical,
-  HandCoins,
-  Handshake,
-  Send,
-} from "lucide-react-native";
+import { ArrowLeft, EllipsisVertical, Send } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView } from "react-native";
 import { match } from "ts-pattern";
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const chatQuery = useChat(Number(id));
+  const chatId = Number(id);
+  const chatQuery = useChat(chatId);
+  const activeOfferQuery = useActiveOffer(chatId);
   const router = useRouter();
   const { pubkey } = useAccountStore();
 
@@ -78,7 +76,10 @@ export default function ChatScreen() {
                 ))}
               </VStack>
             </ScrollView>
-            <SendMessage chat={data!} />
+            <SendMessage
+              chat={data!}
+              activeOffer={activeOfferQuery.data ?? null}
+            />
           </>
         ))}
     </VStack>
@@ -99,7 +100,14 @@ function MessageComponent(props: { message: Message }) {
             : "mr-arkaic-xl bg-arkaic-fill border-arkaic-primary"
         }
       >
-        <P className={isSender ? "text-right" : ""}>{props.message.message}</P>
+        {props.message.offer ? (
+          <VStack space={"sm"} className={isSender ? "items-end" : "items-start"}>
+            <Small>Offer</Small>
+            <AmountComponent size='xl' amount={props.message.offer.price} />
+          </VStack>
+        ) : (
+          <P className={isSender ? "text-right" : ""}>{props.message.message}</P>
+        )}
       </Card>
       <HStack
         space={"sm"}
@@ -118,7 +126,7 @@ function MessageComponent(props: { message: Message }) {
   );
 }
 
-function SendMessage(props: { chat: Chat }) {
+function SendMessage(props: { chat: Chat; activeOffer: Offer | null }) {
   const sendMessageMutation = useSendMessage();
   const [message, setMessage] = useState<string>("");
 
@@ -127,16 +135,7 @@ function SendMessage(props: { chat: Chat }) {
       <VStack space={"lg"}>
         {message === "" && (
           <>
-            <HStack space={"md"}>
-              <Button className='flex-1' variant={"outline"}>
-                <ButtonText>New offer</ButtonText>
-                <ButtonIcon as={HandCoins} />
-              </Button>
-              <Button className='flex-1'>
-                <ButtonText>Buy</ButtonText>
-                <ButtonIcon as={Handshake} />
-              </Button>
-            </HStack>
+            <ChatActions chat={props.chat} activeOffer={props.activeOffer} />
             <Divider />
           </>
         )}
@@ -155,7 +154,6 @@ function SendMessage(props: { chat: Chat }) {
               sendMessageMutation.mutate(
                 {
                   message,
-                  offerPrice: 0,
                   chatId: props.chat.id,
                 },
                 { onSuccess: () => setMessage("") },
