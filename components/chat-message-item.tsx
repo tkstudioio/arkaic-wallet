@@ -1,12 +1,12 @@
 import { ChatMessage } from "@/types/product";
-import { Card } from "./ui/card";
-import { Muted, P, Small } from "./ui/typography";
-import { VStack } from "./ui/vstack";
-import { HStack } from "./ui/hstack";
-import { Button, ButtonText } from "./ui/button";
-import { Badge, BadgeText } from "./ui/badge";
 import { format } from "date-fns";
 import { View } from "react-native";
+import { Badge, BadgeText } from "./ui/badge";
+import { Button, ButtonText } from "./ui/button";
+import { Card } from "./ui/card";
+import { HStack } from "./ui/hstack";
+import { Muted, P, Small } from "./ui/typography";
+import { VStack } from "./ui/vstack";
 
 type ChatMessageItemProps = {
   message: ChatMessage;
@@ -24,8 +24,7 @@ export function ChatMessageItem({
   isPendingAction,
 }: ChatMessageItemProps) {
   const isOffer = message.offerPrice != null;
-  const canRespond =
-    !isOwnMessage && message.offerStatus === "awaitingAccept";
+  const canRespond = !isOwnMessage && message.offerStatus === "awaitingAccept";
 
   if (isOffer) {
     return (
@@ -91,9 +90,7 @@ export function ChatMessageItem({
   }
 
   return (
-    <View
-      className={`max-w-[80%] ${isOwnMessage ? "self-end" : "self-start"}`}
-    >
+    <View className={`max-w-[80%] ${isOwnMessage ? "self-end" : "self-start"}`}>
       <Card
         className={isOwnMessage ? "bg-arkaic-primary/10" : "bg-arkaic-fill"}
       >
