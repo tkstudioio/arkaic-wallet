@@ -1,5 +1,4 @@
 import { ListingItem } from "@/components/listing-item";
-import { Grid, GridItem } from "@/components/ui/grid";
 import { Spinner } from "@/components/ui/spinner";
 import { H1, P } from "@/components/ui/typography";
 import { useListings } from "@/hooks/listings/use-listings";
@@ -18,15 +17,11 @@ export default function ProductsList() {
         .with({ isError: true }, () => (
           <P className='text-arkaic-negative'>Failed to load products.</P>
         ))
-        .otherwise(({ data }) => (
-          <Grid className='gap-4' _extra={{ className: "grid-cols-2" }}>
-            {map(data, (listing) => (
-              <GridItem key={listing.id} _extra={{ className: "" }}>
-                <ListingItem listing={listing} />
-              </GridItem>
-            ))}
-          </Grid>
-        ))}
+        .otherwise(({ data }) =>
+          map(data, (listing) => (
+            <ListingItem key={listing.id} listing={listing} />
+          )),
+        )}
     </>
   );
 }
