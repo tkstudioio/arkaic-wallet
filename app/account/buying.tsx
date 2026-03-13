@@ -1,18 +1,13 @@
-import { BuyingChatItem } from "@/components/buying-chat-item";
-import { Spinner } from "@/components/ui/spinner";
-import { H1, P } from "@/components/ui/typography";
-import { VStack } from "@/components/ui/vstack";
-import { useAccountBuyingChats } from "@/hooks/products/use-account-products";
-
-import { match } from "ts-pattern";
+import { H1 } from "@/components/ui/typography";
+// import { useAccountBuyingChats } from "@/hooks/listings/use-account-products";
 
 export default function BuyingList() {
-  const chatsQuery = useAccountBuyingChats();
+  // const chatsQuery = useAccountBuyingChats();
 
   return (
     <>
       <H1 className='font-heading'>Buying</H1>
-      {match(chatsQuery)
+      {/* {match(chatsQuery)
         .with({ isLoading: true }, () => <Spinner className='mt-4' />)
         .with({ isError: true }, () => (
           <P className='text-arkaic-negative'>Failed to load chats.</P>
@@ -26,7 +21,7 @@ export default function BuyingList() {
               <P className='text-typography-500'>No active negotiations.</P>
             )}
           </VStack>
-        ))}
+        ))} */}
     </>
   );
 }

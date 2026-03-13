@@ -1,349 +1,160 @@
-import { useChat } from "@/hooks/chats/use-chat";
-import { useSendMessage } from "@/hooks/chats/use-send-message";
-import { useAcceptOffer } from "@/hooks/chats/use-accept-offer";
-import { useAcceptOfferMessage } from "@/hooks/chats/use-accept-offer-message";
-import { useRejectOfferMessage } from "@/hooks/chats/use-reject-offer-message";
-import { useFundEscrow } from "@/hooks/escrows/use-fund-escrow";
-import { useSellerSignCollaborate } from "@/hooks/escrows/use-seller-sign-collaborate";
-import { useBuyerConfirmCollaborate } from "@/hooks/escrows/use-buyer-confirm-collaborate";
-import { useSellerSignCheckpoints } from "@/hooks/escrows/use-seller-sign-checkpoints";
-import { useRefund } from "@/hooks/escrows/use-refund";
-import { ChatMessageItem } from "@/components/chat-message-item";
-import { Card } from "@/components/ui/card";
-import { Large, Muted, P, Small } from "@/components/ui/typography";
-import { Spinner } from "@/components/ui/spinner";
-import { VStack } from "@/components/ui/vstack";
-import { HStack } from "@/components/ui/hstack";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Input, InputField } from "@/components/ui/input";
+import { AmountComponent } from "@/components/amount";
 import { Badge, BadgeText } from "@/components/ui/badge";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Divider } from "@/components/ui/divider";
+import { HStack } from "@/components/ui/hstack";
+import { Input, InputField } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
+import { Large, P, Small } from "@/components/ui/typography";
+import { VStack } from "@/components/ui/vstack";
+
+import { useChat } from "@/hooks/chats/use-chat";
+import { useSendMessage } from "@/hooks/messages/use-send-message";
 import useAccountStore from "@/stores/account";
-import { getPubkeyHex } from "@/utils/get-pubkey-hex";
-import { EscrowStatus } from "@/types/product";
+import { Chat, Message } from "@/types/backend";
+import { formatDistanceToNowStrict } from "date-fns";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { map } from "lodash";
+import { ArrowLeft, Send } from "lucide-react-native";
+import { useState } from "react";
+import { ScrollView } from "react-native";
+import { match } from "ts-pattern";
 
-import { useLocalSearchParams } from "expo-router";
-import { toNumber } from "lodash";
-import { FlatList, View } from "react-native";
-import { isAfter, subMinutes } from "date-fns";
-import { useCallback, useEffect, useState } from "react";
-
-const ESCROW_STATUS_LABEL: Record<EscrowStatus, string> = {
-  awaitingFunds: "Awaiting funds",
-  fundLocked: "Funds locked",
-  sellerReady: "Seller ready",
-  buyerSubmitted: "Buyer submitted",
-  buyerCheckpointsSigned: "Checkpoints signed",
-  completed: "Completed",
-  refunded: "Refunded",
-};
-
-export default function ChatDetail() {
+export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const castedId = toNumber(id);
-  if (isNaN(castedId)) throw new Error("Wrong chatId");
-
-  const { wallet } = useAccountStore();
-  const { data: chat, isLoading } = useChat(castedId);
-  const sendMessage = useSendMessage();
-  const acceptOffer = useAcceptOffer();
-  const acceptOfferMessage = useAcceptOfferMessage();
-  const rejectOfferMessage = useRejectOfferMessage();
-  const fundEscrow = useFundEscrow();
-  const sellerSignCollab = useSellerSignCollaborate();
-  const buyerConfirmCollab = useBuyerConfirmCollaborate();
-  const sellerSignCheckpoints = useSellerSignCheckpoints();
-  const refund = useRefund();
-
-  const [text, setText] = useState("");
-  const [offerPrice, setOfferPrice] = useState("");
-  const [showOfferInput, setShowOfferInput] = useState(false);
-  const [userPubkey, setUserPubkey] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!wallet) return;
-    getPubkeyHex(wallet).then(setUserPubkey);
-  }, [wallet]);
-
-  const handleSend = useCallback(() => {
-    if (!text.trim() && !offerPrice) return;
-
-    const params: { chatId: number; text?: string; offerPrice?: number } = {
-      chatId: castedId,
-    };
-    if (text.trim()) params.text = text.trim();
-    if (offerPrice) params.offerPrice = Number(offerPrice);
-
-    sendMessage.mutate(params, {
-      onSuccess: () => {
-        setText("");
-        setOfferPrice("");
-        setShowOfferInput(false);
-      },
-    });
-  }, [text, offerPrice, castedId, sendMessage]);
-
-  const handleAccept = useCallback(() => {
-    const timelockExpiry = Math.floor(
-      subMinutes(new Date(), 5).getTime() / 1000,
-    );
-    acceptOffer.mutate({ chatId: castedId, timelockExpiry });
-  }, [castedId, acceptOffer]);
-
-  if (isLoading) return <Spinner />;
-  if (!chat) return <P>Chat not found</P>;
-
-  const isSeller = userPubkey === chat.product?.seller?.pubkey;
-  const isBuyer = userPubkey === chat.buyer?.pubkey;
-  const currentUserId = isBuyer ? chat.buyerId : chat.product?.sellerId;
-  const hasEscrow = !!chat.escrow;
-  const hasAgreedPrice = chat.agreedPrice != null;
-  const escrow = chat.escrow;
-
-  const timelockExpired = escrow
-    ? isAfter(new Date(), new Date(escrow.timelockExpiry * 1000))
-    : false;
-
-  const messages = [...(chat.messages ?? [])].sort(
-    (a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  );
-
-  const isAnyEscrowActionPending =
-    fundEscrow.isPending ||
-    sellerSignCollab.isPending ||
-    buyerConfirmCollab.isPending ||
-    sellerSignCheckpoints.isPending ||
-    refund.isPending;
+  const chatQuery = useChat(Number(id));
+  const router = useRouter();
 
   return (
-    <VStack className='h-full' space='md'>
-      {/* Header */}
-      <Card>
-        <VStack space='xs'>
-          <Large>{chat.product?.name ?? "Product"}</Large>
-          <P>{chat.product?.price ?? 0} sats</P>
-          {hasAgreedPrice && (
-            <Small className='text-green-600'>
-              Agreed price: {chat.agreedPrice} sats
-            </Small>
-          )}
-          <Muted>
-            {isSeller
-              ? `Buyer: ${chat.buyer?.accountName ?? chat.buyer?.pubkey?.slice(0, 7) ?? "Unknown"}`
-              : `Seller: ${chat.product?.seller?.pubkey?.slice(0, 7) ?? "Unknown"}`}
-          </Muted>
-          <HStack space='sm'>
-            <Badge
-              size='sm'
-              action={chat.status === "active" ? "success" : "muted"}
-            >
-              <BadgeText>
-                {chat.status === "active" ? "Active" : "Concluded"}
-              </BadgeText>
-            </Badge>
-          </HStack>
-        </VStack>
-      </Card>
+    <VStack space='lg' className='w-full h-full'>
+      <Button
+        action='neutral'
+        variant={"outline"}
+        onPress={router.back}
+        className='w-max'
+      >
+        <ButtonIcon as={ArrowLeft} />
+      </Button>
 
-      {/* Messages */}
-      <FlatList
-        data={messages}
-        keyExtractor={(item) => String(item.id)}
-        inverted
-        className='flex-1'
-        contentContainerClassName='gap-2 px-arkaic-sm'
-        renderItem={({ item }) => (
-          <ChatMessageItem
-            message={item}
-            isOwnMessage={item.senderId === currentUserId}
-            onAcceptOffer={(messageId) =>
-              acceptOfferMessage.mutate({ chatId: castedId, messageId })
-            }
-            onRejectOffer={(messageId) =>
-              rejectOfferMessage.mutate({ chatId: castedId, messageId })
-            }
-            isPendingAction={
-              acceptOfferMessage.isPending || rejectOfferMessage.isPending
-            }
-          />
-        )}
-      />
+      {match(chatQuery)
+        .with({ data: undefined }, { data: null }, () => null)
+        .otherwise(({ data }) => (
+          <>
+            <ScrollView className='h-24'>
+              <VStack space={"lg"}>
+                <Card>
+                  <Skeleton className='w-full h-max aspect-video' />
 
-      {/* Escrow section */}
-      {hasEscrow && escrow && (
-        <Card className='mx-arkaic-sm'>
-          <VStack space='sm'>
-            <HStack className='justify-between items-center'>
-              <Small className='font-heading'>Escrow</Small>
-              <Badge size='sm'>
-                <BadgeText>
-                  {ESCROW_STATUS_LABEL[escrow.status] ?? escrow.status}
-                </BadgeText>
-              </Badge>
-            </HStack>
-            <Small>{escrow.value} sats</Small>
-
-            {/* Escrow action buttons */}
-            {isBuyer && escrow.status === "awaitingFunds" && (
-              <Button
-                onPress={() =>
-                  fundEscrow.mutate({
-                    escrow,
-                    sellerPubkey: chat.product?.seller?.pubkey ?? "",
-                  })
-                }
-                isDisabled={isAnyEscrowActionPending}
-              >
-                <ButtonText>
-                  {fundEscrow.isPending ? "Funding..." : "Fund escrow"}
-                </ButtonText>
-              </Button>
-            )}
-
-            {isSeller && escrow.status === "fundLocked" && (
-              <Button
-                onPress={() =>
-                  sellerSignCollab.mutate({
-                    escrowId: escrow.id,
-                    chatId: castedId,
-                  })
-                }
-                isDisabled={isAnyEscrowActionPending}
-              >
-                <ButtonText>
-                  {sellerSignCollab.isPending
-                    ? "Signing..."
-                    : "Sign collaborate"}
-                </ButtonText>
-              </Button>
-            )}
-
-            {isBuyer && escrow.status === "sellerReady" && (
-              <Button
-                onPress={() =>
-                  buyerConfirmCollab.mutate({
-                    escrowId: escrow.id,
-                    chatId: castedId,
-                  })
-                }
-                isDisabled={isAnyEscrowActionPending}
-              >
-                <ButtonText>
-                  {buyerConfirmCollab.isPending
-                    ? "Confirming..."
-                    : "Confirm collaborate"}
-                </ButtonText>
-              </Button>
-            )}
-
-            {isSeller &&
-              (escrow.status === "buyerSubmitted" ||
-                escrow.status === "buyerCheckpointsSigned") && (
-                <Button
-                  onPress={() =>
-                    sellerSignCheckpoints.mutate({
-                      escrowId: escrow.id,
-                      chatId: castedId,
-                    })
-                  }
-                  isDisabled={isAnyEscrowActionPending}
-                >
-                  <ButtonText>
-                    {sellerSignCheckpoints.isPending
-                      ? "Signing..."
-                      : "Sign checkpoints"}
-                  </ButtonText>
-                </Button>
-              )}
-
-            {isBuyer &&
-              timelockExpired &&
-              escrow.status !== "completed" &&
-              escrow.status !== "refunded" && (
-                <Button
-                  action='negative'
-                  onPress={() =>
-                    refund.mutate({ escrowId: escrow.id, chatId: castedId })
-                  }
-                  isDisabled={isAnyEscrowActionPending}
-                >
-                  <ButtonText>
-                    {refund.isPending ? "Refunding..." : "Claim refund"}
-                  </ButtonText>
-                </Button>
-              )}
-
-            {(escrow.status === "completed" ||
-              escrow.status === "refunded") && (
-              <Small className='text-center'>
-                {escrow.status === "completed"
-                  ? "Transaction completed"
-                  : "Funds refunded"}
-              </Small>
-            )}
-          </VStack>
-        </Card>
-      )}
-
-      {/* Create escrow button (buyer only, no escrow yet) */}
-      {isBuyer && !hasEscrow && chat.status === "active" && (
-        <View className='px-arkaic-sm'>
-          <Button
-            onPress={handleAccept}
-            isDisabled={acceptOffer.isPending}
-          >
-            <ButtonText>
-              {acceptOffer.isPending ? "Creating escrow..." : "Create escrow"}
-            </ButtonText>
-          </Button>
-        </View>
-      )}
-
-      {/* Input bar */}
-      {chat.status === "active" && (
-        <Card className='gap-2'>
-          {showOfferInput && (
-            <Input size='sm'>
-              <InputField
-                placeholder='Price in sats'
-                keyboardType='numeric'
-                value={offerPrice}
-                onChangeText={setOfferPrice}
-              />
-            </Input>
-          )}
-          <HStack space='sm' className='items-center'>
-            <View className='flex-1'>
-              <Input>
-                <InputField
-                  placeholder='Message...'
-                  value={text}
-                  onChangeText={setText}
-                  onSubmitEditing={handleSend}
-                />
-              </Input>
-            </View>
-            {!hasAgreedPrice && (
-              <Button
-                size='sm'
-                variant='outline'
-                onPress={() => setShowOfferInput(!showOfferInput)}
-              >
-                <ButtonText>$</ButtonText>
-              </Button>
-            )}
-            <Button
-              size='sm'
-              onPress={handleSend}
-              isDisabled={
-                sendMessage.isPending || (!text.trim() && !offerPrice)
-              }
-            >
-              <ButtonText>Send</ButtonText>
-            </Button>
-          </HStack>
-        </Card>
-      )}
+                  <Large>{data?.listing?.name}</Large>
+                  <VStack className='w-full items-end'>
+                    <AmountComponent size='4xl' amount={data?.listing?.price} />
+                  </VStack>
+                </Card>
+                <VStack space={"md"} className='px-arkaic-sm'>
+                  {map(data?.messages, (message) => (
+                    <MessageComponent
+                      key={message.signature}
+                      message={message}
+                    />
+                  ))}
+                </VStack>
+              </VStack>
+            </ScrollView>
+            <SendMessage chat={data!} />
+          </>
+        ))}
     </VStack>
+  );
+}
+
+function MessageComponent(props: { message: Message }) {
+  const { pubkey } = useAccountStore();
+
+  return (
+    <Card
+      variant={"outline"}
+      className={
+        props.message.senderPubkey === pubkey
+          ? "ml-arkaic-xl flex justify-end items-end border-dashed"
+          : "mr-arkaic-xl border-dashed"
+      }
+    >
+      <HStack
+        className={
+          props.message.senderPubkey === pubkey
+            ? "items-center justify-between w-full flex-row-reverse"
+            : "items-center justify-between w-full"
+        }
+      >
+        <Badge size={"lg"}>
+          <BadgeText>
+            {props.message.senderPubkey === pubkey
+              ? "You"
+              : props.message.sender?.username}
+          </BadgeText>
+        </Badge>
+        <Small
+          className={props.message.senderPubkey === pubkey ? "text-right" : ""}
+        >
+          {formatDistanceToNowStrict(props.message.sentAt)}
+        </Small>
+      </HStack>
+      <P className={props.message.senderPubkey === pubkey ? "text-right" : ""}>
+        {props.message.message}
+      </P>
+    </Card>
+  );
+}
+
+function SendMessage(props: { chat: Chat }) {
+  const sendMessageMutation = useSendMessage();
+  const [message, setMessage] = useState<string>("");
+
+  return (
+    <Card>
+      <VStack space={"lg"}>
+        <HStack space={"md"}>
+          <Button className='flex-1' variant={"outline"}>
+            <ButtonText>New offer</ButtonText>
+          </Button>
+          <Button className='flex-1'>
+            <ButtonText>Buy</ButtonText>
+          </Button>
+        </HStack>
+        <Divider />
+        <HStack space={"md"}>
+          <Input className='flex-1 h-full'>
+            <InputField
+              placeholder='Type message...'
+              value={message}
+              onChangeText={setMessage}
+            />
+          </Input>
+          <Button
+            className='w-max'
+            variant={"outline"}
+            isDisabled={message.length < 1}
+            onPress={() => {
+              sendMessageMutation.mutate(
+                {
+                  message,
+                  offerPrice: 0,
+                  chatId: props.chat.id,
+                },
+                { onSuccess: () => setMessage("") },
+              );
+            }}
+          >
+            {sendMessageMutation.isPending ? (
+              <Spinner />
+            ) : (
+              <ButtonIcon as={Send} />
+            )}
+          </Button>
+        </HStack>
+      </VStack>
+    </Card>
   );
 }

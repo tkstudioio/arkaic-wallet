@@ -6,6 +6,7 @@ import {
   Package,
   Plus,
   Settings,
+  User,
   Wallet,
 } from "lucide-react-native";
 import { Button, ButtonIcon } from "./ui/button";
@@ -13,8 +14,9 @@ import { Card } from "./ui/card";
 import { HStack } from "./ui/hstack";
 
 const tabs: { label: string; icon: LucideIcon; path: Href }[] = [
-  { label: "Products", icon: Package, path: "/products" },
-  { label: "Sell", icon: Plus, path: "/products/create" },
+  { label: "Listings", icon: Package, path: "/listings" },
+  { label: "Sell", icon: Plus, path: "/listings/create" },
+  { label: "My listings", icon: User, path: "/listings/my-listings" },
   { label: "Chats", icon: MessagesSquare, path: "/chats" },
   { label: "Wallet", icon: Wallet, path: "/account/dashboard" },
   { label: "Settings", icon: Settings, path: "/account/settings" },
