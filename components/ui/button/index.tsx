@@ -42,8 +42,6 @@ const buttonStyle = tva({
     action: {
       primary:
         "bg-arkaic-primary data-[hover=true]:bg-arkaic-primary/90 data-[active=true]:bg-arkaic-primary/80 border-arkaic-border data-[focus-visible=true]:web:ring-indicator-info",
-      secondary:
-        "bg-arkaic-fill border border-arkaic-primary data-[hover=true]:bg-arkaic-fill/90 data-[active=true]:bg-arkaic-fill/80 data-[focus-visible=true]:web:ring-indicator-info",
       positive:
         "bg-arkaic-positive border-arkaic-border data-[hover=true]:bg-arkaic-positive/90 data-[active=true]:bg-arkaic-positive/80 data-[focus-visible=true]:web:ring-indicator-info",
       negative:
@@ -71,12 +69,7 @@ const buttonStyle = tva({
       class:
         "px-0 bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
     },
-    {
-      action: "secondary",
-      variant: "link",
-      class:
-        "px-0 bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
-    },
+
     {
       action: "positive",
       variant: "link",
@@ -101,12 +94,7 @@ const buttonStyle = tva({
       class:
         "bg-arkaic-fill border-arkaic-primary data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-arkaic-fill",
     },
-    {
-      action: "secondary",
-      variant: "outline",
-      class:
-        "bg-arkaic-fill border-arkaic-primary data-[hover=true]:bg-arkaic-fill/50 data-[active=true]:bg-arkaic-fill",
-    },
+
     {
       action: "positive",
       variant: "outline",
@@ -240,7 +228,6 @@ const buttonIconStyle = tva({
         "text-arkaic-muted data-[hover=true]:text-arkaic-muted data-[active=true]:text-arkaic-muted",
       positive:
         "text-arkaic-positive data-[hover=true]:text-arkaic-positive data-[active=true]:text-arkaic-positive",
-
       negative:
         "text-arkaic-negative data-[hover=true]:text-arkaic-negative data-[active=true]:text-arkaic-negative",
       neutral:
