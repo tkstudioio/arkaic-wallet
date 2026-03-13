@@ -1,0 +1,25 @@
+import useAccountStore from "@/stores/account";
+import { Chat, Offer } from "@/types/backend";
+import { BuyerActions } from "./buyer-actions";
+import { SellerActions } from "./seller-actions";
+
+type ChatActionsProps = {
+  chat: Chat;
+  activeOffer: Offer | null;
+};
+
+export function ChatActions({ chat, activeOffer }: ChatActionsProps) {
+  const { pubkey } = useAccountStore();
+
+  const isBuyer = chat.buyerPubkey === pubkey;
+
+  if (isBuyer) {
+    return <BuyerActions chat={chat} activeOffer={activeOffer} />;
+  }
+
+  if (activeOffer) {
+    return <SellerActions activeOffer={activeOffer} chatId={chat.id} />;
+  }
+
+  return null;
+}
