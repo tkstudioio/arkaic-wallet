@@ -2,13 +2,13 @@ import { ProductsListItem } from "@/components/products-list-item";
 import { Grid, GridItem } from "@/components/ui/grid";
 import { Spinner } from "@/components/ui/spinner";
 import { H1, P } from "@/components/ui/typography";
-import { useProducts } from "@/hooks/products/use-products";
+import { useListings } from "@/hooks/products/use-listings";
 import { map } from "lodash";
 
 import { match } from "ts-pattern";
 
 export default function ProductsList() {
-  const productsQuery = useProducts();
+  const productsQuery = useListings();
 
   return (
     <>

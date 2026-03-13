@@ -2,7 +2,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
 import { H1, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
-import { useCreateProduct } from "@/hooks/products/use-create-product";
+import { useCreateProduct } from "@/hooks/products/use-create-listing";
 import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";

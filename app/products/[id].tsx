@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Large, P, Small } from "@/components/ui/typography";
-import { useProduct } from "@/hooks/products/use-product";
+import { useListing } from "@/hooks/products/use-listing";
 
 import { AmountComponent } from "@/components/amount";
+import { Badge, BadgeText } from "@/components/ui/badge";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
@@ -18,12 +19,11 @@ import {
 } from "@/components/ui/modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VStack } from "@/components/ui/vstack";
-import { Badge, BadgeText } from "@/components/ui/badge";
+import { useAcceptOfferMessage } from "@/hooks/chats/use-accept-offer-message";
 import { useOpenChat } from "@/hooks/chats/use-open-chat";
 import { useProductChats } from "@/hooks/chats/use-product-chats";
-import { useSendMessage } from "@/hooks/chats/use-send-message";
-import { useAcceptOfferMessage } from "@/hooks/chats/use-accept-offer-message";
 import { useRejectOfferMessage } from "@/hooks/chats/use-reject-offer-message";
+import { useSendMessage } from "@/hooks/chats/use-send-message";
 import { ChatMessage } from "@/types/product";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
@@ -34,7 +34,7 @@ import { match } from "ts-pattern";
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const productQuery = useProduct(id);
+  const productQuery = useListing(id);
   const { mutateAsync: openChat, isPending: isOpeningChat } = useOpenChat();
   const { mutateAsync: sendMessage, isPending: isSending } = useSendMessage();
   const acceptOfferMessage = useAcceptOfferMessage();
@@ -94,7 +94,9 @@ export default function ProductDetail() {
               onRejectOffer={(messageId) =>
                 rejectOfferMessage.mutate({ chatId: chat.id, messageId })
               }
-              isPendingAction={acceptOfferMessage.isPending || rejectOfferMessage.isPending}
+              isPendingAction={
+                acceptOfferMessage.isPending || rejectOfferMessage.isPending
+              }
             />
           ))}
 
@@ -181,7 +183,9 @@ function Message(props: {
   onRejectOffer?: (messageId: number) => void;
   isPendingAction?: boolean;
 }) {
-  const isSender = props.currentUserId != null && props.message.senderId === props.currentUserId;
+  const isSender =
+    props.currentUserId != null &&
+    props.message.senderId === props.currentUserId;
   const canRespond =
     !isSender && props.message.offerStatus === "awaitingAccept";
 
