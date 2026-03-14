@@ -1,4 +1,5 @@
 import useAccountStore from "@/stores/account";
+import { mnemonicToPrivateKey } from "@/utils/mnemonic";
 import { schnorr } from "@noble/curves/secp256k1";
 import { hex } from "@scure/base";
 import axios, { AxiosError } from "axios";
@@ -27,11 +28,11 @@ backend.interceptors.request.use(async (config) => {
 
     const payload = new TextEncoder().encode(JSON.stringify(config.data));
 
-    if (!account?.privateKey) return config;
+    if (!account?.mnemonic) throw new Error("missing mnemonic");
 
-    const signature = hex.encode(
-      schnorr.sign(payload, hex.decode(account?.privateKey)),
-    );
+    const privateKey = mnemonicToPrivateKey(account?.mnemonic);
+
+    const signature = hex.encode(schnorr.sign(payload, hex.decode(privateKey)));
 
     config.data.signature = signature;
   }

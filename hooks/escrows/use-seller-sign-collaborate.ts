@@ -1,11 +1,11 @@
 import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
+import { backend } from "@/lib/api";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type SellerSignCollaborateParams = {
-  escrowId: number;
+  escrowAddress: string;
   chatId: number;
 };
 
@@ -15,40 +15,30 @@ export function useSellerSignCollaborate() {
 
   return useMutation({
     mutationKey: ["seller-sign-collaborate"],
-    mutationFn: async ({ escrowId }: SellerSignCollaborateParams) => {
+    mutationFn: async ({ escrowAddress }: SellerSignCollaborateParams) => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const headers = await getAuthHeaders(wallet);
-
-      const response = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/collaborate/seller-psbt`,
-        { headers },
+      const { data: psbtData } = await backend.get(
+        `/escrows/${escrowAddress}/collaborate/seller-psbt`,
       );
-      if (!response.ok) throw new Error("Failed to get seller PSBT");
-      const { collaboratePsbt } = await response.json();
 
-      if (!collaboratePsbt) throw new Error("No collaborate PSBT");
+      if (!psbtData.collaboratePsbt) throw new Error("No collaborate PSBT");
 
-      const psbtBytes = base64.decode(collaboratePsbt);
+      const psbtBytes = base64.decode(psbtData.collaboratePsbt);
       const tx = Transaction.fromPSBT(psbtBytes);
       const signedTx = await wallet.identity.sign(tx);
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
-      const submitResponse = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/collaborate/seller-submit-psbt`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify({ signedPsbt }),
-        },
+      const { data } = await backend.post(
+        `/escrows/${escrowAddress}/collaborate/seller-submit-psbt`,
+        { signedPsbt },
       );
-      if (!submitResponse.ok) throw new Error("Failed to submit seller PSBT");
-      return submitResponse.json();
+      return data;
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["chat", variables.chatId] });
       queryClient.invalidateQueries({
-        queryKey: ["escrow", variables.escrowId],
+        queryKey: ["escrow", variables.escrowAddress],
       });
     },
     onError: (err) => console.log(err),

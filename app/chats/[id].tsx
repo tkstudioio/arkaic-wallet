@@ -1,6 +1,7 @@
 import { AmountComponent } from "@/components/amount";
 import { ChatActions } from "@/components/chat/chat-actions";
-import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
+import { EscrowCard } from "@/components/escrow";
+import { MessageComponent } from "@/components/message";
 import { Button, ButtonIcon } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Divider } from "@/components/ui/divider";
@@ -8,17 +9,16 @@ import { HStack } from "@/components/ui/hstack";
 import { Input, InputField } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import { Large, P, Small } from "@/components/ui/typography";
+import { Large, P } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 
 import { useChat } from "@/hooks/chats/use-chat";
 import { useSendMessage } from "@/hooks/messages/use-send-message";
 import { useActiveOffer } from "@/hooks/offers/use-active-offer";
 import useAccountStore from "@/stores/account";
-import { Chat, Message, Offer } from "@/types/backend";
-import { formatDistanceToNowStrict } from "date-fns";
+import { Chat, Offer } from "@/types/backend";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { first, map } from "lodash";
+import { map } from "lodash";
 import { ArrowLeft, EllipsisVertical, Send } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView } from "react-native";
@@ -79,6 +79,7 @@ export default function ChatScreen() {
             <SendMessage
               chat={data!}
               activeOffer={activeOfferQuery.data ?? null}
+              escrowAddress={data?.escrow?.address}
             />
           </>
         ))}
@@ -86,59 +87,38 @@ export default function ChatScreen() {
   );
 }
 
-function MessageComponent(props: { message: Message }) {
-  const { pubkey } = useAccountStore();
-
-  const isSender = props.message.senderPubkey === pubkey;
-  return (
-    <VStack space={"md"}>
-      <Card
-        variant={"outline"}
-        className={
-          isSender
-            ? "ml-arkaic-xl flex justify-end items-end bg-arkaic-fill"
-            : "mr-arkaic-xl bg-arkaic-fill border-arkaic-primary"
-        }
-      >
-        {props.message.offer ? (
-          <VStack space={"sm"} className={isSender ? "items-end" : "items-start"}>
-            <Small>Offer</Small>
-            <AmountComponent size='xl' amount={props.message.offer.price} />
-          </VStack>
-        ) : (
-          <P className={isSender ? "text-right" : ""}>{props.message.message}</P>
-        )}
-      </Card>
-      <HStack
-        space={"sm"}
-        className={isSender ? "flex-row-reverse items-center" : "items-center"}
-      >
-        <Avatar size={"xs"}>
-          <AvatarFallbackText>
-            {first(props.message.sender?.username)}
-          </AvatarFallbackText>
-        </Avatar>
-        <Small className={isSender ? "text-right" : ""}>
-          {formatDistanceToNowStrict(props.message.sentAt)}
-        </Small>
-      </HStack>
-    </VStack>
-  );
-}
-
-function SendMessage(props: { chat: Chat; activeOffer: Offer | null }) {
+function SendMessage(props: {
+  chat: Chat;
+  activeOffer: Offer | null;
+  escrowAddress?: string | null;
+}) {
   const sendMessageMutation = useSendMessage();
   const [message, setMessage] = useState<string>("");
 
   return (
     <Card>
       <VStack space={"lg"}>
-        {message === "" && (
+        {message === "" && !props.escrowAddress && (
           <>
-            <ChatActions chat={props.chat} activeOffer={props.activeOffer} />
+            <ChatActions
+              chat={props.chat}
+              activeOffer={props.activeOffer}
+              hasEscrow={Boolean(props.escrowAddress)}
+            />
             <Divider />
           </>
         )}
+
+        {props.escrowAddress && (
+          <>
+            <EscrowCard
+              escrowAddress={props.escrowAddress}
+              chatId={props.chat.id}
+            />
+            <Divider />
+          </>
+        )}
+
         <HStack space={"md"}>
           <Input className='flex-1 h-full'>
             <InputField

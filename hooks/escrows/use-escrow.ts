@@ -1,26 +1,14 @@
-import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
-import { Escrow } from "@/types/product";
+import { backend } from "@/lib/api";
+import { Escrow } from "@/types/backend";
 import { useQuery } from "@tanstack/react-query";
 
-export function useEscrow(escrowId: number) {
-  const { wallet } = useAccountStore();
-
+export function useEscrow(escrowAddress: string | undefined) {
   return useQuery({
-    queryKey: ["escrow", escrowId],
+    queryKey: ["escrow", escrowAddress],
     queryFn: async (): Promise<Escrow> => {
-      if (!wallet) throw new Error("Missing wallet");
-
-      const headers = await getAuthHeaders(wallet);
-
-      const response = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}`,
-        { headers },
-      );
-      if (!response.ok) throw new Error("Failed to fetch escrow");
-      return response.json();
+      const { data } = await backend.get(`/escrows/address/${escrowAddress}`);
+      return data;
     },
     refetchInterval: 10000,
-    enabled: !!escrowId && !!wallet,
   });
 }

@@ -2,7 +2,7 @@ import { useLoginMutation } from "@/hooks/arkade/use-login";
 import { ArkaicAccount } from "@/types/arkaic";
 import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { Avatar, AvatarFallbackText, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallbackText } from "./ui/avatar";
 import { Button, ButtonText } from "./ui/button";
 import { Heading } from "./ui/heading";
 import { HStack } from "./ui/hstack";
@@ -16,7 +16,7 @@ import {
   ModalHeader,
 } from "./ui/modal";
 import { Spinner } from "./ui/spinner";
-import { Large, P, Small } from "./ui/typography";
+import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function AccountListItem(props: { account: ArkaicAccount }) {
@@ -27,16 +27,18 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
   const hasMnemonic = !!props.account.mnemonic;
 
   const handlePress = () => {
-    if (hasMnemonic) {
-      setPassphrase("");
-      setShowPassphraseModal(true);
-    } else {
+    if (!hasMnemonic) {
       loginMutation.mutate({ account: props.account });
+      return;
     }
+
+    setPassphrase("");
+    setShowPassphraseModal(true);
   };
 
   const handleLogin = () => {
     setShowPassphraseModal(false);
+
     loginMutation.mutate({
       account: props.account,
       passphrase: passphrase || undefined,
@@ -49,19 +51,12 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
         <View className='bg-arkaic-fill rounded-arkaic-card px-arkaic-md py-arkaic-md'>
           <HStack className='items-center' space='lg'>
             <Avatar size='lg'>
-              {props.account.avatar ? (
-                <AvatarImage source={{ uri: props.account.avatar }} />
-              ) : (
-                <AvatarFallbackText>{props.account.name}</AvatarFallbackText>
-              )}
+              <AvatarFallbackText>{props.account.name}</AvatarFallbackText>
             </Avatar>
             <VStack className='flex-1' space='xs'>
               <Large className='text-arkaic-foreground'>
                 {props.account.name}
               </Large>
-              <Small className='text-arkaic-muted'>
-                {props.account.arkadeServerUrl}
-              </Small>
             </VStack>
             {loginMutation.isPending && <Spinner />}
           </HStack>
@@ -82,8 +77,7 @@ export function AccountListItem(props: { account: ArkaicAccount }) {
               <P>
                 Enter your passphrase to unlock{" "}
                 <P className='font-heading'>{props.account.name}</P>. Leave
-                empty if you
-                {"didn't set one."}
+                empty if you didn&apos;t set one.
               </P>
               <Input size='xl'>
                 <InputField

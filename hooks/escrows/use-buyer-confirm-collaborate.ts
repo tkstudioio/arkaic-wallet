@@ -1,11 +1,11 @@
 import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
+import { backend } from "@/lib/api";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type BuyerConfirmCollaborateParams = {
-  escrowId: number;
+  escrowAddress: string;
   chatId: number;
 };
 
@@ -15,42 +15,28 @@ export function useBuyerConfirmCollaborate() {
 
   return useMutation({
     mutationKey: ["buyer-confirm-collaborate"],
-    mutationFn: async ({ escrowId }: BuyerConfirmCollaborateParams) => {
+    mutationFn: async ({ escrowAddress }: BuyerConfirmCollaborateParams) => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const headers = await getAuthHeaders(wallet);
-
-      // Get buyer PSBT
-      const response = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/collaborate/buyer-psbt`,
-        { headers },
+      const { data: psbtData } = await backend.get(
+        `/escrows/${escrowAddress}/collaborate/buyer-psbt`,
       );
-      if (!response.ok) throw new Error("Failed to get buyer PSBT");
-      const { collaboratePsbt } = await response.json();
 
-      if (!collaboratePsbt) throw new Error("Seller has not signed yet");
+      if (!psbtData.collaboratePsbt)
+        throw new Error("Seller has not signed yet");
 
-      // Sign PSBT
-      const psbtBytes = base64.decode(collaboratePsbt);
+      const psbtBytes = base64.decode(psbtData.collaboratePsbt);
       const tx = Transaction.fromPSBT(psbtBytes);
       const signedTx = await wallet.identity.sign(tx);
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
-      // Submit signed PSBT
-      const submitResponse = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/collaborate/buyer-submit-psbt`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify({ signedPsbt }),
-        },
+      const { data: submitData } = await backend.post(
+        `/escrows/${escrowAddress}/collaborate/buyer-submit-psbt`,
+        { signedPsbt },
       );
-      if (!submitResponse.ok) throw new Error("Failed to submit buyer PSBT");
-      const { signedCheckpointTxs } = await submitResponse.json();
 
-      // Sign each checkpoint with buyer key
       const buyerSignedCheckpoints = await Promise.all(
-        signedCheckpointTxs.map(async (cp: string) => {
+        submitData.signedCheckpointTxs.map(async (cp: string) => {
           const cpBytes = base64.decode(cp);
           const cpTx = Transaction.fromPSBT(cpBytes);
           const signedCp = await wallet.identity.sign(cpTx);
@@ -58,23 +44,16 @@ export function useBuyerConfirmCollaborate() {
         }),
       );
 
-      // Submit buyer-signed checkpoints
-      const checkpointsResponse = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/collaborate/buyer-sign-checkpoints`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify({ signedCheckpointTxs: buyerSignedCheckpoints }),
-        },
+      const { data } = await backend.post(
+        `/escrows/${escrowAddress}/collaborate/buyer-sign-checkpoints`,
+        { signedCheckpointTxs: buyerSignedCheckpoints },
       );
-      if (!checkpointsResponse.ok)
-        throw new Error("Failed to submit buyer checkpoints");
-      return checkpointsResponse.json();
+      return data;
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["chat", variables.chatId] });
       queryClient.invalidateQueries({
-        queryKey: ["escrow", variables.escrowId],
+        queryKey: ["escrow", variables.escrowAddress],
       });
     },
     onError: (err) => console.log(err),

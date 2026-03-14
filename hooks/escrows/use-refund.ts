@@ -1,11 +1,11 @@
 import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
+import { backend } from "@/lib/api";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type RefundParams = {
-  escrowId: number;
+  escrowAddress: string;
   chatId: number;
 };
 
@@ -15,42 +15,27 @@ export function useRefund() {
 
   return useMutation({
     mutationKey: ["refund"],
-    mutationFn: async ({ escrowId }: RefundParams) => {
+    mutationFn: async ({ escrowAddress }: RefundParams) => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const headers = await getAuthHeaders(wallet);
-
-      // Get refund PSBT
-      const response = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/refund/psbt`,
-        { headers },
+      const { data: psbtData } = await backend.get(
+        `/escrows/${escrowAddress}/refund/psbt`,
       );
-      if (!response.ok) throw new Error("Failed to get refund PSBT");
-      const { refundPsbt } = await response.json();
 
-      if (!refundPsbt) throw new Error("No refund PSBT");
+      if (!psbtData.refundPsbt) throw new Error("No refund PSBT");
 
-      // Sign refund PSBT
-      const psbtBytes = base64.decode(refundPsbt);
+      const psbtBytes = base64.decode(psbtData.refundPsbt);
       const tx = Transaction.fromPSBT(psbtBytes);
       const signedTx = await wallet.identity.sign(tx);
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
-      // Submit signed PSBT
-      const submitResponse = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/refund/submit-signed-psbt`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify({ signedPsbt }),
-        },
+      const { data: submitData } = await backend.post(
+        `/escrows/${escrowAddress}/refund/submit-signed-psbt`,
+        { signedPsbt },
       );
-      if (!submitResponse.ok) throw new Error("Failed to submit refund PSBT");
-      const { arkTxid, signedCheckpointTxs } = await submitResponse.json();
 
-      // Sign each checkpoint tx with buyer key
       const buyerSignedCheckpoints = await Promise.all(
-        signedCheckpointTxs.map(async (cp: string) => {
+        submitData.signedCheckpointTxs.map(async (cp: string) => {
           const cpBytes = base64.decode(cp);
           const cpTx = Transaction.fromPSBT(cpBytes);
           const signedCp = await wallet.identity.sign(cpTx);
@@ -58,25 +43,19 @@ export function useRefund() {
         }),
       );
 
-      // Finalize refund
-      const finalizeResponse = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/refund/finalize`,
+      const { data } = await backend.post(
+        `/escrows/${escrowAddress}/refund/finalize`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify({
-            arkTxid,
-            signedCheckpointTxs: buyerSignedCheckpoints,
-          }),
+          arkTxid: submitData.arkTxid,
+          signedCheckpointTxs: buyerSignedCheckpoints,
         },
       );
-      if (!finalizeResponse.ok) throw new Error("Failed to finalize refund");
-      return finalizeResponse.json();
+      return data;
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["chat", variables.chatId] });
       queryClient.invalidateQueries({
-        queryKey: ["escrow", variables.escrowId],
+        queryKey: ["escrow", variables.escrowAddress],
       });
     },
     onError: (err) => console.log(err),

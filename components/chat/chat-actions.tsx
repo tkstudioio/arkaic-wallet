@@ -6,15 +6,26 @@ import { SellerActions } from "./seller-actions";
 type ChatActionsProps = {
   chat: Chat;
   activeOffer: Offer | null;
+  hasEscrow?: boolean;
 };
 
-export function ChatActions({ chat, activeOffer }: ChatActionsProps) {
+export function ChatActions({
+  chat,
+  activeOffer,
+  hasEscrow,
+}: ChatActionsProps) {
   const { pubkey } = useAccountStore();
 
   const isBuyer = chat.buyerPubkey === pubkey;
 
   if (isBuyer) {
-    return <BuyerActions chat={chat} activeOffer={activeOffer} />;
+    return (
+      <BuyerActions
+        chat={chat}
+        activeOffer={activeOffer}
+        hasEscrow={hasEscrow}
+      />
+    );
   }
 
   if (activeOffer) {

@@ -1,6 +1,5 @@
 import useAccountStore from "@/stores/account";
 import { ArkaicPayment } from "@/types/arkaic";
-import { Ramps } from "@arkade-os/sdk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAspInfo } from "./use-asp-info";
 
@@ -11,40 +10,42 @@ export function useSendBitcoin() {
   return useMutation<string | undefined, Error, ArkaicPayment>({
     mutationKey: ["send"],
     mutationFn: async (arkaicPayment) => {
-      if (!wallet) throw new Error("No wallet set");
+      if (!wallet) throw new Error("Missing wallet");
 
-      console.log(arkaicPayment);
-      if (arkaicPayment.lightningInvoice) {
-        console.log(arkaicPayment.lightningInvoice);
-        if (!arkadeLightning) throw new Error("No arkade lightning provider");
-        const paymentResult = await arkadeLightning.sendLightningPayment({
-          invoice: arkaicPayment.lightningInvoice,
-        });
+      if (!arkaicPayment.amount) throw new Error("Missing amount");
 
-        return paymentResult.txid;
-      }
+      console.log(
+        arkaicPayment.lightningInvoice,
+        arkaicPayment.arkAddress,
+        arkaicPayment.signerPubkey,
+        aspInfo?.signerPubkey,
+      );
 
-      if (!arkaicPayment.amount) throw new Error("Missing transaction amount");
-      if (!arkaicPayment.onchainAddress)
-        throw new Error("Wrong address parsing");
-
-      // onchain payment (asp is different or no ark address is provided)
       if (
-        !arkaicPayment.signerPubkey ||
-        !arkaicPayment.arkAddress ||
-        arkaicPayment.signerPubkey !== aspInfo?.signerPubkey
+        !arkaicPayment.lightningInvoice &&
+        (!arkaicPayment.arkAddress ||
+          arkaicPayment.signerPubkey !== aspInfo?.signerPubkey)
+      )
+        throw new Error("Unprocessable payment");
+
+      if (
+        arkaicPayment.arkAddress &&
+        aspInfo?.signerPubkey === arkaicPayment.signerPubkey
       ) {
-        return await new Ramps(wallet).offboard(
-          arkaicPayment.onchainAddress,
-          BigInt(arkaicPayment.amount)
-        );
+        await wallet?.sendBitcoin({
+          address: arkaicPayment.arkAddress,
+          amount: arkaicPayment.amount,
+        });
+        return;
       }
 
-      // ark payment (asp is the same and ark address is provided)
-      return await wallet?.sendBitcoin({
-        address: arkaicPayment.arkAddress,
-        amount: arkaicPayment.amount,
+      if (!arkadeLightning || !arkaicPayment.lightningInvoice)
+        throw new Error("Unprocessable lightning swap");
+      const paymentResult = await arkadeLightning.sendLightningPayment({
+        invoice: arkaicPayment.lightningInvoice,
       });
+
+      return paymentResult.txid;
     },
 
     onSuccess: () => {

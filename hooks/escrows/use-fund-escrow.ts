@@ -1,6 +1,7 @@
+import { backend } from "@/lib/api";
+import { toXOnly } from "@/lib/utis";
 import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
-import { Escrow } from "@/types/product";
+import { Escrow } from "@/types/backend";
 import {
   CLTVMultisigTapscript,
   MultisigTapscript,
@@ -14,10 +15,6 @@ type FundEscrowParams = {
   sellerPubkey: string;
 };
 
-function toXOnly(bytes: Uint8Array): Uint8Array {
-  return bytes.length === 33 ? bytes.slice(1) : bytes;
-}
-
 export function useFundEscrow() {
   const queryClient = useQueryClient();
   const { wallet, arkProvider } = useAccountStore();
@@ -27,8 +24,6 @@ export function useFundEscrow() {
     mutationFn: async ({ escrow, sellerPubkey }: FundEscrowParams) => {
       if (!wallet) throw new Error("Missing wallet");
       if (!arkProvider) throw new Error("Missing arkProvider");
-
-      const headers = await getAuthHeaders(wallet);
 
       const sellerPubkeyBytes = hex.decode(sellerPubkey);
       const buyerPubkeyBytes = await wallet.identity.compressedPublicKey();
@@ -55,19 +50,17 @@ export function useFundEscrow() {
 
       await wallet.sendBitcoin({
         address: escrowAddress,
-        amount: escrow.value,
+        amount: escrow.price,
       });
 
-      const response = await fetch(
-        `${API_BASE_URL}/escrows/${escrow.id}/check-payment`,
-        { headers },
+      const { data } = await backend.get(
+        `/escrows/${escrow.address}/check-payment`,
       );
-      if (!response.ok) throw new Error("Failed to check payment");
-      return response.json();
+      return data;
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["escrow", variables.escrow.id],
+        queryKey: ["escrow", variables.escrow.address],
       });
       queryClient.invalidateQueries({
         queryKey: ["chat", variables.escrow.chatId],

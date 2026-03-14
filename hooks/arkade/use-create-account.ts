@@ -48,18 +48,13 @@ export function useCreateAccount() {
         `${account.name} ${pubkey}`,
       );
 
-      try {
-        const { data } = await backend.post("/auth/register", {
-          pubkey,
-          username: account.name,
-          signature: hex.encode(
-            schnorr.sign(registerMessage, hex.decode(privateKey)),
-          ),
-        });
-        console.log(data);
-      } catch (e) {
-        console.log(e);
-      }
+      await backend.post("/auth/register", {
+        pubkey,
+        username: account.name,
+        signature: hex.encode(
+          schnorr.sign(registerMessage, hex.decode(privateKey)),
+        ),
+      });
 
       const swapProvider = new BoltzSwapProvider({
         apiUrl: "https://api.ark.boltz.exchange",
@@ -95,7 +90,7 @@ export function useCreateAccount() {
       });
 
       setStore({
-        account: { ...account, privateKey },
+        account: account,
         token,
         wallet,
         arkProvider,

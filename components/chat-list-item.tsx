@@ -1,19 +1,22 @@
-import { ProductChat } from "@/types/product";
+import { Chat } from "@/types/backend";
 import { Card } from "./ui/card";
 import { Muted, P, Small } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 import { HStack } from "./ui/hstack";
 import { Badge, BadgeText } from "./ui/badge";
 import { Link } from "expo-router";
+import { EscrowStatusBadge } from "./escrow";
 
 type ChatListItemProps = {
-  chat: ProductChat;
+  chat: Chat;
 };
 
 export function ChatListItem({ chat }: ChatListItemProps) {
   const lastMessage = chat.messages?.length
     ? chat.messages[chat.messages.length - 1]
     : null;
+
+  const escrow = chat.escrows?.[0];
 
   return (
     <Link
@@ -27,27 +30,25 @@ export function ChatListItem({ chat }: ChatListItemProps) {
         <VStack space='sm'>
           <HStack className='justify-between items-center'>
             <P className='font-heading'>
-              {chat.buyer?.accountName ?? chat.buyer?.pubkey?.slice(0, 7) ?? "Buyer"}
+              {chat.buyer?.username ?? "Buyer"}
             </P>
             <Badge
               size='sm'
-              action={chat.status === "active" ? "success" : "muted"}
+              action={chat.status === "open" ? "success" : "muted"}
             >
               <BadgeText>
-                {chat.status === "active" ? "Active" : "Concluded"}
+                {chat.status === "open" ? "Active" : "Concluded"}
               </BadgeText>
             </Badge>
           </HStack>
           {lastMessage && (
             <Small className='text-typography-500' numberOfLines={1}>
-              {lastMessage.offerPrice != null
-                ? `Price proposal: ${lastMessage.offerPrice} sats${lastMessage.offerStatus ? ` (${lastMessage.offerStatus})` : ""}`
-                : lastMessage.text ?? ""}
+              {lastMessage.offer?.price != null
+                ? `Price proposal: ${lastMessage.offer.price} sats`
+                : lastMessage.message ?? ""}
             </Small>
           )}
-          {chat.escrow && (
-            <Muted>Escrow: {chat.escrow.status}</Muted>
-          )}
+          {escrow && <EscrowStatusBadge status={escrow.status} />}
         </VStack>
       </Card>
     </Link>

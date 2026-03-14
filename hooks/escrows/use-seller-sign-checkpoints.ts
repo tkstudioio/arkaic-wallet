@@ -1,11 +1,11 @@
 import useAccountStore from "@/stores/account";
-import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
+import { backend } from "@/lib/api";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type SellerSignCheckpointsParams = {
-  escrowId: number;
+  escrowAddress: string;
   chatId: number;
 };
 
@@ -15,22 +15,17 @@ export function useSellerSignCheckpoints() {
 
   return useMutation({
     mutationKey: ["seller-sign-checkpoints"],
-    mutationFn: async ({ escrowId }: SellerSignCheckpointsParams) => {
+    mutationFn: async ({ escrowAddress }: SellerSignCheckpointsParams) => {
       if (!wallet) throw new Error("Missing wallet");
 
-      const headers = await getAuthHeaders(wallet);
-
-      const response = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/collaborate/seller-checkpoints`,
-        { headers },
+      const { data: cpData } = await backend.get(
+        `/escrows/${escrowAddress}/collaborate/seller-checkpoints`,
       );
-      if (!response.ok) throw new Error("Failed to get seller checkpoints");
-      const { checkpointTxs } = await response.json();
 
-      if (!checkpointTxs) throw new Error("Checkpoints not ready yet");
+      if (!cpData.checkpointTxs) throw new Error("Checkpoints not ready yet");
 
       const signedCheckpoints = await Promise.all(
-        checkpointTxs.map(async (cp: string) => {
+        cpData.checkpointTxs.map(async (cp: string) => {
           const cpBytes = base64.decode(cp);
           const cpTx = Transaction.fromPSBT(cpBytes);
           const signedCp = await wallet.identity.sign(cpTx);
@@ -38,22 +33,16 @@ export function useSellerSignCheckpoints() {
         }),
       );
 
-      const submitResponse = await fetch(
-        `${API_BASE_URL}/escrows/${escrowId}/collaborate/seller-sign-checkpoints`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify({ signedCheckpointTxs: signedCheckpoints }),
-        },
+      const { data } = await backend.post(
+        `/escrows/${escrowAddress}/collaborate/seller-sign-checkpoints`,
+        { signedCheckpointTxs: signedCheckpoints },
       );
-      if (!submitResponse.ok)
-        throw new Error("Failed to submit seller checkpoints");
-      return submitResponse.json();
+      return data;
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["chat", variables.chatId] });
       queryClient.invalidateQueries({
-        queryKey: ["escrow", variables.escrowId],
+        queryKey: ["escrow", variables.escrowAddress],
       });
     },
     onError: (err) => console.log(err),

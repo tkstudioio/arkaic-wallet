@@ -3,7 +3,7 @@ import { Input, InputField } from "@/components/ui/input";
 import { H1, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCreateProduct } from "@/hooks/listings/use-create-listing";
-import useAccountStore from "@/stores/account";
+
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
 import { toNumber, toString } from "lodash";
@@ -11,21 +11,11 @@ import { toNumber, toString } from "lodash";
 export default function ProductCreate() {
   const router = useRouter();
   const createProduct = useCreateProduct();
-  const { account, wallet } = useAccountStore();
-
-  if (!account?.privateKey || !wallet) {
-    router.replace("/");
-    return null;
-  }
 
   return (
     <Formik
       initialValues={{ name: "", price: 0 }}
-      onSubmit={(values) =>
-        createProduct.mutate(values, {
-          onSuccess: () => router.replace("/listings/my-listings"),
-        })
-      }
+      onSubmit={(values) => createProduct.mutate(values)}
     >
       {({ handleSubmit, values, setFieldValue, handleChange }) => (
         <VStack space='lg'>

@@ -27,11 +27,7 @@ export function useLoginMutation() {
   return useMutation({
     mutationKey: ["login"],
     mutationFn: async ({ account, passphrase }: LoginParams) => {
-      let privateKey = account.privateKey;
-
-      if (account.mnemonic) {
-        privateKey = mnemonicToPrivateKey(account.mnemonic, passphrase);
-      }
+      const privateKey = mnemonicToPrivateKey(account.mnemonic, passphrase);
 
       if (!privateKey) {
         throw new Error("No private key or mnemonic available");
@@ -43,6 +39,18 @@ export function useLoginMutation() {
       const pubkey = Array.from(pubkeyBytes)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
+
+      const registerMessage = new TextEncoder().encode(
+        `${account.name} ${pubkey}`,
+      );
+
+      await backend.post("/auth/register", {
+        pubkey,
+        username: account.name,
+        signature: hex.encode(
+          schnorr.sign(registerMessage, hex.decode(privateKey)),
+        ),
+      });
 
       const { data: challenge } = await backend.post<{
         nonce: string;
@@ -94,7 +102,7 @@ export function useLoginMutation() {
 
       setStore({
         pubkey,
-        account: { ...account, privateKey },
+        account,
         wallet,
         token,
         arkProvider,
@@ -104,7 +112,7 @@ export function useLoginMutation() {
         fingerprint,
       });
 
-      router.push("/account/dashboard");
+      router.dismissTo("/account/dashboard");
     },
     onError: console.log,
   });
