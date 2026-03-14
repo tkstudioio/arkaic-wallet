@@ -1,5 +1,5 @@
-import useAccountStore from "@/stores/account";
 import { backend } from "@/lib/api";
+import useAccountStore from "@/stores/account";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ export function useBuyerConfirmCollaborate() {
       if (!wallet) throw new Error("Missing wallet");
 
       const { data: psbtData } = await backend.get(
-        `/escrows/${escrowAddress}/collaborate/buyer-psbt`,
+        `/escrows/address/${escrowAddress}/collaborate/buyer-psbt`,
       );
 
       if (!psbtData.collaboratePsbt)
@@ -31,7 +31,7 @@ export function useBuyerConfirmCollaborate() {
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
       const { data: submitData } = await backend.post(
-        `/escrows/${escrowAddress}/collaborate/buyer-submit-psbt`,
+        `/escrows/address/${escrowAddress}/collaborate/buyer-submit-psbt`,
         { signedPsbt },
       );
 
@@ -45,7 +45,7 @@ export function useBuyerConfirmCollaborate() {
       );
 
       const { data } = await backend.post(
-        `/escrows/${escrowAddress}/collaborate/buyer-sign-checkpoints`,
+        `/escrows/address/${escrowAddress}/collaborate/buyer-sign-checkpoints`,
         { signedCheckpointTxs: buyerSignedCheckpoints },
       );
       return data;

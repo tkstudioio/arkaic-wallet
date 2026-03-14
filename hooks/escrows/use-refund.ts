@@ -1,5 +1,5 @@
-import useAccountStore from "@/stores/account";
 import { backend } from "@/lib/api";
+import useAccountStore from "@/stores/account";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ export function useRefund() {
       if (!wallet) throw new Error("Missing wallet");
 
       const { data: psbtData } = await backend.get(
-        `/escrows/${escrowAddress}/refund/psbt`,
+        `/escrows/address/${escrowAddress}/refund/psbt`,
       );
 
       if (!psbtData.refundPsbt) throw new Error("No refund PSBT");
@@ -30,7 +30,7 @@ export function useRefund() {
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
       const { data: submitData } = await backend.post(
-        `/escrows/${escrowAddress}/refund/submit-signed-psbt`,
+        `/escrows/address/${escrowAddress}/refund/submit-signed-psbt`,
         { signedPsbt },
       );
 
@@ -44,7 +44,7 @@ export function useRefund() {
       );
 
       const { data } = await backend.post(
-        `/escrows/${escrowAddress}/refund/finalize`,
+        `/escrows/address/${escrowAddress}/refund/finalize`,
         {
           arkTxid: submitData.arkTxid,
           signedCheckpointTxs: buyerSignedCheckpoints,
