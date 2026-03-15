@@ -10,6 +10,7 @@ import { useChatEscrow } from "@/hooks/chats/use-chat-escrow";
 import { useChatOffer } from "@/hooks/chats/use-chat-offer";
 import { useBuyerConfirmCollaborate } from "@/hooks/escrows/use-buyer-confirm-collaborate";
 import { useEscrow } from "@/hooks/escrows/use-escrow";
+import { usePayEscrow } from "@/hooks/escrows/use-pay-escrow";
 import { useRefund } from "@/hooks/escrows/use-refund";
 import { useSellerSignCheckpoints } from "@/hooks/escrows/use-seller-sign-checkpoints";
 import { useSellerSignCollaborate } from "@/hooks/escrows/use-seller-sign-collaborate";
@@ -88,6 +89,7 @@ function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
   const sellerSignCollaborate = useSellerSignCollaborate();
   const buyerConfirmCollaborate = useBuyerConfirmCollaborate();
   const sellerSignCheckpoints = useSellerSignCheckpoints();
+  const payEscrow = usePayEscrow();
   const refund = useRefund();
 
   const isBuyer = props.chat.buyerPubkey === pubkey;
@@ -114,7 +116,21 @@ function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
         {match(escrow)
           .with({ status: "awaitingFunds" }, () =>
             isBuyer ? (
-              <P>Awaiting funds locking</P>
+              <Button
+                onPress={() =>
+                  payEscrow.mutate({
+                    escrowAddress: escrow.address,
+                    price: escrow.price,
+                    chatId: props.chat.id,
+                  })
+                }
+              >
+                {payEscrow.isPending ? (
+                  <Spinner />
+                ) : (
+                  <ButtonText>Pay escrow</ButtonText>
+                )}
+              </Button>
             ) : (
               <P>Awaiting buyer to lock funds</P>
             ),
