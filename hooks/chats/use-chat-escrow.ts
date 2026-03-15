@@ -8,9 +8,10 @@ export function useChatEscrow(chatId: number) {
     queryKey: ["chat-escrow", chatId],
     queryFn: async (): Promise<Escrow | null> => {
       const { data } = await backend.get<Escrow | null>(
-        "/chats/" + chatId + "/escrow",
+        `/chats/${chatId}/escrow`,
       );
       return data;
     },
+    enabled: Boolean(chatId),
   });
 }

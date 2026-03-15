@@ -29,7 +29,12 @@ export function Transactions() {
 
   useEffect(() => {
     if (!wallet) return;
-    wallet.notifyIncomingFunds(refreshBalanceAndTransactions);
+    const stopListening = wallet.notifyIncomingFunds(
+      refreshBalanceAndTransactions,
+    );
+    return () => {
+      stopListening.then(() => {});
+    };
   }, [wallet, account, refreshBalanceAndTransactions]);
 
   return (
@@ -50,7 +55,7 @@ export function Transactions() {
         {match(transactionsQuery)
           .with({ isSuccess: true }, ({ data }) => {
             if (!isEmpty(data)) {
-              return map(data, (transaction, index) => (
+              return map(data, (transaction) => (
                 <Transaction
                   transaction={transaction}
                   key={join(values(transaction.key)) + transaction.createdAt}

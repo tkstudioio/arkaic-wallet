@@ -9,6 +9,7 @@ export function useEscrow(escrowAddress: string | undefined) {
       const { data } = await backend.get(`/escrows/address/${escrowAddress}`);
       return data;
     },
+    enabled: Boolean(escrowAddress),
     refetchInterval: 10000,
   });
 }

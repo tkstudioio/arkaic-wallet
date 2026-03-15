@@ -8,12 +8,12 @@ export function CreateAccount() {
 
   return (
     <VStack className='w-full' space={"md"}>
-      <Button size='lg' onPress={() => router.push("/auth/create")}>
+      <Button size='lg' onPress={() => router.push("/account/create")}>
         <ButtonText>Create account</ButtonText>
       </Button>
       <Button
         size='lg'
-        onPress={() => router.push("/auth/restore")}
+        onPress={() => router.push("/account/restore")}
         variant={"outline"}
       >
         <ButtonText>Restore account</ButtonText>

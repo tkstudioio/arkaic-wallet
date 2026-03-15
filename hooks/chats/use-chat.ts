@@ -7,8 +7,9 @@ export function useChat(chatId: number) {
   return useQuery({
     queryKey: ["chat", chatId],
     queryFn: async (): Promise<Chat | null> => {
-      const { data } = await backend.get<Chat | null>("/chats/" + chatId);
+      const { data } = await backend.get<Chat | null>(`/chats/${chatId}`);
       return data;
     },
+    enabled: Boolean(chatId),
   });
 }

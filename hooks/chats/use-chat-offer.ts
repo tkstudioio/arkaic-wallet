@@ -8,9 +8,10 @@ export function useChatOffer(chatId: number) {
     queryKey: ["chat-offer", chatId],
     queryFn: async (): Promise<Offer | null> => {
       const { data } = await backend.get<Offer | null>(
-        "/chats/" + chatId + "/offer",
+        `/chats/${chatId}/offer`,
       );
       return data;
     },
+    enabled: Boolean(chatId),
   });
 }

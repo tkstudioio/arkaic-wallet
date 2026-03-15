@@ -1,8 +1,5 @@
 import { useBalance } from "@/hooks/arkade/use-balance";
 
-import { useWallet } from "@/hooks/arkade/use-wallet";
-import { ArkaicAccount } from "@/types/arkaic";
-
 import useAccountStore from "@/stores/account";
 import { User } from "lucide-react-native";
 import { AmountComponent } from "./amount";
@@ -13,9 +10,8 @@ import { Spinner } from "./ui/spinner";
 import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
-export function AccountBalance(props: { account: ArkaicAccount }) {
-  const { data: wallet } = useWallet(props.account);
-  const { account } = useAccountStore();
+export function AccountBalance() {
+  const { account, wallet } = useAccountStore();
   const balanceQuery = useBalance(wallet);
 
   if (!balanceQuery.isFetched) return <Spinner />;
