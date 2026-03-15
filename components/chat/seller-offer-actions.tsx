@@ -12,11 +12,12 @@ type SellerActionsProps = {
   chatId: number;
 };
 
-export function SellerActions({ activeOffer, chatId }: SellerActionsProps) {
+export function SellerOfferActions({
+  activeOffer,
+  chatId,
+}: SellerActionsProps) {
   const respondMutation = useRespondToOffer();
-
   const isPending = activeOffer.acceptance === null;
-
   if (!isPending) return null;
 
   return (
