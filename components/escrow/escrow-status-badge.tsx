@@ -6,6 +6,7 @@ const escrowBadgeAction: Record<
   "warning" | "info" | "success" | "error"
 > = {
   awaitingFunds: "warning",
+  partiallyFunded: "warning",
   fundLocked: "info",
   sellerReady: "info",
   buyerSubmitted: "info",
@@ -16,6 +17,7 @@ const escrowBadgeAction: Record<
 
 const escrowStatusLabel: Record<EscrowStatus, string> = {
   awaitingFunds: "Awaiting funds",
+  partiallyFunded: "Partially funded",
   fundLocked: "Funds locked",
   sellerReady: "Seller ready",
   buyerSubmitted: "Buyer submitted",
