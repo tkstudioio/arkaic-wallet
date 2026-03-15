@@ -242,7 +242,7 @@ export function SendActionSheet() {
                             sendBitcoinMutation.reset();
                           }}
                         >
-                          <ButtonText>Back to dashbooard</ButtonText>
+                          <ButtonText>Back to dashboard</ButtonText>
                         </Button>
                       ))
                       .otherwise(() => (
@@ -285,5 +285,3 @@ export function SendActionSheet() {
     </>
   );
 }
-
-// bitcoin:bc1psmhdceakdcxxygqwjqxv062zevjgnzv25v4fqyrm0cdtaychc4ssamen2j?ark=ark1qq4hfssprtcgnjzf8qlw2f78yvjau5kldfugg29k34y7j96q2w4t5r4tpu65zlvfj8s2p2txsutxvnmze9aygrrunldseyylrsxv2r2jdmqczu&signerPubkey=022b74c2011af089c849383ee527c72325de52df6a788428b68d49e9174053aaba&amount=0.00000528

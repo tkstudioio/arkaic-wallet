@@ -55,7 +55,7 @@ export function useLoginMutation() {
       const { data: challenge } = await backend.post<{
         nonce: string;
         pubkey: string;
-        expirty: Date;
+        expiry: Date;
       }>("/auth/challenge", { pubkey });
 
       const loginMessage = new TextEncoder().encode(
@@ -114,6 +114,6 @@ export function useLoginMutation() {
 
       router.dismissTo("/account/dashboard");
     },
-    onError: console.log,
+    onError: (err: Error) => console.error(err.message),
   });
 }

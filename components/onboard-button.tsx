@@ -22,7 +22,7 @@ export function OnboardButton(
   const onboardUtxos = useOnboardUtxos();
   const queryClient = useQueryClient();
 
-  const [open, setOpen] = useState<boolean>();
+  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -54,7 +54,7 @@ export function OnboardButton(
                       variant={"link"}
                       onPress={() =>
                         Linking.openURL(
-                          `https://mempool.space/it/tx/${commitmentTxid}`,
+                          `https://mempool.space/tx/${commitmentTxid}`,
                         )
                       }
                     >

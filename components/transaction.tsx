@@ -29,7 +29,7 @@ export function Transaction({ transaction }: { transaction: ArkTransaction }) {
 
   function openExplorer() {
     if (mempoolTxid) {
-      Linking.openURL(`https://mempool.space/it/tx/${mempoolTxid}`);
+      Linking.openURL(`https://mempool.space/tx/${mempoolTxid}`);
     }
   }
 

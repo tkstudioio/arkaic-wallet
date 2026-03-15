@@ -11,8 +11,8 @@ export function useStartChat() {
 
   return useMutation({
     mutationKey: ["chat"],
-    mutationFn: async (listinig: Listing): Promise<Chat> => {
-      const { data } = await backend.post<Chat>("/chats/" + listinig.id);
+    mutationFn: async (listing: Listing): Promise<Chat> => {
+      const { data } = await backend.post<Chat>("/chats/" + listing.id);
 
       if (isEmpty(data.messages)) {
         await sendMessageMutation.mutateAsync({
@@ -23,7 +23,7 @@ export function useStartChat() {
 
       return data;
     },
-    onError: console.log,
+    onError: (err: Error) => console.error(err.message),
     onSuccess: (data) => router.push(`/chats/${data.id}`),
   });
 }
