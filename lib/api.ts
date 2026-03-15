@@ -26,7 +26,17 @@ backend.interceptors.request.use(async (config) => {
   if (method === "POST" || method === "PUT" || method === "PATCH") {
     if (!config.data) config.data = {};
 
-    const payload = new TextEncoder().encode(JSON.stringify(config.data));
+    const sortedData = Object.keys(config.data)
+      .sort()
+      .reduce(
+        (acc, key) => {
+          acc[key] = config.data[key];
+          return acc;
+        },
+        {} as Record<string, unknown>,
+      );
+
+    const payload = new TextEncoder().encode(JSON.stringify(sortedData));
 
     if (!account?.mnemonic) throw new Error("missing mnemonic");
 
