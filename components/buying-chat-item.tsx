@@ -1,19 +1,17 @@
-import { Chat, EscrowStatus } from "@/types/backend";
-import { Card } from "./ui/card";
-import { Muted, P, Small } from "./ui/typography";
-import { VStack } from "./ui/vstack";
-import { HStack } from "./ui/hstack";
-import { Badge, BadgeText } from "./ui/badge";
+import { Chat } from "@/types/backend";
 import { Link } from "expo-router";
 import { AmountComponent } from "./amount";
 import { EscrowStatusBadge } from "./escrow";
+import { Badge, BadgeText } from "./ui/badge";
+import { Card } from "./ui/card";
+import { HStack } from "./ui/hstack";
+import { Muted, P, Small } from "./ui/typography";
+import { VStack } from "./ui/vstack";
 
 export function BuyingChatItem({ chat }: { chat: Chat }) {
   const lastMessage = chat.messages?.length
     ? chat.messages[chat.messages.length - 1]
     : null;
-
-  const escrow = chat.escrows?.[0];
 
   return (
     <Link
@@ -42,18 +40,21 @@ export function BuyingChatItem({ chat }: { chat: Chat }) {
           <AmountComponent size='lg' amount={chat.listing?.price ?? 0} />
 
           <Muted>
-            Seller: {chat.listing?.seller?.username ?? chat.listing?.sellerPubkey?.slice(0, 7) ?? "Unknown"}
+            Seller:{" "}
+            {chat.listing?.seller?.username ??
+              chat.listing?.sellerPubkey?.slice(0, 7) ??
+              "Unknown"}
           </Muted>
 
           {lastMessage && (
             <Small className='text-typography-500' numberOfLines={1}>
               {lastMessage.offer?.price != null
                 ? `Price proposal: ${lastMessage.offer.price} sats`
-                : lastMessage.message ?? ""}
+                : (lastMessage.message ?? "")}
             </Small>
           )}
 
-          {escrow && <EscrowStatusBadge status={escrow.status} />}
+          {chat.escrow && <EscrowStatusBadge status={chat.escrow.status} />}
         </VStack>
       </Card>
     </Link>

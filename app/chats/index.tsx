@@ -1,31 +1,32 @@
-import { ListingItem } from "@/components/listing-item";
-import { Grid, GridItem } from "@/components/ui/grid";
+import { BuyingChatItem } from "@/components/buying-chat-item";
 import { Spinner } from "@/components/ui/spinner";
 import { H1, P } from "@/components/ui/typography";
-import { useListings } from "@/hooks/listings/use-listings";
+import { VStack } from "@/components/ui/vstack";
+import { useBuyerChats } from "@/hooks/chats/use-buyer-chats";
 import { map } from "lodash";
 
 import { match } from "ts-pattern";
 
-export default function ProductsList() {
-  const productsQuery = useListings();
+export default function ChatsList() {
+  const chatsQuery = useBuyerChats();
 
   return (
     <>
-      <H1 className='font-heading'>Listings</H1>
-      {match(productsQuery)
+      <H1 className='font-heading'>Chats</H1>
+      {match(chatsQuery)
         .with({ isLoading: true }, () => <Spinner className='mt-4' />)
         .with({ isError: true }, () => (
-          <P className='text-arkaic-negative'>Failed to load products.</P>
+          <P className='text-arkaic-negative'>Failed to load chats.</P>
         ))
         .otherwise(({ data }) => (
-          <Grid className='gap-4' _extra={{ className: "grid-cols-2" }}>
-            {map(data, (listing) => (
-              <GridItem key={listing.id} _extra={{ className: "" }}>
-                <ListingItem listing={listing} />
-              </GridItem>
+          <VStack space='md'>
+            {map(data, (chat) => (
+              <BuyingChatItem key={chat.id} chat={chat} />
             ))}
-          </Grid>
+            {(!data || data.length === 0) && (
+              <P className='text-typography-500'>No active chats.</P>
+            )}
+          </VStack>
         ))}
     </>
   );
