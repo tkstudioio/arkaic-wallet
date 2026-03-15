@@ -4,6 +4,7 @@ import { ArkaicAccount } from "@/types/arkaic";
 import { getPubkeyHex } from "@/utils/get-pubkey-hex";
 import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
+import { createStorageConfig } from "@/lib/sqlite-storage";
 import { schnorr } from "@noble/curves/secp256k1";
 
 import {
@@ -35,10 +36,12 @@ export function useCreateAccount() {
       );
 
       const identity = SingleKey.fromHex(privateKey);
+      const storage = createStorageConfig();
       const wallet = await Wallet.create({
         identity,
         arkProvider,
         indexerProvider,
+        storage,
       });
       const pubkey = await getPubkeyHex(wallet);
 
@@ -65,9 +68,7 @@ export function useCreateAccount() {
         swapProvider,
       });
 
-      const vtxoManager = new VtxoManager(wallet, {
-        enabled: true,
-      });
+      const vtxoManager = new VtxoManager(wallet);
 
       const { data: challenge } = await backend.post<{
         nonce: string;

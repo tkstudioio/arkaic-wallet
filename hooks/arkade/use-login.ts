@@ -11,6 +11,7 @@ import {
   ExpoArkProvider,
   ExpoIndexerProvider,
 } from "@arkade-os/sdk/adapters/expo";
+import { createStorageConfig } from "@/lib/sqlite-storage";
 
 import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
@@ -75,10 +76,12 @@ export function useLoginMutation() {
         "https://mutinynet.arkade.sh",
       );
 
+      const storage = createStorageConfig();
       const wallet = await Wallet.create({
         identity,
         arkProvider,
         indexerProvider,
+        storage,
       });
 
       const swapProvider = new BoltzSwapProvider({
@@ -92,9 +95,7 @@ export function useLoginMutation() {
         swapProvider,
       });
 
-      const vtxoManager = new VtxoManager(wallet, {
-        enabled: true,
-      });
+      const vtxoManager = new VtxoManager(wallet);
 
       const fingerprint = account.mnemonic
         ? getMasterFingerprint(account.mnemonic, passphrase)

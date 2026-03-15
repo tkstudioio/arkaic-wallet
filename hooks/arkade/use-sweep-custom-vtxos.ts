@@ -29,7 +29,13 @@ function asTapLeafScript(
 ): TapLeafScript {
   const controlBlock = hex.decode(controlBlockHex);
   const script = hex.decode(scriptHex);
-  return [controlBlock, new Uint8Array([...script, tapLeafVersion])];
+  const version = controlBlock[0];
+  const internalKey = controlBlock.slice(1, 33);
+  const merklePath: Uint8Array[] = [];
+  for (let i = 33; i < controlBlock.length; i += 32) {
+    merklePath.push(controlBlock.slice(i, i + 32));
+  }
+  return [{ version, internalKey, merklePath }, new Uint8Array([...script, tapLeafVersion])];
 }
 
 function toWalletInput(input: SweepCustomVtxoInput) {
