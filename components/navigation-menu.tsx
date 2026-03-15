@@ -1,4 +1,4 @@
-import { Href, usePathname, useRouter } from "expo-router";
+import { Href, Link, usePathname } from "expo-router";
 import { toString } from "lodash";
 import {
   LucideIcon,
@@ -24,7 +24,6 @@ const tabs: { label: string; icon: LucideIcon; path: Href }[] = [
 
 export default function NavigationMenu() {
   const pathname = usePathname();
-  const router = useRouter();
 
   return (
     <Card>
@@ -34,16 +33,16 @@ export default function NavigationMenu() {
           const Icon = tab.icon;
 
           return (
-            <Button
-              variant={isActive ? undefined : "link"}
-              action={isActive ? undefined : "neutral"}
-              key={toString(tab.path)}
-              size='sm'
-              className={"flex-1 items-center justify-center w-full"}
-              onPress={() => router.push(tab.path)}
-            >
-              <ButtonIcon as={Icon} size='sm' />
-            </Button>
+            <Link key={toString(tab.path)} asChild href={tab.path}>
+              <Button
+                variant={isActive ? undefined : "link"}
+                action={isActive ? undefined : "neutral"}
+                size='sm'
+                className={"flex-1 items-center justify-center w-full"}
+              >
+                <ButtonIcon as={Icon} size='sm' />
+              </Button>
+            </Link>
           );
         })}
       </HStack>
