@@ -70,7 +70,7 @@ export type Chat = {
   id: number;
 
   listingId: number;
-  listing?: Listing;
+  listing: Listing;
 
   buyerPubkey: string;
   buyer?: Account;
@@ -148,6 +148,7 @@ export type Category = {
 
 export type EscrowStatus =
   | "awaitingFunds"
+  | "partiallyFunded"
   | "fundLocked"
   | "sellerReady"
   | "buyerSubmitted"
