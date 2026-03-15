@@ -13,7 +13,6 @@ import { useSendBitcoin } from "../arkade/use-send-bitcoin";
 
 type CreateEscrowParams = {
   chatId: number;
-
   sellerPubkey: string;
   timelockExpiry: number;
   price: number;
@@ -27,13 +26,14 @@ export function useCreateEscrow() {
 
   return useMutation({
     mutationKey: ["create-escrow"],
+    onError: (e) => console.log(e.response.data || e.message),
     mutationFn: async (values: CreateEscrowParams): Promise<string> => {
       const info = await arkProvider?.getInfo();
       if (!info) throw new Error("Missing singerPubkey");
       if (!pubkey) throw new Error("Missing pubkey");
 
       const { data: storedEscrow } = await backend.get<Escrow | null>(
-        `/escrows/${values.chatId}`,
+        `/chats/${values.chatId}/escrow`,
       );
 
       const buyerPubkey = toXOnly(hex.decode(pubkey));

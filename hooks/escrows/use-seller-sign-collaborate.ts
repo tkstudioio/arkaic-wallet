@@ -1,5 +1,5 @@
-import useAccountStore from "@/stores/account";
 import { backend } from "@/lib/api";
+import useAccountStore from "@/stores/account";
 import { Transaction } from "@arkade-os/sdk";
 import { base64 } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ export function useSellerSignCollaborate() {
       if (!wallet) throw new Error("Missing wallet");
 
       const { data: psbtData } = await backend.get(
-        `/escrows/${escrowAddress}/collaborate/seller-psbt`,
+        `/escrows/address/${escrowAddress}/collaborate/seller-psbt`,
       );
 
       if (!psbtData.collaboratePsbt) throw new Error("No collaborate PSBT");
@@ -30,7 +30,7 @@ export function useSellerSignCollaborate() {
       const signedPsbt = base64.encode(signedTx.toPSBT());
 
       const { data } = await backend.post(
-        `/escrows/${escrowAddress}/collaborate/seller-submit-psbt`,
+        `/escrows/address/${escrowAddress}/collaborate/seller-submit-psbt`,
         { signedPsbt },
       );
       return data;
@@ -41,6 +41,6 @@ export function useSellerSignCollaborate() {
         queryKey: ["escrow", variables.escrowAddress],
       });
     },
-    onError: (err) => console.log(err),
+    onError: (err) => console.log(err.response.data),
   });
 }

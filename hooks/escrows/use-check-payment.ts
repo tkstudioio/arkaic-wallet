@@ -6,7 +6,6 @@ export function useCheckPayment(escrowAddress: string) {
   return useQuery({
     queryKey: ["check-payment", escrowAddress],
     queryFn: async (): Promise<Escrow> => {
-      console.log("aaa");
       const { data } = await backend.get<Escrow>(
         `/escrows/address/${escrowAddress}/check-payment`,
       );
