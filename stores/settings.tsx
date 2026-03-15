@@ -1,10 +1,6 @@
 import { CurrencySymbol } from "@/hooks/arkade/use-bitcoin-price";
 import { create } from "zustand";
 
-export enum ChainSetting {
-  Onchain = "onchain",
-  Ark = "ark",
-}
 type SettingsStore = {
   detailedTransactions: boolean;
   toggleDetailedTransactions: () => void;
