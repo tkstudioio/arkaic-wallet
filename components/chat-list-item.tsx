@@ -16,7 +16,7 @@ export function ChatListItem({ chat }: ChatListItemProps) {
     ? chat.messages[chat.messages.length - 1]
     : null;
 
-  const escrow = chat.escrows?.[0];
+  const escrow = chat.escrow;
 
   return (
     <Link

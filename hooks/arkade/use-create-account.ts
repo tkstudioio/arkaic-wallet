@@ -29,8 +29,6 @@ export function useCreateAccount() {
       const storedAccounts = await AsyncStorage.getItem(StorageKeys.Accounts);
       const currentAccounts = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-      queryClient.invalidateQueries({ queryKey: ["accounts"] });
-
       const arkProvider = new ExpoArkProvider("https://mutinynet.arkade.sh");
       const indexerProvider = new ExpoIndexerProvider(
         "https://mutinynet.arkade.sh",
@@ -74,7 +72,7 @@ export function useCreateAccount() {
       const { data: challenge } = await backend.post<{
         nonce: string;
         pubkey: string;
-        expirty: Date;
+        expiry: Date;
       }>("/auth/challenge", { pubkey });
 
       const loginMessage = new TextEncoder().encode(
@@ -91,6 +89,7 @@ export function useCreateAccount() {
 
       setStore({
         account: account,
+        pubkey,
         token,
         wallet,
         arkProvider,
@@ -104,8 +103,11 @@ export function useCreateAccount() {
         JSON.stringify([...currentAccounts, account]),
       );
 
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
       queryClient.invalidateQueries({ queryKey: ["balance"] });
     },
-    onError: console.log,
+    onError: (err: Error) => console.error(err.message),
   });
 }

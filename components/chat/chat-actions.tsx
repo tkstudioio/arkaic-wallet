@@ -1,7 +1,7 @@
 import useAccountStore from "@/stores/account";
 import { Chat, Offer } from "@/types/backend";
 import { BuyerActions } from "./buyer-actions";
-import { SellerActions } from "./seller-actions";
+import { SellerOfferActions } from "./seller-offer-actions";
 
 type ChatActionsProps = {
   chat: Chat;
@@ -29,7 +29,7 @@ export function ChatActions({
   }
 
   if (activeOffer) {
-    return <SellerActions activeOffer={activeOffer} chatId={chat.id} />;
+    return <SellerOfferActions activeOffer={activeOffer} chatId={chat.id} />;
   }
 
   return null;

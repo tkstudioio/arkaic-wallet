@@ -19,10 +19,11 @@ export function useCreateProduct() {
       const { data } = await backend.post(`/listings`, values);
       return data;
     },
-    onError: console.log,
+    onError: (err: Error) => console.error(err.message),
     onSuccess: () => {
       router.replace("/listings/my-listings");
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     },
   });
 }

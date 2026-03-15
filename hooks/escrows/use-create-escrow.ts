@@ -1,5 +1,5 @@
 import { backend } from "@/lib/api";
-import { toXOnly } from "@/lib/utis";
+import { toXOnly } from "@/lib/utils";
 import useAccountStore from "@/stores/account";
 import { Escrow } from "@/types/backend";
 import {
@@ -20,16 +20,15 @@ type CreateEscrowParams = {
 
 export function useCreateEscrow() {
   const queryClient = useQueryClient();
-  const { arkProvider } = useAccountStore();
-  const { pubkey } = useAccountStore();
+  const { arkProvider, pubkey } = useAccountStore();
   const sendPaymentMutation = useSendBitcoin();
 
   return useMutation({
     mutationKey: ["create-escrow"],
-    onError: (e) => console.log(e.response.data || e.message),
+    onError: (e: Error) => console.error(e.message),
     mutationFn: async (values: CreateEscrowParams): Promise<string> => {
       const info = await arkProvider?.getInfo();
-      if (!info) throw new Error("Missing singerPubkey");
+      if (!info) throw new Error("Missing signerPubkey");
       if (!pubkey) throw new Error("Missing pubkey");
 
       const { data: storedEscrow } = await backend.get<Escrow | null>(
@@ -60,7 +59,7 @@ export function useCreateEscrow() {
           amount: values.price,
           signerPubkey: info.signerPubkey,
         },
-        { onError: console.log, onSuccess: console.log },
+        {},
       );
 
       await backend.post(`/escrows/${values.chatId}`, {
