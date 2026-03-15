@@ -73,7 +73,7 @@ export function ReceiveActionSheet() {
           if (!receivalResult) throw new Error("no receival result");
           Toast.success("LN Swap received");
         } catch (e) {
-          console.log(e);
+          console.error(e);
           Toast.error("Error listening for ln swap");
         }
       },
@@ -193,10 +193,6 @@ export function ReceiveActionSheet() {
                                   />
                                 </Input>
                               ))}
-                              {/* <Button onPress={backToDashboard}>
-                                <ButtonText>Back to dashboard</ButtonText>
-                                <ButtonIcon as={LayoutDashboard} />
-                              </Button> */}
                             </>
                           ))
                           .with({ type: "vtxo" }, (coin) =>

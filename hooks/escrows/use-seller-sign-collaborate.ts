@@ -41,6 +41,6 @@ export function useSellerSignCollaborate() {
         queryKey: ["escrow", variables.escrowAddress],
       });
     },
-    onError: (err) => console.log(err.response.data),
+    onError: (err: Error) => console.error(err.message),
   });
 }

@@ -2,7 +2,6 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useBuyerConfirmCollaborate } from "@/hooks/escrows/use-buyer-confirm-collaborate";
-import { useCheckPayment } from "@/hooks/escrows/use-check-payment";
 import { useEscrow } from "@/hooks/escrows/use-escrow";
 import { useRefund } from "@/hooks/escrows/use-refund";
 import { useSellerSignCheckpoints } from "@/hooks/escrows/use-seller-sign-checkpoints";
@@ -21,9 +20,7 @@ type EscrowCardProps = {
 
 export function EscrowCard({ escrowAddress, chatId }: EscrowCardProps) {
   const escrowQuery = useEscrow(escrowAddress);
-  const checkPaymentQuery = useCheckPayment(escrowAddress);
 
-  console.log(checkPaymentQuery.data);
   const { pubkey } = useAccountStore();
 
   const sellerSignCollaborate = useSellerSignCollaborate();
@@ -45,10 +42,10 @@ export function EscrowCard({ escrowAddress, chatId }: EscrowCardProps) {
 
             {match(escrow.status)
               .with("awaitingFunds", () =>
-                isBuyer ? <P>Devi pagare</P> : null,
+                isBuyer ? <P>Awaiting your payment</P> : null,
               )
               .with("fundLocked", () =>
-                isSeller ? <P>Devi accettare</P> : null,
+                isSeller ? <P>Awaiting your acceptance</P> : null,
               )
               .otherwise(() => null)}
 
@@ -86,7 +83,7 @@ export function EscrowCard({ escrowAddress, chatId }: EscrowCardProps) {
     })
     .with({ isLoading: true }, () => <P>Loading</P>)
     .with({ isError: true }, () => <P>Error</P>)
-    .otherwise(() => <P>Addio</P>);
+    .otherwise(() => null);
 }
 
 type EscrowActionsProps = {
@@ -114,7 +111,7 @@ function EscrowActions({
 }: EscrowActionsProps) {
   switch (escrow.status) {
     case "awaitingFunds":
-      if (!isBuyer) return;
+      if (!isBuyer) return null;
       return <Small>Waiting for buyer to fund...</Small>;
 
     case "fundLocked":

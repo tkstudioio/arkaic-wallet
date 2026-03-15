@@ -14,13 +14,6 @@ export function useSendBitcoin() {
 
       if (!arkaicPayment.amount) throw new Error("Missing amount");
 
-      console.log(
-        arkaicPayment.lightningInvoice,
-        arkaicPayment.arkAddress,
-        arkaicPayment.signerPubkey,
-        aspInfo?.signerPubkey,
-      );
-
       if (
         !arkaicPayment.lightningInvoice &&
         (!arkaicPayment.arkAddress ||
@@ -54,4 +47,3 @@ export function useSendBitcoin() {
   });
 }
 
-// bc1p3f7rzsl560gc7tz2xhnsy657sc9ualgnr7q92ukzum380wclp6gq22w9sp

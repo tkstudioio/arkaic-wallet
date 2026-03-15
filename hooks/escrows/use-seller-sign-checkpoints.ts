@@ -45,6 +45,6 @@ export function useSellerSignCheckpoints() {
         queryKey: ["escrow", variables.escrowAddress],
       });
     },
-    onError: (err) => console.log(err),
+    onError: (err: Error) => console.error(err.message),
   });
 }
