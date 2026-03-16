@@ -1,7 +1,7 @@
 import useAccountStore from "@/stores/account";
 import { ArkaicPayment } from "@/types/arkaic";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAspInfo } from "./use-asp-info";
+import { useAspInfo } from "../use-asp-info";
 
 export function useSendBitcoin() {
   const { wallet, arkadeLightning } = useAccountStore();

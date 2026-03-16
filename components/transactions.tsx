@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 import { VStack } from "@/components/ui/vstack";
-import { useTransactions } from "@/hooks/arkade/use-transactions";
+import { useTransactions } from "@/hooks/wallet/use-transactions";
 import useAccountStore from "@/stores/account";
 import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";

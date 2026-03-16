@@ -1,4 +1,4 @@
-import { CurrencySymbol } from "@/hooks/arkade/use-bitcoin-price";
+import { CurrencySymbol } from "@/hooks/use-bitcoin-price";
 import { create } from "zustand";
 
 type SettingsStore = {

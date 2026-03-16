@@ -5,7 +5,7 @@ import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
-import { useCreateAccount } from "@/hooks/arkade/use-create-account";
+import { useCreateAccount } from "@/hooks/account/use-create-account";
 import {
   generateMnemonic,
   getRandomVerificationIndices,

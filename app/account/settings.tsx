@@ -12,8 +12,8 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { H1, Muted, P } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
-import { useDeleteAccount } from "@/hooks/arkade/use-delete-account";
-import { useLogout } from "@/hooks/arkade/use-logout";
+import { useDeleteAccount } from "@/hooks/account/use-delete-account";
+import { useLogout } from "@/hooks/account/use-logout";
 import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
 import { FileKey2, LogOut, TrashIcon } from "lucide-react-native";

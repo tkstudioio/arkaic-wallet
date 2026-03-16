@@ -1,4 +1,4 @@
-import { useOnboardUtxos } from "@/hooks/arkade/use-onboard-utxos";
+import { useOnboardUtxos } from "@/hooks/wallet/use-onboard-utxos";
 import { useQueryClient } from "@tanstack/react-query";
 import { ExternalLink, PlaneTakeoff } from "lucide-react-native";
 import { PropsWithChildren, useState } from "react";

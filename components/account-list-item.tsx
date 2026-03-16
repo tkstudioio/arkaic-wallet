@@ -1,4 +1,4 @@
-import { useLoginMutation } from "@/hooks/arkade/use-login";
+import { useLoginMutation } from "@/hooks/account/use-login";
 import { ArkaicAccount } from "@/types/arkaic";
 import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";

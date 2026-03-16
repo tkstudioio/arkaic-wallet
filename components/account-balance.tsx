@@ -1,4 +1,4 @@
-import { useBalance } from "@/hooks/arkade/use-balance";
+import { useBalance } from "@/hooks/wallet/use-balance";
 
 import useAccountStore from "@/stores/account";
 import { User } from "lucide-react-native";

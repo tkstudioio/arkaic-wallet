@@ -9,9 +9,9 @@ import {
   ActionsheetDragIndicator,
   ActionsheetDragIndicatorWrapper,
 } from "@/components/ui/actionsheet";
-import { useAspInfo } from "@/hooks/arkade/use-asp-info";
-import { usePasteFromClipboard } from "@/hooks/arkade/use-clipboard";
-import { useSendBitcoin } from "@/hooks/arkade/use-send-bitcoin";
+import { useSendBitcoin } from "@/hooks/wallet/use-send-bitcoin";
+import { useAspInfo } from "@/hooks/use-asp-info";
+import { usePasteFromClipboard } from "@/hooks/use-clipboard";
 import { parserBIP21Address } from "@/utils/parse-bip21-address";
 import { shortenAddress } from "@/utils/shorten-address";
 import { useQueryClient } from "@tanstack/react-query";
