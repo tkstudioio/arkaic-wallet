@@ -14,6 +14,7 @@ import useAccountStore from "@/stores/account";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { map } from "lodash";
 import { ArrowLeft, EllipsisVertical } from "lucide-react-native";
+import { useRef } from "react";
 import { ScrollView } from "react-native";
 import { match } from "ts-pattern";
 
@@ -24,6 +25,7 @@ export default function ChatScreen() {
   const activeOfferQuery = useActiveOffer(chatId);
   const router = useRouter();
   const { pubkey } = useAccountStore();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const counterpart =
     chatQuery.data?.buyerPubkey === pubkey
@@ -62,7 +64,13 @@ export default function ChatScreen() {
               </HStack>
             </Card>
 
-            <ScrollView className='h-24'>
+            <ScrollView
+              ref={scrollViewRef}
+              className='h-24'
+              onContentSizeChange={() =>
+                scrollViewRef.current?.scrollToEnd({ animated: false })
+              }
+            >
               <VStack space={"md"} className='px-arkaic-sm'>
                 {map(data?.messages, (message) => (
                   <MessageComponent key={message.signature} message={message} />
