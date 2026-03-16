@@ -18,7 +18,7 @@ import { useSendMessage } from "@/hooks/messages/use-send-message";
 import useAccountStore from "@/stores/account";
 import { Chat, Offer } from "@/types/backend";
 import { Send } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { match } from "ts-pattern";
 import { AmountComponent } from "../amount";
 import { BuyListing } from "../listing/buy-listing";
@@ -88,7 +88,6 @@ function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
 
   const sellerSignCollaborate = useSellerSignCollaborate();
   const buyerConfirmCollaborate = useBuyerConfirmCollaborate();
-  const sellerSignCheckpoints = useSellerSignCheckpoints();
   const payEscrow = usePayEscrow();
   const refund = useRefund();
 
@@ -171,16 +170,10 @@ function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
             isBuyer ? (
               <P>Order completed</P>
             ) : (
-              <Button
-                onPress={() =>
-                  sellerSignCheckpoints.mutate({
-                    escrowAddress: escrow.address,
-                    chatId: props.chat.id,
-                  })
-                }
-              >
-                <ButtonText>Claim payment</ButtonText>
-              </Button>
+              <AutoClaimPayment
+                escrowAddress={escrow.address}
+                chatId={props.chat.id}
+              />
             ),
           )
           .otherwise(({ status }) => (
@@ -230,4 +223,32 @@ function OfferActions(props: { chat: Chat }) {
       <BuyListing chat={props.chat} price={props.chat.listing?.price} />
     </>
   ) : null;
+}
+
+function AutoClaimPayment(props: { escrowAddress: string; chatId: number }) {
+  const sellerSignCheckpoints = useSellerSignCheckpoints();
+
+  useEffect(() => {
+    sellerSignCheckpoints.mutate({
+      escrowAddress: props.escrowAddress,
+      chatId: props.chatId,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return match(sellerSignCheckpoints)
+    .with({ isError: true }, () => (
+      <Button
+        onPress={() =>
+          sellerSignCheckpoints.mutate({
+            escrowAddress: props.escrowAddress,
+            chatId: props.chatId,
+          })
+        }
+      >
+        <ButtonText>Claim payment</ButtonText>
+      </Button>
+    ))
+    .with({ isPending: true }, () => <Spinner />)
+    .otherwise(() => null);
 }
