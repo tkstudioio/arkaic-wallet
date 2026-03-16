@@ -97,10 +97,12 @@ export type Message = {
 
   message: string | null;
 
-  senderPubkey: string;
-  sender?: Account;
+  senderPubkey: string | null;
+  sender?: Account | null;
 
-  signature: string;
+  signature: string | null;
+
+  isSystem: boolean;
 
   sentAt: Date;
 
