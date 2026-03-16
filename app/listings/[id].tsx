@@ -10,6 +10,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useSellerChats } from "@/hooks/chats/use-seller-chats";
 import { useStartChat } from "@/hooks/chats/use-start-chat";
+import { useWebSocket } from "@/hooks/use-websocket";
 import useAccountStore from "@/stores/account";
 import { Link, useLocalSearchParams } from "expo-router";
 import { first, map } from "lodash";
@@ -49,7 +50,10 @@ export default function Listing() {
 }
 
 function SellerListingChats(props: { listingId: number }) {
+  useWebSocket();
+
   const sellerChatsQuery = useSellerChats(props.listingId);
+
   return match(sellerChatsQuery)
     .with({ data: undefined }, { data: [] }, () => <P>No chats</P>)
     .otherwise(({ data }) => {
