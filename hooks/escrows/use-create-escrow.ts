@@ -31,15 +31,21 @@ export function useCreateEscrow() {
       if (!info) throw new Error("Missing signerPubkey");
       if (!pubkey) throw new Error("Missing pubkey");
 
-      const { data: storedEscrow } = await backend.get<Escrow | null>(
-        `/chats/${values.chatId}/escrow`,
-      );
+      let timelockExpiry: number | undefined;
+
+      try {
+        const { data: storedEscrow } = await backend.get<Escrow>(
+          `/chats/${values.chatId}/escrow`,
+        );
+
+        timelockExpiry = storedEscrow.timelockExpiry;
+      } catch {
+        timelockExpiry = values.timelockExpiry;
+      }
 
       const buyerPubkey = toXOnly(hex.decode(pubkey));
       const sellerPubkey = toXOnly(hex.decode(values.sellerPubkey));
       const serverPubkey = toXOnly(hex.decode(info.signerPubkey));
-      let timelockExpiry =
-        storedEscrow?.timelockExpiry || values.timelockExpiry;
 
       const refundPath = CLTVMultisigTapscript.encode({
         pubkeys: [buyerPubkey, serverPubkey],
@@ -75,9 +81,9 @@ export function useCreateEscrow() {
       return escrowAddress;
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["chat", variables.chatId] });
-      queryClient.invalidateQueries({
-        queryKey: ["active-offer", variables.chatId],
+      queryClient.refetchQueries({ queryKey: ["chat", variables.chatId] });
+      queryClient.refetchQueries({
+        queryKey: ["chat-offer", variables.chatId],
       });
     },
   });

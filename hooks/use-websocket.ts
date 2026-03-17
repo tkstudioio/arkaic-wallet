@@ -1,6 +1,6 @@
 import useAccountStore from "@/stores/account";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 const WS_URL = "ws://localhost:4000/ws";
 
@@ -39,21 +39,44 @@ type WsMessage =
   | OfferRejectedEvent
   | EscrowUpdateEvent;
 
+let ws: WebSocket | null = null;
+let refCount = 0;
+
+function connect(token: string) {
+  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+    return ws;
+  }
+
+  ws = new WebSocket(`${WS_URL}?token=${token}`);
+
+  ws.onopen = () => console.log("[WebSocket] connected");
+  ws.onclose = (e) => {
+    console.log("[WebSocket] closed", e.code, e.reason);
+    ws = null;
+  };
+  ws.onerror = () => console.error("[WebSocket] error");
+
+  return ws;
+}
+
+function disconnect() {
+  if (ws) {
+    ws.close();
+    ws = null;
+  }
+}
+
 export function useWebSocket() {
   const token = useAccountStore((s) => s.token);
   const queryClient = useQueryClient();
-  const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     if (!token) return;
 
-    const ws = new WebSocket(`${WS_URL}?token=${token}`);
+    refCount++;
+    const socket = connect(token);
 
-    ws.onopen = () => {
-      console.log("[WebSocket] connected");
-    };
-
-    ws.onmessage = (event) => {
+    const handleMessage = (event: MessageEvent) => {
       try {
         const message: WsMessage = JSON.parse(event.data);
 
@@ -80,19 +103,15 @@ export function useWebSocket() {
       }
     };
 
-    ws.onclose = (e) => {
-      console.log("[WebSocket] closed", e.code, e.reason);
-    };
-
-    ws.onerror = () => {
-      console.error("[WebSocket] error");
-    };
-
-    wsRef.current = ws;
+    socket.addEventListener("message", handleMessage);
 
     return () => {
-      ws.close();
-      wsRef.current = null;
+      socket.removeEventListener("message", handleMessage);
+      refCount--;
+      if (refCount <= 0) {
+        refCount = 0;
+        disconnect();
+      }
     };
   }, [token, queryClient]);
 }

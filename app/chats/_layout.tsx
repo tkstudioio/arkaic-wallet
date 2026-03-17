@@ -3,14 +3,12 @@ import { useWebSocket } from "@/hooks/use-websocket";
 
 import { Slot } from "expo-router";
 
-export default function ProductsLayout() {
+export default function ChatsLayout() {
   useWebSocket();
 
   return (
     <VStack className='h-full' space={"lg"}>
-      <VStack className='h-full' space={"lg"}>
-        <Slot />
-      </VStack>
+      <Slot />
     </VStack>
   );
 }

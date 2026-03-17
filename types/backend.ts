@@ -85,7 +85,6 @@ export type Chat = {
 
   messages?: Message[];
 
-  escrowAddress?: string | null;
   escrow?: Escrow | null;
 };
 

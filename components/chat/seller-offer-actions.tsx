@@ -1,11 +1,10 @@
-import { AmountComponent } from "@/components/amount";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
 import { Spinner } from "@/components/ui/spinner";
-import { P } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useRespondToOffer } from "@/hooks/offers/use-respond-to-offer";
 import { Offer } from "@/types/backend";
+import { Check, X } from "lucide-react-native";
 
 type SellerActionsProps = {
   activeOffer: Offer;
@@ -22,10 +21,6 @@ export function SellerOfferActions({
 
   return (
     <VStack space={"sm"}>
-      <HStack space={"sm"} className='items-center justify-center'>
-        <P>Offer:</P>
-        <AmountComponent amount={activeOffer.price} />
-      </HStack>
       <HStack space={"md"}>
         <Button
           className='flex-1'
@@ -40,11 +35,10 @@ export function SellerOfferActions({
             })
           }
         >
-          {respondMutation.isPending ? (
-            <Spinner />
-          ) : (
-            <ButtonText>Reject</ButtonText>
-          )}
+          <ButtonIcon as={X} />
+          <ButtonText>Reject</ButtonText>
+
+          {respondMutation.isPending && <Spinner />}
         </Button>
         <Button
           className='flex-1'
@@ -58,11 +52,10 @@ export function SellerOfferActions({
             })
           }
         >
-          {respondMutation.isPending ? (
-            <Spinner />
-          ) : (
-            <ButtonText>Accept</ButtonText>
-          )}
+          <ButtonIcon as={Check} />
+          <ButtonText>Accept</ButtonText>
+
+          {respondMutation.isPending && <Spinner />}
         </Button>
       </HStack>
     </VStack>

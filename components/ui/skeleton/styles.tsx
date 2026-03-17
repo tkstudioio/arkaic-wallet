@@ -1,7 +1,7 @@
 import { tva } from "@gluestack-ui/utils/nativewind-utils";
 
 export const skeletonStyle = tva({
-  base: "w-full h-full bg-arkaic-muted/10 rounded-card",
+  base: "w-full h-full bg-arkaic-muted/10 rounded-arkaic-card",
   variants: {
     speed: {
       1: "duration-75",

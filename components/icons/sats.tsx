@@ -5,7 +5,7 @@ import Svg, { Path, SvgProps } from "react-native-svg";
 const Sats = (props: SvgProps) => {
   return (
     <Svg
-      className='fill-inherit text-inherit'
+      className='fill-inherit text-blue-4fill-inherit'
       viewBox='0 0 18 18'
       width={24}
       preserveAspectRatio='xMidYMid meet'

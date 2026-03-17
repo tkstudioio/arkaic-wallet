@@ -51,7 +51,6 @@ export default function Listing() {
 
 function SellerListingChats(props: { listingId: number }) {
   useWebSocket();
-
   const sellerChatsQuery = useSellerChats(props.listingId);
 
   return match(sellerChatsQuery)

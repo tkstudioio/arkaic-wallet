@@ -113,7 +113,7 @@ export function useLoginMutation() {
         fingerprint,
       });
 
-      router.dismissTo("/account/dashboard");
+      router.replace("/account/dashboard");
     },
     onError: (err: Error) => console.error(err.message),
   });

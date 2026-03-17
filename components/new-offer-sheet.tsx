@@ -77,7 +77,8 @@ export function NewOfferSheet({ isOpen, onClose, chat }: NewOfferSheetProps) {
             onPress={handleSubmit}
             isDisabled={!price || Number(price) <= 0 || sendMessage.isPending}
           >
-            {sendMessage.isPending ? <Spinner /> : <ButtonText>Send offer</ButtonText>}
+            <ButtonText>Send offer</ButtonText>
+            {sendMessage.isPending && <Spinner />}
           </Button>
         </VStack>
       </ActionsheetContent>

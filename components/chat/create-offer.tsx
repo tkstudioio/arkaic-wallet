@@ -3,7 +3,7 @@ import { Chat } from "@/types/backend";
 import { HandCoins } from "lucide-react-native";
 import { useState } from "react";
 
-import { NewOfferSheet } from "./new-offer-sheet";
+import { NewOfferSheet } from "../new-offer-sheet";
 
 export function CreateOffer(props: { chat: Chat }) {
   const [showOfferSheet, setShowOfferSheet] = useState(false);

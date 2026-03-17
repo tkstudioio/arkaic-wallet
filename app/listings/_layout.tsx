@@ -4,7 +4,7 @@ import { VStack } from "@/components/ui/vstack";
 import { Slot } from "expo-router";
 import { ScrollView } from "react-native";
 
-export default function ProductsLayout() {
+export default function ListingsLayout() {
   return (
     <VStack className='h-full' space={"lg"}>
       <ScrollView className='h-full rounded-arkaic-card relative'>

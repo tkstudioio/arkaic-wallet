@@ -1,15 +1,14 @@
-import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { HStack } from "@/components/ui/hstack";
-import { Muted, P, Small } from "@/components/ui/typography";
+import { Large, Muted, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 
 import useAccountStore from "@/stores/account";
 import { Message } from "@/types/backend";
 import { format, formatDistanceToNowStrict } from "date-fns";
 
-import { first } from "lodash";
+import { match } from "ts-pattern";
 import { AmountComponent } from "./amount";
+import { Badge, BadgeText } from "./ui/badge";
 
 export function MessageComponent(props: { message: Message }) {
   const { pubkey } = useAccountStore();
@@ -26,46 +25,66 @@ export function MessageComponent(props: { message: Message }) {
   const isSender = props.message.senderPubkey === pubkey;
 
   return (
-    <VStack space={"md"} className={isSender ? "self-end max-w-[80%]" : "self-start max-w-[80%]"}>
-      <Card
-        variant={"outline"}
-        className={
-          isSender
-            ? "flex justify-end items-end bg-arkaic-fill"
-            : "bg-arkaic-fill border-arkaic-primary"
-        }
-      >
-        {props.message.message && (
+    <VStack
+      space={"md"}
+      className={
+        isSender ? "self-end w-max max-w-[85%]" : "self-start w-max max-w-[85%]"
+      }
+    >
+      {props.message.message && (
+        <Card>
           <P className={isSender ? "text-right" : ""}>
             {props.message.message}
           </P>
-        )}
+          <Small className={isSender ? "text-right" : ""}>
+            {formatDistanceToNowStrict(props.message.sentAt)}
+          </Small>
+        </Card>
+      )}
 
-        {props.message.offer && (
-          <VStack
-            className={isSender ? "items-end" : "items-start"}
-            space={"md"}
+      {match(props.message.offer)
+        .with(undefined, null, () => null)
+        .otherwise((offer) => (
+          <Card
+            className={
+              offer.acceptance
+                ? offer.acceptance.accepted
+                  ? "border border-arkaic-positive"
+                  : "border border-arkaic-negative"
+                : "border border-arkaic-border"
+            }
           >
-            <P className={isSender ? "text-right" : ""}>
-              {isSender ? "You have" : "Buyer has"} sent an offer
-            </P>
-            <AmountComponent amount={props.message.offer.price} size='4xl' />
-          </VStack>
-        )}
-      </Card>
-      <HStack
-        space={"sm"}
-        className={isSender ? "flex-row-reverse items-center" : "items-center"}
-      >
-        <Avatar size={"xs"}>
-          <AvatarFallbackText>
-            {first(props.message.sender?.username)}
-          </AvatarFallbackText>
-        </Avatar>
-        <Small className={isSender ? "text-right" : ""}>
-          {formatDistanceToNowStrict(props.message.sentAt)}
-        </Small>
-      </HStack>
+            <VStack
+              className={isSender ? "items-end" : "items-start"}
+              space={"md"}
+            >
+              {match(offer.acceptance)
+                .with({ accepted: true }, () => (
+                  <Badge size={"xl"} action='success'>
+                    <BadgeText>Accepted</BadgeText>
+                  </Badge>
+                ))
+                .with({ accepted: false }, () => (
+                  <Badge size={"xl"} action='error'>
+                    <BadgeText>Rejected</BadgeText>
+                  </Badge>
+                ))
+                .otherwise(() => (
+                  <Badge size={"xl"}>
+                    <BadgeText>Waiting seller</BadgeText>
+                  </Badge>
+                ))}
+
+              <Large className={isSender ? "text-right" : ""}>
+                {isSender ? "You have" : "Buyer has"} sent an offer
+              </Large>
+              <AmountComponent amount={offer.price} size='4xl' />
+              <Small className={isSender ? "text-right" : ""}>
+                {formatDistanceToNowStrict(props.message.sentAt)}
+              </Small>
+            </VStack>
+          </Card>
+        ))}
     </VStack>
   );
 }

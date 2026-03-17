@@ -15,7 +15,11 @@ import { Chat } from "@/types/backend";
 import { Handshake } from "lucide-react-native";
 import { useState } from "react";
 
-export function BuyListing(props: { chat: Chat; price: number }) {
+export function BuyListing(props: {
+  chat: Chat;
+  price: number;
+  isOffer?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const createEscrow = useCreateEscrow();
 
@@ -34,7 +38,7 @@ export function BuyListing(props: { chat: Chat; price: number }) {
   return (
     <>
       <Button onPress={() => setOpen(true)} className='flex-1'>
-        <ButtonText>Buy</ButtonText>
+        <ButtonText>Buy product</ButtonText>
         <ButtonIcon as={Handshake} />
       </Button>
 
