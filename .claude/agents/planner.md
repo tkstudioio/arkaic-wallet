@@ -43,6 +43,7 @@ Per ogni task, ragiona attivamente sugli scenari non esplicitati nella richiesta
 - **Tipi TypeScript**: I tipi esistenti (`ArkaicAccount`, `ArkaicPayment`) devono essere estesi? Ci sono breaking changes?
 - **React Query**: Il nuovo hook usa query keys corrette e invalida la cache nel momento giusto?
 - **Zustand**: La modifica al store (`stores/account.ts`, `stores/settings.tsx`) ha side effect sui componenti dipendenti?
+- **ts-pattern**: Il rendering condizionale e la gestione di discriminated unions usano `match(...).with(...).otherwise()`? Ogni `match` deve terminare con `.otherwise()`.
 - **Platform-specific**: La feature funziona su iOS, Android e Web? Servono file `.web.tsx` (come `use-color-scheme.web.ts` o `card/index.web.tsx`)?
 - **Navigazione**: La modifica richiede una nuova route in `app/` o cambia la navigazione esistente?
 - **Sicurezza**: L'azione implica private keys o dati sensibili? Usare `expo-secure-store`, mai AsyncStorage per dati critici.
@@ -121,6 +122,7 @@ Il file deve contenere un **prompt completo e autosufficiente** per il developer
 - Componenti Gluestack UI dove disponibili (Button, Input, Card, ActionSheet, Modal, ecc.)
 - Font Ubuntu Mono via `font-heading` (bold) e `font-body` (regular)
 - Tipografia semantica: usare componenti `H1`, `P`, `Large`, `Small`, `Muted` da `@/components/ui/typography`
+- **ts-pattern**: usare sempre `match` da `ts-pattern` per rendering condizionale e discriminated unions — ogni `match` deve terminare con `.otherwise()`
 - Gestire sempre i casi di wallet non inizializzato (store vuoto)
 - Qualsiasi altro vincolo specifico del task]
 

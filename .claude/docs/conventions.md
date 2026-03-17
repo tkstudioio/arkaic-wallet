@@ -148,6 +148,37 @@ type ArkaicPayment = {
 
 ---
 
+## Pattern Matching (ts-pattern)
+
+Usa sempre `match` da `ts-pattern` per il rendering condizionale e per gestire discriminated unions. Ogni `match` deve terminare con `.otherwise()` per massimizzare l'esposizione di casi non gestiti (TypeScript warning su rami mancanti).
+
+```tsx
+import { match } from 'ts-pattern';
+
+// Rendering condizionale
+{match(status)
+  .with('loading', () => <Spinner />)
+  .with('error', () => <ErrorView />)
+  .with('success', () => <Content />)
+  .otherwise(() => null)}
+
+// Discriminated union
+{match(message)
+  .with({ type: 'text' }, (m) => <TextBubble content={m.content} />)
+  .with({ type: 'offer' }, (m) => <OfferCard offer={m.offer} />)
+  .with({ type: 'system' }, (m) => <SystemMessage text={m.text} />)
+  .otherwise(() => null)}
+```
+
+**Regole ts-pattern:**
+- Sempre `match` al posto di `if/else` o `switch` per logica condizionale su tipi/stati
+- Sempre `match` per il rendering condizionale di componenti React
+- Ogni `match` termina **obbligatoriamente** con `.otherwise()` (mai `.exhaustive()` da solo se si vuole fallback silenzioso)
+- `.otherwise(() => null)` come fallback di default nel JSX
+- Preferire pattern oggetto `{ type: '...' }` per discriminated unions
+
+---
+
 ## Naming Conventions
 
 - **File**: kebab-case (`use-balance.ts`, `escrow-card.tsx`)
