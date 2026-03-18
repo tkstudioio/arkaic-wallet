@@ -33,6 +33,7 @@ arkaic-wallet/
 ├── hooks/                    # React Query hooks per dominio
 │   ├── wallet/               # balance, send, receive, onboard, vtxos, transactions
 │   ├── account/              # create, login, logout, delete
+│   ├── categories/           # fetch categories (root list, single by slug)
 │   ├── listings/             # CRUD listings marketplace
 │   ├── escrows/              # pay, create, refund, sign, confirm
 │   ├── chats/                # chat buyer/seller, start chat
@@ -144,6 +145,28 @@ Il progetto include un sistema marketplace P2P su Ark:
 - **Receiving**: BIP21 URI (`bitcoin:<onchain>?ark=<ark_addr>&amount=<btc>`) + Lightning invoice
 - **Sending**: parse BIP21, distingui Ark vs on-chain tramite `signerPubkey`, invia via `wallet.sendBitcoin()`
 - **Tipi di pagamento** (badge colorati): Ark (green), on-chain (orange), boarding (blue)
+
+---
+
+## Recent Layout & Component Changes
+
+### M-004: Listing Grid Refactor (`app/listings/my-listings.tsx`)
+
+Grid-based layout (`Grid` / `GridItem`) replaced with flat `map()` render pattern. Aligns listing presentation across routes (`index.tsx` and `my-listings.tsx` now use consistent flat list with `gap-3` spacing).
+
+**Impact**: Simplified list rendering, no layout component overhead, same visual spacing via Tailwind gap utilities.
+
+### M-005: Amount Component Alignment (`components/amount.tsx`)
+
+Removed `justify-center` from `AmountComponent` HStack. Amount now left-aligns by default (`items-center` only, no horizontal centering).
+
+**Impact**: Amount displays with left alignment in all consuming contexts:
+- Wallet dashboard balance display
+- Listing item prices
+- Escrow card amounts
+- Chat message offer prices
+
+**Workaround**: Consumers needing centered amounts can wrap `<AmountComponent>` in a centering container (`flex justify-center`) if needed.
 
 ---
 
