@@ -59,24 +59,22 @@ export function useCreateEscrow() {
       const escrowScript = new VtxoScript([refundPath, collaborativePath]);
       const escrowAddress = escrowScript.address("tark", serverPubkey).encode();
 
-      await backend.post(`/escrows/${values.chatId}`, {
-        chatId: values.chatId,
-        sellerPubkey: values.sellerPubkey,
-        price: values.price,
-        timelockExpiry,
-        escrowAddress,
-        serverPubkey: info.signerPubkey,
-      });
+      await Promise.all([
+        backend.post(`/escrows/${values.chatId}`, {
+          chatId: values.chatId,
+          sellerPubkey: values.sellerPubkey,
+          price: values.price,
+          timelockExpiry,
+          escrowAddress,
+          serverPubkey: info.signerPubkey,
+        }),
 
-      try {
-        await sendPaymentMutation.mutateAsync({
+        sendPaymentMutation.mutateAsync({
           arkAddress: escrowAddress,
           amount: values.price,
           signerPubkey: info.signerPubkey,
-        });
-      } catch (e) {
-        console.error("Escrow payment failed, can be retried:", e);
-      }
+        }),
+      ]);
 
       return escrowAddress;
     },
