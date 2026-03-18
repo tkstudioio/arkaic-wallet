@@ -1,7 +1,6 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { P } from "@/components/ui/typography";
-import { VStack } from "@/components/ui/vstack";
 
 import { useBuyerConfirmCollaborate } from "@/hooks/escrows/use-buyer-confirm-collaborate";
 import { useEscrow } from "@/hooks/escrows/use-escrow";
@@ -11,6 +10,7 @@ import { useSellerSignCollaborate } from "@/hooks/escrows/use-seller-sign-collab
 import useAccountStore from "@/stores/account";
 import { Chat } from "@/types/backend";
 import { match } from "ts-pattern";
+import { HStack } from "../ui/hstack";
 import { AutoClaimPayment } from "./auto-claim-payment";
 
 export function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
@@ -27,13 +27,15 @@ export function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
 
   return match(escrowQuery)
     .with({ isSuccess: true }, ({ data: escrow }) => (
-      <VStack className='flex-col-reverse'>
+      <HStack className='w-full' space={"md"}>
         {isBuyer &&
           Date.now() / 1000 > escrow.timelockExpiry &&
           (escrow.status === "fundLocked" ||
             escrow.status === "sellerReady" ||
             escrow.status === "partiallyFunded") && (
             <Button
+              variant={"outline"}
+              className='w-max'
               onPress={() =>
                 refund.mutate({
                   escrowAddress: escrow.address,
@@ -48,6 +50,10 @@ export function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
           .with({ status: "awaitingFunds" }, () =>
             isBuyer ? (
               <Button
+                className='flex-1'
+                action='neutral'
+                variant='outline'
+                disabled
                 onPress={() =>
                   payEscrow.mutate({
                     escrowAddress: escrow.address,
@@ -56,11 +62,9 @@ export function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
                   })
                 }
               >
-                {payEscrow.isPending ? (
-                  <Spinner />
-                ) : (
-                  <ButtonText>Pay escrow</ButtonText>
-                )}
+                <ButtonText>
+                  Awaiting payment confirmation <Spinner />
+                </ButtonText>
               </Button>
             ) : (
               <P>Awaiting buyer to lock funds</P>
@@ -68,9 +72,25 @@ export function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
           )
           .with({ status: "fundLocked" }, () =>
             isBuyer ? (
-              <P>Awaiting seller to confirm</P>
+              <Button
+                disabled
+                action={"neutral"}
+                variant={"outline"}
+                className='flex-1'
+                onPress={() =>
+                  sellerSignCollaborate.mutate({
+                    escrowAddress: escrow.address,
+                    chatId: props.chat.id,
+                  })
+                }
+              >
+                <ButtonText>
+                  Awaiting seller <Spinner />
+                </ButtonText>
+              </Button>
             ) : (
               <Button
+                className='flex-1'
                 onPress={() =>
                   sellerSignCollaborate.mutate({
                     escrowAddress: escrow.address,
@@ -85,6 +105,7 @@ export function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
           .with({ status: "sellerReady" }, () =>
             isBuyer ? (
               <Button
+                className='flex-1'
                 onPress={() =>
                   buyerConfirmCollaborate.mutate({
                     escrowAddress: escrow.address,
@@ -108,10 +129,11 @@ export function EscrowActions(props: { chat: Chat; escrowAddress: string }) {
               />
             ),
           )
+          .with({ status: "completed" }, { status: "refunded" }, () => null)
           .otherwise(({ status }) => (
             <P>{status}</P>
           ))}
-      </VStack>
+      </HStack>
     ))
     .otherwise(() => null);
 }

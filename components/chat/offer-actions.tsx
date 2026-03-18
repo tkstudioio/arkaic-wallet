@@ -13,42 +13,47 @@ export function OfferActions(props: { chat: Chat }) {
 
   const isBuyer = props.chat.buyerPubkey === pubkey;
 
+  const noOfferUI = match(isBuyer)
+    .with(true, () => (
+      <>
+        <CreateOffer chat={props.chat} />
+        <BuyListing chat={props.chat} price={props.chat.listing?.price} />
+      </>
+    ))
+    .otherwise(() => null);
+
   return match(chatOfferQuery)
+    .with({ isSuccess: true, data: null }, () => noOfferUI)
     .with({ isSuccess: true }, ({ data }) =>
       match(isBuyer)
         .with(true, () => (
           <>
-            {match(data.acceptance)
-              .with({ accepted: true }, () => (
-                <AmountComponent amount={data.price} size='4xl' />
+            {match({ acceptance: data!.acceptance, valid: data!.valid })
+              .with({ acceptance: { accepted: true } }, () => (
+                <AmountComponent amount={data!.price} size='4xl' />
               ))
-              .with({ accepted: false }, () => (
-                <CreateOffer chat={props.chat} />
-              ))
+              .with(
+                { acceptance: { accepted: false } },
+                { valid: false },
+                { acceptance: undefined },
+                () => <CreateOffer chat={props.chat} />,
+              )
+
               .otherwise(() => null)}
             <BuyListing
               chat={props.chat}
-              isOffer={data.acceptance?.accepted}
+              isOffer={data!.acceptance?.accepted}
               price={
-                data.acceptance?.accepted
-                  ? data.price
+                data!.acceptance?.accepted
+                  ? data!.price
                   : props.chat.listing?.price
               }
             />
           </>
         ))
         .otherwise(() => (
-          <SellerOfferActions chatId={props.chat.id} activeOffer={data} />
+          <SellerOfferActions chatId={props.chat.id} activeOffer={data!} />
         )),
     )
-    .otherwise(() =>
-      match(isBuyer)
-        .with(true, () => (
-          <>
-            <CreateOffer chat={props.chat} />
-            <BuyListing chat={props.chat} price={props.chat.listing?.price} />
-          </>
-        ))
-        .otherwise(() => null),
-    );
+    .otherwise(() => null);
 }
