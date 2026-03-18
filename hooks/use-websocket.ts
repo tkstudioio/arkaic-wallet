@@ -43,7 +43,10 @@ let ws: WebSocket | null = null;
 let refCount = 0;
 
 function connect(token: string) {
-  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+  if (
+    ws &&
+    (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)
+  ) {
     return ws;
   }
 
