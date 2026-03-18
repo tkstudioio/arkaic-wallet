@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 
 type CreateProductParams = {
   name: string;
+  description: string;
   price: number;
   categoryId: number;
 };

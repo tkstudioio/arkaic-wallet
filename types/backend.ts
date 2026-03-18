@@ -48,6 +48,7 @@ export type Listing = {
 
   signature: string;
   name: string;
+  description?: string;
   price: number;
 
   createdAt: Date;
