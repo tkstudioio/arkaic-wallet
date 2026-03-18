@@ -11,6 +11,7 @@ import { Chat, Offer } from "@/types/backend";
 import { Send } from "lucide-react-native";
 import React, { useState } from "react";
 import { match } from "ts-pattern";
+import { Large } from "../ui/typography";
 import { EscrowActions } from "./escrow-actions";
 import { OfferActions } from "./offer-actions";
 
@@ -35,34 +36,43 @@ export function SendMessage(props: {
           ))}
       </HStack>
       <Card>
-        <HStack space={"md"}>
-          <Input className='flex-1 h-full'>
-            <InputField
-              placeholder='Type message...'
-              value={message}
-              onChangeText={setMessage}
-            />
-          </Input>
-          <Button
-            className='w-max'
-            isDisabled={message.length < 1}
-            onPress={() => {
-              sendMessageMutation.mutate(
-                {
-                  message,
-                  chatId: props.chat.id,
-                },
-                { onSuccess: () => setMessage("") },
-              );
-            }}
-          >
-            {sendMessageMutation.isPending ? (
-              <Spinner />
-            ) : (
-              <ButtonIcon as={Send} />
-            )}
-          </Button>
-        </HStack>
+        {match(chatEscrowQuery.data?.status)
+          .with("completed", () => (
+            <Large className='text-center'>Escrow completed!</Large>
+          ))
+          .with("refunded", () => (
+            <Large className='text-center'>Buyer refunded</Large>
+          ))
+          .otherwise(() => (
+            <HStack space={"md"}>
+              <Input className='flex-1 h-full'>
+                <InputField
+                  placeholder='Type message...'
+                  value={message}
+                  onChangeText={setMessage}
+                />
+              </Input>
+              <Button
+                className='w-max'
+                isDisabled={message.length < 1}
+                onPress={() => {
+                  sendMessageMutation.mutate(
+                    {
+                      message,
+                      chatId: props.chat.id,
+                    },
+                    { onSuccess: () => setMessage("") },
+                  );
+                }}
+              >
+                {sendMessageMutation.isPending ? (
+                  <Spinner />
+                ) : (
+                  <ButtonIcon as={Send} />
+                )}
+              </Button>
+            </HStack>
+          ))}
       </Card>
     </VStack>
   );
