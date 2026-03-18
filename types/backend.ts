@@ -51,8 +51,8 @@ export type Listing = {
   price: number;
 
   createdAt: Date;
-
-  categories?: ListingCategory[];
+  category?: Category;
+  categoryId?: number;
   chats?: Chat[];
 };
 
@@ -138,6 +138,7 @@ export type OfferAcceptance = {
 export type Category = {
   id: number;
   name: string;
+  slug: string;
 
   childrenOf: number | null;
 
