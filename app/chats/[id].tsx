@@ -79,7 +79,7 @@ export default function ChatScreen() {
             >
               <VStack space={"md"} className=' py-arkaic-md'>
                 {map(data?.messages, (message) => (
-                  <MessageComponent key={message.signature} message={message} />
+                  <MessageComponent key={message.signature ?? message.id} message={message} />
                 ))}
               </VStack>
             </ScrollView>
