@@ -1,3 +1,4 @@
+import { CategoryPicker } from "@/components/category-picker";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
 import { H1, P, Small } from "@/components/ui/typography";
@@ -14,10 +15,24 @@ export default function ProductCreate() {
 
   return (
     <Formik
-      initialValues={{ name: "", price: 0 }}
-      onSubmit={(values) => createProduct.mutate(values)}
+      initialValues={{ name: "", price: 0, categoryId: null as number | null }}
+      onSubmit={(values) =>
+        createProduct.mutate({
+          name: values.name,
+          price: values.price,
+          categoryId: values.categoryId!,
+        })
+      }
     >
-      {({ handleSubmit, values, setFieldValue, handleChange }) => (
+      {({
+        handleSubmit,
+        values,
+        setFieldValue,
+        handleChange,
+        errors,
+        touched,
+        isValid,
+      }) => (
         <VStack space='lg'>
           <H1 className='font-heading'>Create Product</H1>
           <VStack space='xs'>
@@ -44,13 +59,24 @@ export default function ProductCreate() {
               />
             </Input>
           </VStack>
+          <CategoryPicker
+            onSelect={(categoryId) => {
+              console.log(categoryId);
+              setFieldValue("categoryId", categoryId);
+            }}
+            selectedCategoryId={values.categoryId}
+          />
+          {errors.categoryId && touched.categoryId && (
+            <P className='text-red-500'>{errors.categoryId}</P>
+          )}
+
           {createProduct.isError && (
             <P className='text-red-500'>Failed to create product.</P>
           )}
 
           <Button
             onPress={() => handleSubmit()}
-            isDisabled={createProduct.isPending}
+            isDisabled={createProduct.isPending || !isValid}
           >
             <ButtonText>
               {createProduct.isPending ? "Creating..." : "Create"}
