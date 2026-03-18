@@ -1,12 +1,10 @@
 import { Card } from "@/components/ui/card";
-
-import { Large } from "@/components/ui/typography";
-
-import { Link } from "expo-router";
-
+import { Large, Small } from "@/components/ui/typography";
 import { Listing } from "@/types/backend";
+import { Link } from "expo-router";
 import { AmountComponent } from "./amount";
-import { Badge, BadgeText } from "./ui/badge";
+import { CategoryBadge } from "./category-badge";
+import { HStack } from "./ui/hstack";
 import { Skeleton } from "./ui/skeleton";
 import { VStack } from "./ui/vstack";
 
@@ -20,18 +18,23 @@ export function ListingItem({ listing }: { listing: Listing }) {
         params: { id: listing.id },
       }}
     >
-      <Card className='justify-start w-full'>
-        <Skeleton className='w-full h-max aspect-square' />
+      <Card className='justify-start'>
+        <HStack space={"md"}>
+          <Skeleton className='h-full aspect-square w-max' />
 
-        <Badge size={"lg"}>
-          <BadgeText>{listing.seller?.username}</BadgeText>
-        </Badge>
-
-        <Large>{listing.name}</Large>
-
-        <VStack className='w-full items-end'>
-          <AmountComponent size='4xl' amount={listing.price} />
-        </VStack>
+          <VStack className='justify-between' space={"md"}>
+            <VStack>
+              <Small>{listing.seller?.username}</Small>
+              <Large>{listing.name}</Large>
+            </VStack>
+            {listing.category && (
+              <HStack space='xs' className='flex-wrap'>
+                <CategoryBadge category={listing.category} />
+              </HStack>
+            )}
+            <AmountComponent size='4xl' amount={listing.price} />
+          </VStack>
+        </HStack>
       </Card>
     </Link>
   );

@@ -18,10 +18,7 @@ export function AmountComponent(props: {
           : 16;
 
   return (
-    <HStack
-      className={cnBase("items-center justify-center", props.className)}
-      space={"sm"}
-    >
+    <HStack className={cnBase("items-center", props.className)} space={"sm"}>
       <Text size={props.size}>
         {Intl.NumberFormat().format(props.amount || 0)}
       </Text>

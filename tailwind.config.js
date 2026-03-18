@@ -183,6 +183,7 @@ module.exports = {
           muted: "rgb(var(--color-arkaic-muted)/<alpha-value>)",
           primary: "rgb(var(--color-arkaic-primary)/<alpha-value>)",
           accent: "rgb(var(--color-arkaic-accent)/<alpha-value>)",
+          accent: "rgb(var(--color-arkaic-accent)/<alpha-value>)",
           "primary-foreground":
             "rgb(var(--color-arkaic-primary-foreground)/<alpha-value>)",
           fill: "rgb(var(--color-arkaic-fill)/<alpha-value>)",
