@@ -34,6 +34,7 @@ export function CategoryPicker({ onSelect, selectedCategoryId }: Props) {
 
   const hasChildren =
     selectedRoot?.children && selectedRoot.children.length > 0;
+  console.log(selectedRoot?.children);
 
   function handleRootChange(value: string) {
     const rootId = Number(value);
