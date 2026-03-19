@@ -1,22 +1,23 @@
 import { AmountComponent } from "@/components/amount";
-import { Badge, BadgeText } from "@/components/ui/badge";
+import { AttributeDisplay } from "@/components/listing/attribute-display";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Divider } from "@/components/ui/divider";
 import { HStack } from "@/components/ui/hstack";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import { Large, P, Small } from "@/components/ui/typography";
+import { Large, Muted, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useSellerChats } from "@/hooks/chats/use-seller-chats";
 import { useStartChat } from "@/hooks/chats/use-start-chat";
 import { useListing } from "@/hooks/listings/use-listing";
 import { useWebSocket } from "@/hooks/use-websocket";
 import useAccountStore from "@/stores/account";
+import { ListingAttributeValue } from "@/types/backend";
+import { shortenAddress } from "@/utils/shorten-address";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { first, map } from "lodash";
-import { ArrowLeft } from "lucide-react-native";
-import { ScrollView } from "react-native";
+import { ArrowLeft, ImageIcon } from "lucide-react-native";
+import { ScrollView, View } from "react-native";
 import { match } from "ts-pattern";
 
 export default function Listing() {
@@ -48,28 +49,57 @@ export default function Listing() {
         <ScrollView className='flex-1 py-arkaic-md'>
           <VStack space='md'>
             <Card className='w-full'>
-              <Skeleton className='w-full h-max aspect-video' />
-              <VStack space='xs'>
-                {data.category ? (
-                  <HStack space='xs' className='items-center'>
-                    {data.category.parent ? (
-                      <>
-                        <Badge>
-                          <BadgeText>{data.category.parent.name}</BadgeText>
-                        </Badge>
-                        <Small>/</Small>
-                      </>
-                    ) : null}
-                    <Badge>
-                      <BadgeText>{data.category.name}</BadgeText>
-                    </Badge>
-                  </HStack>
-                ) : null}
+              <VStack space='sm'>
+                <Large className='font-semibold'>Details</Large>
+                <Divider />
+
+                <View className='w-full aspect-video bg-arkaic-background rounded-lg items-center justify-center'>
+                  <ImageIcon size={48} className='text-arkaic-muted' />
+                  <Muted>No image</Muted>
+                </View>
+
                 <Large>{data.name}</Large>
                 {data.description ? <P>{data.description}</P> : null}
-              </VStack>
 
-              <AmountComponent size='4xl' amount={data.price} />
+                <AmountComponent size='4xl' amount={data.price} />
+
+                <Divider />
+
+                {data.category ? (
+                  <HStack className='justify-between items-center'>
+                    <Small className='text-arkaic-muted'>Category</Small>
+                    <P>
+                      {data.category.parent
+                        ? `${data.category.parent.name} > ${data.category.name}`
+                        : data.category.name}
+                    </P>
+                  </HStack>
+                ) : null}
+
+                <HStack className='justify-between items-center'>
+                  <Small className='text-arkaic-muted'>Listed on</Small>
+                  <P>{new Date(data.createdAt).toLocaleDateString()}</P>
+                </HStack>
+              </VStack>
+            </Card>
+
+            <ListingAttributes attributes={data.attributes} />
+
+            <Card className='w-full'>
+              <VStack space='sm'>
+                <Large className='font-semibold'>Seller info</Large>
+                <Divider />
+
+                <HStack className='justify-between items-center'>
+                  <Small className='text-arkaic-muted'>Username</Small>
+                  <P>{data.seller?.username ?? "Unknown"}</P>
+                </HStack>
+
+                <HStack className='justify-between items-center'>
+                  <Small className='text-arkaic-muted'>Public key</Small>
+                  <Muted>{shortenAddress(data.sellerPubkey)}</Muted>
+                </HStack>
+              </VStack>
             </Card>
 
             {data.sellerPubkey === pubkey ? (
@@ -95,6 +125,26 @@ export default function Listing() {
         </VStack>
       </VStack>
     ));
+}
+
+type ListingAttributesProps = {
+  attributes: ListingAttributeValue[] | undefined;
+};
+
+function ListingAttributes({ attributes }: ListingAttributesProps) {
+  if (!attributes || attributes.length === 0) return null;
+
+  return (
+    <Card className='w-full'>
+      <VStack space='sm'>
+        <Large className='font-semibold'>Attributes</Large>
+        <Divider />
+        {attributes.map((attrVal) => (
+          <AttributeDisplay key={attrVal.attributeId} attributeValue={attrVal} />
+        ))}
+      </VStack>
+    </Card>
+  );
 }
 
 function SellerListingChats(props: { listingId: number }) {
