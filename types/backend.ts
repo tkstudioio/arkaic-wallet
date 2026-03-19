@@ -150,32 +150,61 @@ export type Category = {
   listings?: ListingCategory[];
 };
 
+export type AttributeType = "select" | "boolean" | "text" | "range" | "date" | "multi_select";
+
 export type CategoryAttribute = {
   attributeId: number;
   name: string;
   slug: string;
-  type: "select" | "boolean";
+  type: AttributeType;
   required: boolean;
   isFilterable: boolean;
   values: { id: number; value: string }[];
+  rangeMin?: number;
+  rangeMax?: number;
+  rangeStep?: number;
+  rangeUnit?: string;
 };
 
 export type ListingAttributeValue = {
+  id: number;
   listingId: number;
   attributeId: number;
   valueId: number | null;
   valueBool: boolean | null;
+  valueText: string | null;
+  valueFloat: number | null;
   attribute: {
     id: number;
     name: string;
     slug: string;
-    type: "select" | "boolean";
+    type: AttributeType;
   };
   value: {
     id: number;
     attributeId: number;
     value: string;
   } | null;
+  multiValues: { id: number; value: string }[] | null;
+};
+
+export type CreateListingAttribute =
+  | { attributeId: number; valueId: number }
+  | { attributeId: number; valueBool: boolean }
+  | { attributeId: number; valueText: string }
+  | { attributeId: number; valueIds: number[] };
+
+export type CategoryFilterAttribute = {
+  attributeId: number;
+  name: string;
+  slug: string;
+  type: AttributeType;
+  isFilterable: boolean;
+  values?: { id: number; value: string }[];
+  rangeMin?: number;
+  rangeMax?: number;
+  rangeStep?: number;
+  rangeUnit?: string;
 };
 
 export type EscrowStatus =

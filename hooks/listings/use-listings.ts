@@ -8,7 +8,7 @@ export function useListings() {
     queryFn: async (): Promise<Listing[]> => {
       const { data } = await backend.get("/listings");
 
-      return data;
+      return data.listings;
     },
   });
 }

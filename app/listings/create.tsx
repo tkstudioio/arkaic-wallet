@@ -9,7 +9,7 @@ import { Large, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCategoryAttributes } from "@/hooks/categories/use-category-attributes";
 import { useCreateProduct } from "@/hooks/listings/use-create-listing";
-import { ListingAttributeValue } from "@/types/backend";
+import { CreateListingAttribute } from "@/types/backend";
 
 import { useRouter } from "expo-router";
 import { useFormik } from "formik";
@@ -23,7 +23,7 @@ type FormValues = {
   description: string;
   price: number;
   categoryId: number | null;
-  attributes: Record<string, string | boolean>;
+  attributes: Record<string, string | boolean | number[]>;
 };
 
 function ProductCreateForm() {
@@ -39,24 +39,54 @@ function ProductCreateForm() {
       attributes: {},
     },
     onSubmit: (values) => {
-      const attributeValues: ListingAttributeValue[] = [];
+      const attributeValues: CreateListingAttribute[] = [];
 
       if (attributesQuery.data) {
         for (const attr of attributesQuery.data) {
           const rawValue = values.attributes[String(attr.attributeId)];
           if (rawValue === undefined || rawValue === "") continue;
 
-          if (attr.type === "select") {
-            attributeValues.push({
-              attributeId: attr.attributeId,
-              valueId: Number(rawValue),
-            });
-          } else if (attr.type === "boolean") {
-            attributeValues.push({
-              attributeId: attr.attributeId,
-              valueBool: rawValue as boolean,
-            });
-          }
+          match(attr.type)
+            .with("select", () => {
+              attributeValues.push({
+                attributeId: attr.attributeId,
+                valueId: Number(rawValue),
+              });
+            })
+            .with("boolean", () => {
+              attributeValues.push({
+                attributeId: attr.attributeId,
+                valueBool: rawValue as boolean,
+              });
+            })
+            .with("text", () => {
+              attributeValues.push({
+                attributeId: attr.attributeId,
+                valueText: rawValue as string,
+              });
+            })
+            .with("range", () => {
+              attributeValues.push({
+                attributeId: attr.attributeId,
+                valueText: String(rawValue),
+              });
+            })
+            .with("date", () => {
+              attributeValues.push({
+                attributeId: attr.attributeId,
+                valueText: rawValue as string,
+              });
+            })
+            .with("multi_select", () => {
+              const ids = rawValue as number[];
+              if (ids.length > 0) {
+                attributeValues.push({
+                  attributeId: attr.attributeId,
+                  valueIds: ids,
+                });
+              }
+            })
+            .otherwise(() => {});
         }
       }
 
@@ -80,7 +110,9 @@ function ProductCreateForm() {
     .filter((a) => a.required)
     .every((a) => {
       const val = values.attributes[String(a.attributeId)];
-      return val !== undefined && val !== "";
+      if (val === undefined || val === "") return false;
+      if (Array.isArray(val)) return val.length > 0;
+      return true;
     });
 
   const canSubmit =

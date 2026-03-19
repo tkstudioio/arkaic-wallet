@@ -1,5 +1,5 @@
 import { backend } from "@/lib/api";
-import { Listing, ListingAttributeValue } from "@/types/backend";
+import { CreateListingAttribute, Listing } from "@/types/backend";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -9,7 +9,7 @@ type CreateProductParams = {
   description: string;
   price: number;
   categoryId: number;
-  attributes: ListingAttributeValue[];
+  attributes: CreateListingAttribute[];
 };
 
 export function useCreateProduct() {

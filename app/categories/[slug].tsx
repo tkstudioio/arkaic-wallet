@@ -1,3 +1,4 @@
+import { ListingItem } from "@/components/listing-item";
 import {
   Actionsheet,
   ActionsheetBackdrop,
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/form-control";
 import { HStack } from "@/components/ui/hstack";
 import { ChevronDownIcon } from "@/components/ui/icon";
+import { Input, InputField } from "@/components/ui/input";
 import {
   Select,
   SelectBackdrop,
@@ -32,6 +34,7 @@ import { Large, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCategory } from "@/hooks/categories/use-category";
 import { useCategoryAttributes } from "@/hooks/categories/use-category-attributes";
+import { useListingsByCategory } from "@/hooks/listings/use-listings-by-category";
 import { CategoryAttribute } from "@/types/backend";
 import { Link, useLocalSearchParams } from "expo-router";
 import { filter, map } from "lodash";
@@ -40,7 +43,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ScrollView, View } from "react-native";
 import { match } from "ts-pattern";
 
-type AttributeFormValues = Record<string, string | boolean>;
+type AttributeFormValues = Record<string, string | boolean | number[]>;
 
 type AttributeFieldProps = {
   attr: CategoryAttribute;
@@ -109,6 +112,114 @@ function AttributeField({ attr, control }: AttributeFieldProps) {
             )}
           />
         ))
+        .with("text", () => (
+          <Controller
+            control={control}
+            name={String(attr.attributeId)}
+            defaultValue=''
+            render={({ field: { value, onChange } }) => (
+              <Input>
+                <InputField
+                  placeholder="Enter value..."
+                  value={typeof value === "string" ? value : ""}
+                  onChangeText={onChange}
+                />
+              </Input>
+            )}
+          />
+        ))
+        .with("range", () => (
+          <Controller
+            control={control}
+            name={String(attr.attributeId)}
+            defaultValue=''
+            render={({ field: { value, onChange } }) => {
+              const parts = typeof value === "string" ? value.split(",") : ["", ""];
+              const minVal = parts[0] ?? "";
+              const maxVal = parts[1] ?? "";
+              return (
+                <VStack space="xs">
+                  <HStack space="sm" className="items-center">
+                    <VStack space="xs" className="flex-1">
+                      <Small className="text-arkaic-muted">Min</Small>
+                      <Input>
+                        <InputField
+                          placeholder={String(attr.rangeMin ?? 0)}
+                          value={minVal}
+                          onChangeText={(v) => onChange(`${v},${maxVal}`)}
+                          keyboardType="numeric"
+                        />
+                      </Input>
+                    </VStack>
+                    <VStack space="xs" className="flex-1">
+                      <Small className="text-arkaic-muted">Max</Small>
+                      <Input>
+                        <InputField
+                          placeholder={String(attr.rangeMax ?? "")}
+                          value={maxVal}
+                          onChangeText={(v) => onChange(`${minVal},${v}`)}
+                          keyboardType="numeric"
+                        />
+                      </Input>
+                    </VStack>
+                    {attr.rangeUnit ? (
+                      <Small className="text-arkaic-muted">{attr.rangeUnit}</Small>
+                    ) : null}
+                  </HStack>
+                </VStack>
+              );
+            }}
+          />
+        ))
+        .with("date", () => (
+          <Controller
+            control={control}
+            name={String(attr.attributeId)}
+            defaultValue=''
+            render={({ field: { value, onChange } }) => (
+              <Input>
+                <InputField
+                  placeholder="YYYY-MM-DD"
+                  value={typeof value === "string" ? value : ""}
+                  onChangeText={onChange}
+                />
+              </Input>
+            )}
+          />
+        ))
+        .with("multi_select", () => (
+          <Controller
+            control={control}
+            name={String(attr.attributeId)}
+            defaultValue={[]}
+            render={({ field: { value, onChange } }) => {
+              const selectedIds = Array.isArray(value) ? value : [];
+              return (
+                <View className="flex-row flex-wrap gap-2">
+                  {attr.values.map((option) => {
+                    const isSelected = selectedIds.includes(option.id);
+                    return (
+                      <Button
+                        key={option.id}
+                        size="sm"
+                        variant={isSelected ? "solid" : "outline"}
+                        action={isSelected ? "primary" : "neutral"}
+                        onPress={() => {
+                          const next = isSelected
+                            ? selectedIds.filter((id: number) => id !== option.id)
+                            : [...selectedIds, option.id];
+                          onChange(next);
+                        }}
+                      >
+                        <ButtonText>{option.value}</ButtonText>
+                      </Button>
+                    );
+                  })}
+                </View>
+              );
+            }}
+          />
+        ))
         .otherwise(() => null)}
     </FormControl>
   );
@@ -147,19 +258,33 @@ function AttributeChip({ attr, control }: AttributeFieldProps) {
         )}
       />
     ))
-    .with("boolean", () => (
+    .with("multi_select", () => (
       <Controller
         control={control}
         name={String(attr.attributeId)}
-        defaultValue={false}
+        defaultValue=''
         render={({ field: { value, onChange } }) => (
-          <HStack space={"md"} className='items-center'>
-            <Small>{attr.name}</Small>
-            <Switch
-              value={typeof value === "boolean" ? value : false}
-              onValueChange={onChange}
-            />
-          </HStack>
+          <Select selectedValue={value as string} onValueChange={onChange}>
+            <SelectTrigger>
+              <SelectInput placeholder={attr.name} className='text-sm' />
+              <SelectIcon as={ChevronDownIcon} className='mr-1' />
+            </SelectTrigger>
+            <SelectPortal>
+              <SelectBackdrop />
+              <SelectContent>
+                <SelectDragIndicatorWrapper>
+                  <SelectDragIndicator />
+                </SelectDragIndicatorWrapper>
+                {map(attr.values, (option) => (
+                  <SelectItem
+                    key={option.id}
+                    label={option.value}
+                    value={option.value}
+                  />
+                ))}
+              </SelectContent>
+            </SelectPortal>
+          </Select>
         )}
       />
     ))
@@ -170,8 +295,11 @@ export default function CategoryDetail() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const categoryQuery = useCategory(slug);
   const attributesQuery = useCategoryAttributes(categoryQuery.data?.id);
-  const { control, handleSubmit } = useForm<AttributeFormValues>();
+  const { control, handleSubmit, watch } = useForm<AttributeFormValues>();
   const [showFilters, setShowFilters] = useState(false);
+
+  const filterValues = watch();
+  const listingsQuery = useListingsByCategory(categoryQuery.data?.id, filterValues);
 
   const onSubmit = (values: AttributeFormValues) => {
     console.log("Category attribute form values:", values);
@@ -222,6 +350,7 @@ export default function CategoryDetail() {
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                nestedScrollEnabled={true}
                 contentContainerClassName='flex-row gap-2 '
               >
                 {map(category.children, (child) => (
@@ -252,10 +381,11 @@ export default function CategoryDetail() {
                   <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
+                    nestedScrollEnabled={true}
                     contentContainerClassName='flex-row gap-2 '
                   >
                     {map(
-                      filter(attributes, ({ type }) => type !== "boolean"),
+                      filter(attributes, ({ type }) => type === "select" || type === "multi_select"),
                       (attr) => (
                         <AttributeChip
                           key={attr.attributeId}
@@ -295,6 +425,39 @@ export default function CategoryDetail() {
                 </ActionsheetScrollView>
               </ActionsheetContent>
             </Actionsheet>
+
+            {/* Listings */}
+            <VStack space='md'>
+              <HStack space='md' className='items-center justify-between'>
+                <P className='font-bold'>Listings</P>
+                {!listingsQuery.isLoading && listingsQuery.data && (
+                  <Small className='text-arkaic-muted'>
+                    {listingsQuery.data.length}
+                  </Small>
+                )}
+              </HStack>
+
+              {match(listingsQuery)
+                .with({ isLoading: true }, () => <Spinner size='small' />)
+                .with({ isError: true }, () => (
+                  <Small className='text-arkaic-negative'>
+                    Failed to load listings.
+                  </Small>
+                ))
+                .otherwise(({ data: listings }) =>
+                  listings && listings.length > 0 ? (
+                    <VStack space='md'>
+                      {map(listings, (listing) => (
+                        <ListingItem key={listing.id} listing={listing} />
+                      ))}
+                    </VStack>
+                  ) : (
+                    <Small className='text-arkaic-muted'>
+                      No listings found.
+                    </Small>
+                  ),
+                )}
+            </VStack>
           </>
         ))}
     </VStack>
