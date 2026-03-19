@@ -7,12 +7,14 @@ import {
   SelectInput,
   SelectItem,
   SelectPortal,
+  SelectScrollView,
   SelectTrigger,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCategories } from "@/hooks/categories/use-categories";
+import { useCategory } from "@/hooks/categories/use-category";
 import { Category } from "@/types/backend";
 import { find } from "lodash";
 import { useState } from "react";
@@ -23,6 +25,79 @@ type Props = {
   selectedCategoryId?: number | null;
 };
 
+type CategoryLevelProps = {
+  parentCategory: Category;
+  onSelect: (categoryId: number) => void;
+};
+
+function CategoryLevel({ parentCategory, onSelect }: CategoryLevelProps) {
+  const categoryQuery = useCategory(parentCategory.slug);
+  const [selectedChildSlug, setSelectedChildSlug] = useState<string | null>(
+    null,
+  );
+
+  const children = categoryQuery.data?.children ?? parentCategory.children ?? [];
+
+  const selectedChild = selectedChildSlug
+    ? find(children, (c) => c.slug === selectedChildSlug)
+    : undefined;
+
+  function handleChange(value: string) {
+    const child = find(children, (c) => String(c.id) === value);
+    if (!child) return;
+
+    setSelectedChildSlug(child.slug);
+    onSelect(child.id);
+  }
+
+  return match(categoryQuery)
+    .with({ isLoading: true }, () => <Spinner />)
+    .with({ isError: true }, () => (
+      <Small className="text-arkaic-negative">Failed to load subcategories.</Small>
+    ))
+    .otherwise(() => {
+      if (children.length === 0) return null;
+
+      return (
+        <VStack space="xs">
+          <Select
+            selectedValue={selectedChild ? String(selectedChild.id) : undefined}
+            onValueChange={handleChange}
+          >
+            <SelectTrigger>
+              <SelectInput placeholder="Select a subcategory" />
+            </SelectTrigger>
+            <SelectPortal>
+              <SelectBackdrop />
+              <SelectContent>
+                <SelectDragIndicatorWrapper>
+                  <SelectDragIndicator />
+                </SelectDragIndicatorWrapper>
+                <SelectScrollView>
+                  {children.map((child) => (
+                    <SelectItem
+                      key={child.id}
+                      label={child.name}
+                      value={String(child.id)}
+                    />
+                  ))}
+                </SelectScrollView>
+              </SelectContent>
+            </SelectPortal>
+          </Select>
+
+          {selectedChild && (
+            <CategoryLevel
+              key={selectedChild.slug}
+              parentCategory={selectedChild}
+              onSelect={onSelect}
+            />
+          )}
+        </VStack>
+      );
+    });
+}
+
 export function CategoryPicker({ onSelect, selectedCategoryId }: Props) {
   const categoriesQuery = useCategories();
   const [selectedRootId, setSelectedRootId] = useState<number | null>(null);
@@ -32,52 +107,36 @@ export function CategoryPicker({ onSelect, selectedCategoryId }: Props) {
     (c) => c.id === selectedRootId,
   );
 
-  const hasChildren =
-    selectedRoot?.children && selectedRoot.children.length > 0;
-  console.log(selectedRoot?.children);
-
   function handleRootChange(value: string) {
     const rootId = Number(value);
-
     setSelectedRootId(rootId);
 
     const root = find(categoriesQuery.data, (c) => c.id === rootId);
     if (!root) return;
 
-    if (!root.children || root.children.length === 0) {
-      onSelect(root.id);
-    } else {
-      onSelect(null);
-    }
-  }
-
-  function handleSubcategoryChange(value: string) {
-    onSelect(Number(value));
+    onSelect(root.id);
   }
 
   return (
-    <VStack space='xs'>
+    <VStack space="xs">
       {match(categoriesQuery)
         .with({ isLoading: true }, () => <Spinner />)
         .with({ isError: true }, () => (
-          <Small className='text-arkaic-negative'>
+          <Small className="text-arkaic-negative">
             Failed to load categories.
           </Small>
         ))
         .otherwise(({ data }) => (
-          <VStack space='xs'>
+          <VStack space="xs">
             <Small>Category</Small>
             <Select
               selectedValue={
                 selectedRootId ? String(selectedRootId) : undefined
               }
-              onValueChange={(v) => {
-                console.log(v);
-                handleRootChange(v);
-              }}
+              onValueChange={handleRootChange}
             >
               <SelectTrigger>
-                <SelectInput placeholder='Select a category' />
+                <SelectInput placeholder="Select a category" />
               </SelectTrigger>
               <SelectPortal>
                 <SelectBackdrop />
@@ -85,46 +144,25 @@ export function CategoryPicker({ onSelect, selectedCategoryId }: Props) {
                   <SelectDragIndicatorWrapper>
                     <SelectDragIndicator />
                   </SelectDragIndicatorWrapper>
-                  {(data ?? []).map((category) => (
-                    <SelectItem
-                      key={category.id}
-                      label={category.name}
-                      value={String(category.id)}
-                    />
-                  ))}
+                  <SelectScrollView>
+                    {(data ?? []).map((category) => (
+                      <SelectItem
+                        key={category.id}
+                        label={category.name}
+                        value={String(category.id)}
+                      />
+                    ))}
+                  </SelectScrollView>
                 </SelectContent>
               </SelectPortal>
             </Select>
 
-            {hasChildren && (
-              <VStack space='xs'>
-                <Small>Subcategory</Small>
-                <Select
-                  selectedValue={
-                    selectedCategoryId ? String(selectedCategoryId) : undefined
-                  }
-                  onValueChange={handleSubcategoryChange}
-                >
-                  <SelectTrigger>
-                    <SelectInput placeholder='Select a subcategory' />
-                  </SelectTrigger>
-                  <SelectPortal>
-                    <SelectBackdrop />
-                    <SelectContent>
-                      <SelectDragIndicatorWrapper>
-                        <SelectDragIndicator />
-                      </SelectDragIndicatorWrapper>
-                      {(selectedRoot?.children ?? []).map((child) => (
-                        <SelectItem
-                          key={child.id}
-                          label={child.name}
-                          value={String(child.id)}
-                        />
-                      ))}
-                    </SelectContent>
-                  </SelectPortal>
-                </Select>
-              </VStack>
+            {selectedRoot && (selectedRoot.children?.length ?? 0) > 0 && (
+              <CategoryLevel
+                key={selectedRoot.slug}
+                parentCategory={selectedRoot}
+                onSelect={onSelect}
+              />
             )}
           </VStack>
         ))}
