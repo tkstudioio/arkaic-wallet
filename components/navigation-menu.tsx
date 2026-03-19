@@ -1,9 +1,9 @@
 import { Href, Link, usePathname } from "expo-router";
 import { toString } from "lodash";
 import {
+  Home,
   LucideIcon,
   MessagesSquare,
-  Package,
   Plus,
   Settings,
   User,
@@ -14,7 +14,7 @@ import { Card } from "./ui/card";
 import { HStack } from "./ui/hstack";
 
 const tabs: { label: string; icon: LucideIcon; path: Href }[] = [
-  { label: "Listings", icon: Package, path: "/listings" },
+  { label: "Home", icon: Home, path: "/categories" },
   { label: "Sell", icon: Plus, path: "/listings/create" },
   { label: "My listings", icon: User, path: "/listings/my-listings" },
   { label: "Chats", icon: MessagesSquare, path: "/chats" },
