@@ -34,8 +34,7 @@ export default function CategoriesIndex() {
       <Large>All products</Large>
 
       {/* Categories */}
-      <VStack space="sm">
-        <P className="text-sm text-arkaic-muted">Browse by category</P>
+      <VStack space='sm'>
         {match(categoriesQuery)
           .with({ isLoading: true }, () => <Spinner />)
           .with({ isError: true }, () => (
@@ -44,7 +43,6 @@ export default function CategoriesIndex() {
             </Small>
           ))
           .otherwise(({ data }) => {
-            const allCategories = flattenCategories(data || []);
             return (
               <ScrollView
                 horizontal
@@ -52,7 +50,7 @@ export default function CategoriesIndex() {
                 nestedScrollEnabled={true}
                 contentContainerClassName='flex-row gap-2'
               >
-                {map(allCategories, (category) => (
+                {map(data, (category) => (
                   <Link
                     key={category.slug}
                     href={`/categories/${category.slug}`}
@@ -74,10 +72,10 @@ export default function CategoriesIndex() {
       </VStack>
 
       {/* All Listings */}
-      <VStack space="sm">
-        <P className="text-sm text-arkaic-muted">Latest listings</P>
+      <VStack space='sm'>
+        <P className='text-sm text-arkaic-muted'>Latest listings</P>
         {match(listingsQuery)
-          .with({ isLoading: true }, () => <Spinner size="small" />)
+          .with({ isLoading: true }, () => <Spinner size='small' />)
           .with({ isError: true }, () => (
             <Small className='text-arkaic-negative'>
               Failed to load listings.
