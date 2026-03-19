@@ -149,6 +149,20 @@ export type Category = {
   listings?: ListingCategory[];
 };
 
+export type CategoryAttribute = {
+  attributeId: number;
+  name: string;
+  slug: string;
+  type: "select" | "boolean";
+  required: boolean;
+  isFilterable: boolean;
+  values: { id: number; value: string }[];
+};
+
+export type ListingAttributeValue =
+  | { attributeId: number; valueId: number }
+  | { attributeId: number; valueBool: boolean };
+
 export type EscrowStatus =
   | "awaitingFunds"
   | "partiallyFunded"
