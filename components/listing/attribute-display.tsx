@@ -8,14 +8,15 @@ type Props = {
 };
 
 export function AttributeDisplay({ attributeValue }: Props) {
-  const { attribute, value, valueBool, valueText, valueFloat, multiValues } = attributeValue;
+  const { attribute, value, valueBool, valueText, valueFloat, multiValues } =
+    attributeValue;
 
   const displayValue = match(attribute.type)
-    .with("boolean", () => (valueBool ? "Yes" : "No"))
+    .with("boolean", () => (valueBool === null ? "-" : valueBool ? "Yes" : "No"))
     .with("select", () => value?.value ?? "-")
     .with("text", () => valueText ?? "-")
     .with("range", () => {
-      if (valueFloat !== null && valueFloat !== undefined) {
+      if (valueFloat != null) {
         return valueFloat.toLocaleString();
       }
       return valueText ?? "-";
@@ -26,13 +27,13 @@ export function AttributeDisplay({ attributeValue }: Props) {
     })
     .with("multi_select", () => {
       if (!multiValues || multiValues.length === 0) return "-";
-      return multiValues.map((v) => v.value).join(", ");
+      return multiValues.map((mv) => mv.value.value).join(", ");
     })
     .otherwise(() => "-");
 
   return (
-    <HStack className="justify-between items-center">
-      <Small className="text-arkaic-muted">{attribute.name}</Small>
+    <HStack className='justify-between items-center'>
+      <Small className='text-arkaic-muted'>{attribute.name}</Small>
       <P>{displayValue}</P>
     </HStack>
   );

@@ -185,7 +185,7 @@ export type ListingAttributeValue = {
     attributeId: number;
     value: string;
   } | null;
-  multiValues: { id: number; value: string }[] | null;
+  multiValues: { id: number; value: { id: number; value: string } }[] | null;
 };
 
 export type CreateListingAttribute =
