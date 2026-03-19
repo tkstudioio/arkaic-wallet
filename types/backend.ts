@@ -55,6 +55,7 @@ export type Listing = {
   category?: Category;
   categoryId?: number;
   chats?: Chat[];
+  attributes?: ListingAttributeValue[];
 };
 
 export type ListingCategory = {
@@ -159,9 +160,23 @@ export type CategoryAttribute = {
   values: { id: number; value: string }[];
 };
 
-export type ListingAttributeValue =
-  | { attributeId: number; valueId: number }
-  | { attributeId: number; valueBool: boolean };
+export type ListingAttributeValue = {
+  listingId: number;
+  attributeId: number;
+  valueId: number | null;
+  valueBool: boolean | null;
+  attribute: {
+    id: number;
+    name: string;
+    slug: string;
+    type: "select" | "boolean";
+  };
+  value: {
+    id: number;
+    attributeId: number;
+    value: string;
+  } | null;
+};
 
 export type EscrowStatus =
   | "awaitingFunds"
