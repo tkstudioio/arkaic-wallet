@@ -1,8 +1,10 @@
+import { ListingItem } from "@/components/listing-item";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { Large, Small } from "@/components/ui/typography";
+import { Large, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCategories } from "@/hooks/categories/use-categories";
+import { useListings } from "@/hooks/listings/use-listings";
 import { Category } from "@/types/backend";
 import { Link } from "expo-router";
 import { map } from "lodash";
@@ -25,11 +27,15 @@ function flattenCategories(categories: Category[]): Category[] {
 
 export default function CategoriesIndex() {
   const categoriesQuery = useCategories();
+  const listingsQuery = useListings();
 
   return (
     <VStack space={"md"}>
       <Large>All products</Large>
-      <VStack>
+
+      {/* Categories */}
+      <VStack space="sm">
+        <P className="text-sm text-arkaic-muted">Browse by category</P>
         {match(categoriesQuery)
           .with({ isLoading: true }, () => <Spinner />)
           .with({ isError: true }, () => (
@@ -65,6 +71,31 @@ export default function CategoriesIndex() {
               </ScrollView>
             );
           })}
+      </VStack>
+
+      {/* All Listings */}
+      <VStack space="sm">
+        <P className="text-sm text-arkaic-muted">Latest listings</P>
+        {match(listingsQuery)
+          .with({ isLoading: true }, () => <Spinner size="small" />)
+          .with({ isError: true }, () => (
+            <Small className='text-arkaic-negative'>
+              Failed to load listings.
+            </Small>
+          ))
+          .otherwise(({ data: listings }) =>
+            listings && listings.length > 0 ? (
+              <VStack space='md'>
+                {map(listings, (listing) => (
+                  <ListingItem key={listing.id} listing={listing} />
+                ))}
+              </VStack>
+            ) : (
+              <Small className='text-arkaic-muted'>
+                No listings available.
+              </Small>
+            ),
+          )}
       </VStack>
     </VStack>
   );
