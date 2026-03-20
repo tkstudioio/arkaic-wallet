@@ -141,6 +141,8 @@ export type Category = {
   id: number;
   name: string;
   slug: string;
+  iconName: string | null;
+  color: string | null;
 
   childrenOf: number | null;
 
