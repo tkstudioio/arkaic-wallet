@@ -4,7 +4,7 @@ import { schnorr } from "@noble/curves/secp256k1";
 import { hex } from "@scure/base";
 import axios, { AxiosError } from "axios";
 
-export const API_BASE_URL = "http://localhost:4000/api";
+export const API_BASE_URL = "http://192.168.3.92:4000/api";
 
 export const backend = axios.create({
   baseURL: API_BASE_URL,
