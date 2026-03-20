@@ -93,11 +93,14 @@ export function useWebSocket() {
           queryClient.refetchQueries({ queryKey: ["chat", chatId] });
           queryClient.refetchQueries({ queryKey: ["active-offer", chatId] });
           queryClient.refetchQueries({ queryKey: ["chat-offer", chatId] });
+          queryClient.refetchQueries({ queryKey: ["chats"] });
+          queryClient.refetchQueries({ queryKey: ["buyer-chats"] });
         }
 
         if (message.type === "escrow_update") {
           queryClient.refetchQueries({ queryKey: ["escrow", message.address] });
           queryClient.refetchQueries({ queryKey: ["chat-escrow"] });
+          queryClient.refetchQueries({ queryKey: ["chats"] });
         }
 
         console.log("[WebSocket]", message.type);
