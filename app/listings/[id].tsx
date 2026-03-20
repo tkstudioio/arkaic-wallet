@@ -1,4 +1,5 @@
 import { AmountComponent } from "@/components/amount";
+import { ChatListItem } from "@/components/chat-list-item";
 import { AttributeDisplay } from "@/components/listing/attribute-display";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,8 +15,8 @@ import { useWebSocket } from "@/hooks/use-websocket";
 import useAccountStore from "@/stores/account";
 import { ListingAttributeValue } from "@/types/backend";
 import { shortenAddress } from "@/utils/shorten-address";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { first, map } from "lodash";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { map } from "lodash";
 import { ArrowLeft, ImageIcon } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import { match } from "ts-pattern";
@@ -85,22 +86,24 @@ export default function Listing() {
 
             <ListingAttributes attributes={data.attributes} />
 
-            <Card className='w-full'>
-              <VStack space='sm'>
-                <Large className='font-semibold'>Seller info</Large>
-                <Divider />
+            {data.sellerPubkey !== pubkey ? (
+              <Card className='w-full'>
+                <VStack space='sm'>
+                  <Large className='font-semibold'>Seller info</Large>
+                  <Divider />
 
-                <HStack className='justify-between items-center'>
-                  <Small className='text-arkaic-muted'>Username</Small>
-                  <P>{data.seller?.username ?? "Unknown"}</P>
-                </HStack>
+                  <HStack className='justify-between items-center'>
+                    <Small className='text-arkaic-muted'>Username</Small>
+                    <P>{data.seller?.username ?? "Unknown"}</P>
+                  </HStack>
 
-                <HStack className='justify-between items-center'>
-                  <Small className='text-arkaic-muted'>Public key</Small>
-                  <Muted>{shortenAddress(data.sellerPubkey)}</Muted>
-                </HStack>
-              </VStack>
-            </Card>
+                  <HStack className='justify-between items-center'>
+                    <Small className='text-arkaic-muted'>Public key</Small>
+                    <Muted>{shortenAddress(data.sellerPubkey)}</Muted>
+                  </HStack>
+                </VStack>
+              </Card>
+            ) : null}
 
             {data.sellerPubkey === pubkey ? (
               <SellerListingChats listingId={data.id} />
@@ -110,13 +113,28 @@ export default function Listing() {
 
         <VStack className='py-4'>
           {pubkey !== data.sellerPubkey ? (
-            <Button
-              onPress={() => startChatMutation.mutate(data)}
-              isDisabled={startChatMutation.isPending}
-            >
-              <ButtonText>Chat with seller</ButtonText>
-              {startChatMutation.isPending && <Spinner />}
-            </Button>
+            (() => {
+              const myChat = data.chats?.find((c) => c.buyerPubkey === pubkey);
+              const isCompleted = myChat?.escrow?.status === "completed";
+
+              return isCompleted ? (
+                <Button
+                  action='neutral'
+                  variant='outline'
+                  onPress={() => router.push(`/chats/${myChat!.id}`)}
+                >
+                  <ButtonText>View chat history</ButtonText>
+                </Button>
+              ) : (
+                <Button
+                  onPress={() => startChatMutation.mutate(data)}
+                  isDisabled={startChatMutation.isPending}
+                >
+                  <ButtonText>Chat with seller</ButtonText>
+                  {startChatMutation.isPending && <Spinner />}
+                </Button>
+              );
+            })()
           ) : (
             <Button action='neutral' variant='outline' isDisabled>
               <ButtonText>Edit listing</ButtonText>
@@ -140,7 +158,10 @@ function ListingAttributes({ attributes }: ListingAttributesProps) {
         <Large className='font-semibold'>Attributes</Large>
         <Divider />
         {attributes.map((attrVal) => (
-          <AttributeDisplay key={attrVal.attributeId} attributeValue={attrVal} />
+          <AttributeDisplay
+            key={attrVal.attributeId}
+            attributeValue={attrVal}
+          />
         ))}
       </VStack>
     </Card>
@@ -151,27 +172,17 @@ function SellerListingChats(props: { listingId: number }) {
   useWebSocket();
   const sellerChatsQuery = useSellerChats(props.listingId);
 
-  return match(sellerChatsQuery)
-    .with({ data: undefined }, { data: [] }, () => <P>No chats</P>)
-    .otherwise(({ data }) => (
+  return (
+    <Card className='w-full'>
       <VStack space='sm'>
-        {map(data, (chat) => {
-          const lastMessage = first(chat.messages);
-          return (
-            <Link
-              key={chat.id}
-              href={{
-                pathname: "/chats/[id]",
-                params: { id: String(chat.id) },
-              }}
-            >
-              <Card className='w-full'>
-                <Large>{chat.buyer?.username}</Large>
-                {lastMessage && <P>{lastMessage.message}</P>}
-              </Card>
-            </Link>
-          );
-        })}
+        <Large className='font-semibold'>Active Chats</Large>
+        <Divider />
+        {match(sellerChatsQuery)
+          .with({ data: undefined }, { data: [] }, () => <P>No chats</P>)
+          .otherwise(({ data }) =>
+            map(data, (chat) => <ChatListItem key={chat.id} chat={chat} />),
+          )}
       </VStack>
-    ));
+    </Card>
+  );
 }
