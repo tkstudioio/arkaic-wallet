@@ -9,9 +9,9 @@ import {
   ActionsheetDragIndicator,
   ActionsheetDragIndicatorWrapper,
 } from "@/components/ui/actionsheet";
-import { useSendBitcoin } from "@/hooks/wallet/use-send-bitcoin";
 import { useAspInfo } from "@/hooks/use-asp-info";
 import { usePasteFromClipboard } from "@/hooks/use-clipboard";
+import { useSendBitcoin } from "@/hooks/wallet/use-send-bitcoin";
 import { parserBIP21Address } from "@/utils/parse-bip21-address";
 import { shortenAddress } from "@/utils/shorten-address";
 import { useQueryClient } from "@tanstack/react-query";
@@ -104,7 +104,7 @@ export function SendActionSheet() {
 
   return (
     <>
-      <Button variant={"link"} action={"neutral"} onPress={() => setOpen(true)}>
+      <Button variant={"outline"} onPress={() => setOpen(true)}>
         <ButtonIcon as={Send} />
         <ButtonText>Send</ButtonText>
       </Button>
