@@ -10,6 +10,8 @@ import { Large, Muted, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useSellerChats } from "@/hooks/chats/use-seller-chats";
 import { useStartChat } from "@/hooks/chats/use-start-chat";
+import { useIsFavorite } from "@/hooks/favorites/use-is-favorite";
+import { useToggleFavorite } from "@/hooks/favorites/use-toggle-favorite";
 import { useListing } from "@/hooks/listings/use-listing";
 import { useWebSocket } from "@/hooks/use-websocket";
 import useAccountStore from "@/stores/account";
@@ -17,7 +19,7 @@ import { ListingAttributeValue } from "@/types/backend";
 import { shortenAddress } from "@/utils/shorten-address";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { map } from "lodash";
-import { ArrowLeft, ImageIcon } from "lucide-react-native";
+import { ArrowLeft, Heart, ImageIcon } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import { match } from "ts-pattern";
 
@@ -27,22 +29,40 @@ export default function Listing() {
   const listingQuery = useListing(id);
   const startChatMutation = useStartChat();
   const router = useRouter();
+  const { isFavorite } = useIsFavorite(Number(id));
+  const toggleFavorite = useToggleFavorite();
 
   return match(listingQuery)
     .with({ data: undefined }, () => null)
     .otherwise(({ data }) => (
       <VStack className='flex-1 h-full'>
         <VStack space={"md"}>
-          <HStack className='items-center' space='md'>
-            <Button
-              action='neutral'
-              variant='link'
-              onPress={router.back}
-              className='w-max'
-            >
-              <ButtonIcon as={ArrowLeft} />
-            </Button>
-            <Small className='font-semibold'>Go back</Small>
+          <HStack className='items-center justify-between' space='md'>
+            <HStack className='items-center' space='md'>
+              <Button
+                action='neutral'
+                variant='link'
+                onPress={router.back}
+                className='w-max'
+              >
+                <ButtonIcon as={ArrowLeft} />
+              </Button>
+              <Small className='font-semibold'>Go back</Small>
+            </HStack>
+            {data.sellerPubkey !== pubkey ? (
+              <Button
+                action='neutral'
+                variant='link'
+                onPress={() => toggleFavorite.mutate({ listingId: Number(id), isFavorite })}
+                className='w-max'
+              >
+                <ButtonIcon
+                  as={Heart}
+                  className={isFavorite ? "text-arkaic-primary" : "text-arkaic-muted"}
+                  fill={isFavorite ? "currentColor" : "none"}
+                />
+              </Button>
+            ) : null}
           </HStack>
           <Divider />
         </VStack>

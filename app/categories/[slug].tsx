@@ -120,7 +120,7 @@ function AttributeField({ attr, control }: AttributeFieldProps) {
             render={({ field: { value, onChange } }) => (
               <Input>
                 <InputField
-                  placeholder="Enter value..."
+                  placeholder='Enter value...'
                   value={typeof value === "string" ? value : ""}
                   onChangeText={onChange}
                 />
@@ -134,36 +134,39 @@ function AttributeField({ attr, control }: AttributeFieldProps) {
             name={String(attr.attributeId)}
             defaultValue=''
             render={({ field: { value, onChange } }) => {
-              const parts = typeof value === "string" ? value.split(",") : ["", ""];
+              const parts =
+                typeof value === "string" ? value.split(",") : ["", ""];
               const minVal = parts[0] ?? "";
               const maxVal = parts[1] ?? "";
               return (
-                <VStack space="xs">
-                  <HStack space="sm" className="items-center">
-                    <VStack space="xs" className="flex-1">
-                      <Small className="text-arkaic-muted">Min</Small>
+                <VStack space='xs'>
+                  <HStack space='sm' className='items-center'>
+                    <VStack space='xs' className='flex-1'>
+                      <Small className='text-arkaic-muted'>Min</Small>
                       <Input>
                         <InputField
                           placeholder={String(attr.rangeMin ?? 0)}
                           value={minVal}
                           onChangeText={(v) => onChange(`${v},${maxVal}`)}
-                          keyboardType="numeric"
+                          keyboardType='numeric'
                         />
                       </Input>
                     </VStack>
-                    <VStack space="xs" className="flex-1">
-                      <Small className="text-arkaic-muted">Max</Small>
+                    <VStack space='xs' className='flex-1'>
+                      <Small className='text-arkaic-muted'>Max</Small>
                       <Input>
                         <InputField
                           placeholder={String(attr.rangeMax ?? "")}
                           value={maxVal}
                           onChangeText={(v) => onChange(`${minVal},${v}`)}
-                          keyboardType="numeric"
+                          keyboardType='numeric'
                         />
                       </Input>
                     </VStack>
                     {attr.rangeUnit ? (
-                      <Small className="text-arkaic-muted">{attr.rangeUnit}</Small>
+                      <Small className='text-arkaic-muted'>
+                        {attr.rangeUnit}
+                      </Small>
                     ) : null}
                   </HStack>
                 </VStack>
@@ -179,7 +182,7 @@ function AttributeField({ attr, control }: AttributeFieldProps) {
             render={({ field: { value, onChange } }) => (
               <Input>
                 <InputField
-                  placeholder="YYYY-MM-DD"
+                  placeholder='YYYY-MM-DD'
                   value={typeof value === "string" ? value : ""}
                   onChangeText={onChange}
                 />
@@ -195,18 +198,20 @@ function AttributeField({ attr, control }: AttributeFieldProps) {
             render={({ field: { value, onChange } }) => {
               const selectedIds = Array.isArray(value) ? value : [];
               return (
-                <View className="flex-row flex-wrap gap-2">
+                <View className='flex-row flex-wrap gap-2'>
                   {attr.values.map((option) => {
                     const isSelected = selectedIds.includes(option.id);
                     return (
                       <Button
                         key={option.id}
-                        size="sm"
+                        size='sm'
                         variant={isSelected ? "solid" : "outline"}
                         action={isSelected ? "primary" : "neutral"}
                         onPress={() => {
                           const next = isSelected
-                            ? selectedIds.filter((id: number) => id !== option.id)
+                            ? selectedIds.filter(
+                                (id: number) => id !== option.id,
+                              )
                             : [...selectedIds, option.id];
                           onChange(next);
                         }}
@@ -299,7 +304,10 @@ export default function CategoryDetail() {
   const [showFilters, setShowFilters] = useState(false);
 
   const filterValues = watch();
-  const listingsQuery = useListingsByCategory(categoryQuery.data?.id, filterValues);
+  const listingsQuery = useListingsByCategory(
+    categoryQuery.data?.id,
+    filterValues,
+  );
 
   const onSubmit = (values: AttributeFormValues) => {
     console.log("Category attribute form values:", values);
@@ -310,7 +318,7 @@ export default function CategoryDetail() {
   const hasAttributes = attributes && attributes.length > 0;
 
   return (
-    <VStack space='md'>
+    <VStack space='md' className='w-full'>
       {match(categoryQuery)
         .with({ isLoading: true }, () => (
           <View className='px-4'>
@@ -327,15 +335,15 @@ export default function CategoryDetail() {
         .otherwise(({ data: category }) => (
           <>
             {/* Breadcrumb */}
-            <View className='flex-row items-center flex-wrap gap-1'>
+            <View className='flex-row items-center flex-wrap'>
               <Link href='/categories'>
                 <Large className='text-typography-500'>All products</Large>
               </Link>
               {category?.parent && (
                 <>
-                  <Large className='text-typography-500'>{" › "}</Large>
+                  <Large className='text-arkaic-muted'>{" › "}</Large>
                   <Link href={`/categories/${category.parent.slug}`}>
-                    <Large className='text-typography-500'>
+                    <Large className='text-arkaic-muted'>
                       {category.parent.name}
                     </Large>
                   </Link>
@@ -351,7 +359,7 @@ export default function CategoryDetail() {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 nestedScrollEnabled={true}
-                contentContainerClassName='flex-row gap-2 '
+                contentContainerClassName='flex-row gap-2'
               >
                 {map(category.children, (child) => (
                   <Link
@@ -362,7 +370,6 @@ export default function CategoryDetail() {
                     <Button
                       variant='outline'
                       action={"neutral"}
-                      size='sm'
                       className='w-max'
                     >
                       <ButtonText>{child.name}</ButtonText>
@@ -385,7 +392,11 @@ export default function CategoryDetail() {
                     contentContainerClassName='flex-row gap-2 '
                   >
                     {map(
-                      filter(attributes, ({ type }) => type === "select" || type === "multi_select"),
+                      filter(
+                        attributes,
+                        ({ type }) =>
+                          type === "select" || type === "multi_select",
+                      ),
                       (attr) => (
                         <AttributeChip
                           key={attr.attributeId}
@@ -428,15 +439,6 @@ export default function CategoryDetail() {
 
             {/* Listings */}
             <VStack space='md'>
-              <HStack space='md' className='items-center justify-between'>
-                <P className='font-bold'>Listings</P>
-                {!listingsQuery.isLoading && listingsQuery.data && (
-                  <Small className='text-arkaic-muted'>
-                    {listingsQuery.data.length}
-                  </Small>
-                )}
-              </HStack>
-
               {match(listingsQuery)
                 .with({ isLoading: true }, () => <Spinner size='small' />)
                 .with({ isError: true }, () => (
@@ -446,11 +448,14 @@ export default function CategoryDetail() {
                 ))
                 .otherwise(({ data: listings }) =>
                   listings && listings.length > 0 ? (
-                    <VStack space='md'>
+                    <ScrollView
+                      className='flex-shrink-0'
+                      contentContainerClassName='flex flex-col gap-4 '
+                    >
                       {map(listings, (listing) => (
                         <ListingItem key={listing.id} listing={listing} />
                       ))}
-                    </VStack>
+                    </ScrollView>
                   ) : (
                     <Small className='text-arkaic-muted'>
                       No listings found.
