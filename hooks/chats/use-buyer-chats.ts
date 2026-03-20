@@ -6,8 +6,8 @@ export function useBuyerChats() {
   return useQuery({
     queryKey: ["buyer-chats"],
     queryFn: async (): Promise<Chat[]> => {
-      const { data } = await backend.get<Chat[]>("/chats");
-      return data;
+      const { data } = await backend.get<{ chats: Chat[]; total: number }>("/chats");
+      return data.chats;
     },
   });
 }
