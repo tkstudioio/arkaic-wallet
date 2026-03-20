@@ -8,6 +8,7 @@ export type Account = {
   buyerChats?: Chat[];
   arbiterChats?: Chat[];
   messages?: Message[];
+  favorites?: Favorite[];
 
   buyerEscrows?: Escrow[];
   sellerEscrows?: Escrow[];
@@ -207,6 +208,14 @@ export type CategoryFilterAttribute = {
   rangeMax?: number;
   rangeStep?: number;
   rangeUnit?: string;
+};
+
+export type Favorite = {
+  id: number;
+  userPubkey: string;
+  listingId: number;
+  listing: Listing;
+  createdAt: Date;
 };
 
 export type EscrowStatus =
