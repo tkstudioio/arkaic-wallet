@@ -6,17 +6,16 @@ import {
   MessagesSquare,
   Plus,
   Settings,
-  User,
   Wallet,
 } from "lucide-react-native";
-import { Button, ButtonIcon } from "./ui/button";
+import { Button, ButtonIcon, ButtonText } from "./ui/button";
 import { Card } from "./ui/card";
 import { HStack } from "./ui/hstack";
 
 const tabs: { label: string; icon: LucideIcon; path: Href }[] = [
   { label: "Home", icon: Home, path: "/categories" },
   { label: "Sell", icon: Plus, path: "/listings/create" },
-  { label: "My listings", icon: User, path: "/listings/my-listings" },
+  // { label: "My listings", icon: User, path: "/listings/my-listings" },
   { label: "Chats", icon: MessagesSquare, path: "/chats" },
   { label: "Wallet", icon: Wallet, path: "/account/dashboard" },
   { label: "Settings", icon: Settings, path: "/account/settings" },
@@ -27,7 +26,7 @@ export default function NavigationMenu() {
 
   return (
     <Card>
-      <HStack>
+      <HStack space={"xl"}>
         {tabs.map((tab) => {
           const isActive = pathname === toString(tab.path);
           const Icon = tab.icon;
@@ -37,10 +36,13 @@ export default function NavigationMenu() {
               <Button
                 variant={isActive ? undefined : "link"}
                 action={isActive ? undefined : "neutral"}
-                size='sm'
-                className={"flex-1 items-center justify-center w-full"}
+                size={"sm"}
+                className={
+                  "flex-1 items-center justify-center w-full aspect-square flex-col px-0 "
+                }
               >
-                <ButtonIcon as={Icon} size='sm' />
+                <ButtonIcon as={Icon} size={"md"} />
+                <ButtonText>{tab.label}</ButtonText>
               </Button>
             </Link>
           );
