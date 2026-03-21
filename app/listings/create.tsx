@@ -1,9 +1,10 @@
 import { AttributeFormField } from "@/components/listing/attribute-form-field";
 import { CategoryPicker } from "@/components/category-picker";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
-import { Divider } from "@/components/ui/divider";
+import { Card } from "@/components/ui/card";
 import { HStack } from "@/components/ui/hstack";
 import { Input, InputField } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Large, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
@@ -14,9 +15,93 @@ import { CreateListingAttribute } from "@/types/backend";
 import { useRouter } from "expo-router";
 import { useFormik } from "formik";
 import { toNumber, toString } from "lodash";
-import { ArrowLeft, Camera } from "lucide-react-native";
-import { ScrollView } from "react-native";
+import { ArrowLeft, Camera, X } from "lucide-react-native";
+import React, { useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 import { match } from "ts-pattern";
+import { Divider } from "@/components/ui/divider";
+
+const MAX_PHOTOS = 10;
+const SLOT_SIZE = 80;
+
+type DraggablePhotoSlotProps = {
+  photoId: string | undefined;
+  index: number;
+  onRemove: (index: number) => void;
+  onReorder: (fromIndex: number, toIndex: number) => void;
+};
+
+function DraggablePhotoSlot({ photoId, index, onRemove, onReorder }: DraggablePhotoSlotProps) {
+  const translateX = useSharedValue(0);
+  const isActive = useSharedValue(false);
+  const zIndex = useSharedValue(0);
+
+  const panGesture = Gesture.Pan()
+    .enabled(!!photoId)
+    .activateAfterLongPress(300)
+    .runOnJS(true)
+    .onStart(() => {
+      isActive.value = true;
+      zIndex.value = 100;
+    })
+    .onUpdate((event) => {
+      translateX.value = event.translationX;
+    })
+    .onEnd((event) => {
+      const slotsMoved = Math.round(event.translationX / (SLOT_SIZE + 8));
+      const newIndex = Math.max(0, Math.min(index + slotsMoved, MAX_PHOTOS - 2));
+
+      if (newIndex !== index && photoId) {
+        onReorder(index, newIndex);
+      }
+
+      translateX.value = withSpring(0);
+      isActive.value = false;
+      zIndex.value = 0;
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+    zIndex: zIndex.value,
+    opacity: isActive.value ? 0.8 : 1,
+  }));
+
+  if (!photoId) {
+    return (
+      <Skeleton
+        isLoaded={false}
+        style={{ width: SLOT_SIZE, height: SLOT_SIZE }}
+        className="rounded-arkaic-button"
+      />
+    );
+  }
+
+  return (
+    <GestureDetector gesture={panGesture}>
+      <Animated.View
+        style={[{ width: SLOT_SIZE, height: SLOT_SIZE }, animatedStyle]}
+        className="rounded-arkaic-button bg-arkaic-border relative"
+      >
+        <View className="flex-1 items-center justify-center">
+          <Small className="text-arkaic-foreground">{index + 1}</Small>
+        </View>
+
+        <Pressable
+          onPress={() => onRemove(index)}
+          className="absolute top-1 right-1 z-10 h-5 w-5 items-center justify-center rounded-full bg-arkaic-negative"
+        >
+          <X size={12} color="white" />
+        </Pressable>
+      </Animated.View>
+    </GestureDetector>
+  );
+}
 
 type FormValues = {
   name: string;
@@ -29,6 +114,7 @@ type FormValues = {
 function ProductCreateForm() {
   const router = useRouter();
   const createProduct = useCreateProduct();
+  const [photos, setPhotos] = useState<string[]>([]);
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -123,6 +209,26 @@ function ProductCreateForm() {
     hasAllRequiredAttributes &&
     !createProduct.isPending;
 
+  function handleAddPhoto() {
+    if (photos.length >= MAX_PHOTOS - 1) return;
+    const newId = `photo_${Date.now()}`;
+    setPhotos((prev) => [...prev, newId]);
+  }
+
+  function handleRemovePhoto(index: number) {
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleReorder(fromIndex: number, toIndex: number) {
+    setPhotos((prev) => {
+      const updated = [...prev];
+      const [moved] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, moved);
+      console.log('Photo order updated:', updated);
+      return updated;
+    });
+  }
+
   return (
     <VStack className="flex-1 h-full">
       <VStack space={"md"}>
@@ -140,24 +246,36 @@ function ProductCreateForm() {
         <Divider />
       </VStack>
 
-      <ScrollView className="flex-1 py-arkaic-md">
-        {/* Section 1: Product photos */}
-        <VStack space="md" className="pb-6">
+      <ScrollView className="flex-1 py-arkaic-md" contentContainerStyle={{ gap: 12 }}>
+        <Card>
           <Large className="font-semibold">Photos</Large>
-          <Button
-            action={"neutral"}
-            variant={"outline"}
-            className="w-max aspect-video"
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 8 }}
           >
-            <ButtonIcon as={Camera} />
-            <ButtonText>Add photo</ButtonText>
-          </Button>
-        </VStack>
+            <Pressable
+              onPress={handleAddPhoto}
+              className="items-center justify-center rounded-arkaic-button border border-dashed border-arkaic-border bg-arkaic-background"
+              style={{ width: SLOT_SIZE, height: SLOT_SIZE }}
+            >
+              <Camera size={24} className="text-arkaic-muted" />
+              <Small className="text-arkaic-muted">Add</Small>
+            </Pressable>
 
-        <Divider />
+            {Array.from({ length: MAX_PHOTOS - 1 }).map((_, index) => (
+              <DraggablePhotoSlot
+                key={photos[index] ?? `empty_${index}`}
+                photoId={photos[index]}
+                index={index}
+                onRemove={handleRemovePhoto}
+                onReorder={handleReorder}
+              />
+            ))}
+          </ScrollView>
+        </Card>
 
-        {/* Section 2: General info */}
-        <VStack space="lg" className="py-6">
+        <Card>
           <Large className="font-semibold">General info</Large>
           <VStack space="xs">
             <Small>Name</Small>
@@ -202,14 +320,10 @@ function ProductCreateForm() {
               />
             </Input>
           </VStack>
-        </VStack>
+        </Card>
 
-        <Divider />
-
-        {/* Section 3: Product details (category + attributes) */}
-        <VStack space="lg" className="pt-6">
-          <Large className="font-semibold">Product details</Large>
-
+        <Card>
+          <Large className="font-semibold">Category</Large>
           <CategoryPicker
             onSelect={(categoryId) => {
               setFieldValue("categoryId", categoryId);
@@ -217,30 +331,43 @@ function ProductCreateForm() {
             }}
             selectedCategoryId={values.categoryId}
           />
+        </Card>
 
-          {values.categoryId &&
-            match(attributesQuery)
-              .with({ isLoading: true }, () => <Spinner />)
-              .with({ isError: true }, () => (
+        {values.categoryId &&
+          match(attributesQuery)
+            .with({ isLoading: true }, () => (
+              <Card>
+                <Spinner />
+              </Card>
+            ))
+            .with({ isError: true }, () => (
+              <Card>
                 <Small className="text-arkaic-negative">
                   Failed to load attributes.
                 </Small>
-              ))
-              .otherwise(({ data: attrs }) => (
-                <VStack space="md">
-                  {(attrs ?? []).map((attr) => (
-                    <AttributeFormField
-                      key={attr.attributeId}
-                      attr={attr}
-                      value={values.attributes[String(attr.attributeId)]}
-                      onChange={(val) =>
-                        setFieldValue(`attributes.${attr.attributeId}`, val)
-                      }
-                    />
-                  ))}
-                </VStack>
-              ))}
-        </VStack>
+              </Card>
+            ))
+            .otherwise(({ data: attrs }) =>
+              (attrs ?? []).length > 0 ? (
+                <Card>
+                  <Large className="font-semibold">Product details</Large>
+                  <VStack space="md">
+                    {(attrs ?? []).map((attr, i) => (
+                      <React.Fragment key={attr.attributeId}>
+                        {i > 0 && <Divider />}
+                        <AttributeFormField
+                          attr={attr}
+                          value={values.attributes[String(attr.attributeId)]}
+                          onChange={(val) =>
+                            setFieldValue(`attributes.${attr.attributeId}`, val)
+                          }
+                        />
+                      </React.Fragment>
+                    ))}
+                  </VStack>
+                </Card>
+              ) : null
+            )}
       </ScrollView>
 
       <VStack className="py-4">
