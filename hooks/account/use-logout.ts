@@ -11,7 +11,7 @@ export function useLogout() {
       logout();
     },
     onSuccess: () => {
-      router.dismissTo("/");
+      router.replace("/");
     },
   });
 }

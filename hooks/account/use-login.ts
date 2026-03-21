@@ -6,12 +6,12 @@ import { schnorr } from "@noble/curves/secp256k1";
 import { hex } from "@scure/base";
 import { useMutation } from "@tanstack/react-query";
 
+import { createStorageConfig } from "@/lib/sqlite-storage";
 import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
 import {
   ExpoArkProvider,
   ExpoIndexerProvider,
 } from "@arkade-os/sdk/adapters/expo";
-import { createStorageConfig } from "@/lib/sqlite-storage";
 
 import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
@@ -113,7 +113,7 @@ export function useLoginMutation() {
         fingerprint,
       });
 
-      router.replace("/account/dashboard");
+      router.replace("/wallet");
     },
     onError: (err: Error) => console.error(err.message),
   });
