@@ -1,23 +1,16 @@
-import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 import { VStack } from "@/components/ui/vstack";
 import { useTransactions } from "@/hooks/wallet/use-transactions";
 import useAccountStore from "@/stores/account";
-import useSettingsStore from "@/stores/settings";
 import { useQueryClient } from "@tanstack/react-query";
 import { isEmpty, join, map, values } from "lodash";
 import { useCallback, useEffect } from "react";
 import { match } from "ts-pattern";
 import { Transaction } from "./transaction";
-import { Divider } from "./ui/divider";
-import { HStack } from "./ui/hstack";
-import { Switch } from "./ui/switch";
-import { Large, P, Small } from "./ui/typography";
+import { Large, P } from "./ui/typography";
 
 export function Transactions() {
-  const { detailedTransactions, toggleDetailedTransactions } =
-    useSettingsStore();
   const { wallet, account } = useAccountStore();
   const transactionsQuery = useTransactions();
   const queryClient = useQueryClient();
@@ -38,49 +31,35 @@ export function Transactions() {
   }, [wallet, account, refreshBalanceAndTransactions]);
 
   return (
-    <Card>
-      <HStack className='justify-between items-center sticky top-0'>
-        <Large>Transactions</Large>
-        <HStack className='items-center justify-end'>
-          <Small>show details</Small>
-          <Switch
-            value={detailedTransactions}
-            onToggle={toggleDetailedTransactions}
-            size={"sm"}
-          />
-        </HStack>
-      </HStack>
-      <Divider />
-      <VStack space={"lg"}>
-        {match(transactionsQuery)
-          .with({ isSuccess: true }, ({ data }) => {
-            if (!isEmpty(data)) {
-              return map(data, (transaction) => (
-                <Transaction
-                  transaction={transaction}
-                  key={join(values(transaction.key)) + transaction.createdAt}
-                />
-              ));
-            }
-            return (
-              <VStack>
-                <Large className='text-center'>No transactions</Large>
-                <P className='text-center'>
-                  press &quot;receive&quot; to request a payment
-                </P>
-              </VStack>
-            );
-          })
-          .with(
-            { isLoading: true },
-            { isFetching: true },
-            { isPending: true },
-            () => <Spinner />,
-          )
-          .otherwise(() => (
-            <P>Something went wrong</P>
-          ))}
-      </VStack>
-    </Card>
+    <VStack space={"lg"}>
+      {match(transactionsQuery)
+        .with({ isSuccess: true }, ({ data }) => {
+          if (!isEmpty(data)) {
+            return map(data, (transaction) => (
+              <Transaction
+                transaction={transaction}
+                key={join(values(transaction.key)) + transaction.createdAt}
+              />
+            ));
+          }
+          return (
+            <VStack>
+              <Large className='text-center'>No transactions</Large>
+              <P className='text-center'>
+                press &quot;receive&quot; to request a payment
+              </P>
+            </VStack>
+          );
+        })
+        .with(
+          { isLoading: true },
+          { isFetching: true },
+          { isPending: true },
+          () => <Spinner />,
+        )
+        .otherwise(() => (
+          <P>Something went wrong</P>
+        ))}
+    </VStack>
   );
 }
