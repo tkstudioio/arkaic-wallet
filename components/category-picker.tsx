@@ -36,7 +36,8 @@ function CategoryLevel({ parentCategory, onSelect }: CategoryLevelProps) {
     null,
   );
 
-  const children = categoryQuery.data?.children ?? parentCategory.children ?? [];
+  const children =
+    categoryQuery.data?.children ?? parentCategory.children ?? [];
 
   const selectedChild = selectedChildSlug
     ? find(children, (c) => c.slug === selectedChildSlug)
@@ -53,19 +54,21 @@ function CategoryLevel({ parentCategory, onSelect }: CategoryLevelProps) {
   return match(categoryQuery)
     .with({ isLoading: true }, () => <Spinner />)
     .with({ isError: true }, () => (
-      <Small className="text-arkaic-negative">Failed to load subcategories.</Small>
+      <Small className='text-arkaic-negative'>
+        Failed to load subcategories.
+      </Small>
     ))
     .otherwise(() => {
       if (children.length === 0) return null;
 
       return (
-        <VStack space="xs">
+        <VStack space='xs'>
           <Select
             selectedValue={selectedChild ? String(selectedChild.id) : undefined}
             onValueChange={handleChange}
           >
             <SelectTrigger>
-              <SelectInput placeholder="Select a subcategory" />
+              <SelectInput placeholder='Select a subcategory' />
             </SelectTrigger>
             <SelectPortal>
               <SelectBackdrop />
@@ -118,17 +121,16 @@ export function CategoryPicker({ onSelect, selectedCategoryId }: Props) {
   }
 
   return (
-    <VStack space="xs">
+    <VStack space='xs'>
       {match(categoriesQuery)
         .with({ isLoading: true }, () => <Spinner />)
         .with({ isError: true }, () => (
-          <Small className="text-arkaic-negative">
+          <Small className='text-arkaic-negative'>
             Failed to load categories.
           </Small>
         ))
         .otherwise(({ data }) => (
-          <VStack space="xs">
-            <Small>Category</Small>
+          <VStack space='md'>
             <Select
               selectedValue={
                 selectedRootId ? String(selectedRootId) : undefined
@@ -136,7 +138,7 @@ export function CategoryPicker({ onSelect, selectedCategoryId }: Props) {
               onValueChange={handleRootChange}
             >
               <SelectTrigger>
-                <SelectInput placeholder="Select a category" />
+                <SelectInput placeholder='Select a category' />
               </SelectTrigger>
               <SelectPortal>
                 <SelectBackdrop />
