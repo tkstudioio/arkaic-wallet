@@ -19,6 +19,7 @@ import {
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 if (typeof global.Buffer === "undefined") global.Buffer = Buffer;
 
@@ -51,24 +52,26 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={client}>
-      <GluestackUIProvider mode='system'>
-        <View
-          style={{ paddingTop, paddingBottom }}
-          className='h-full bg-arkaic-background px-arkaic-md'
-        >
-          <SafeAreaProvider>
-            <Stack
-              screenOptions={{
-                animation: "none",
-                headerShown: false,
-                contentStyle: { backgroundColor: "transparent" },
-              }}
-            />
-            <StatusBar style='auto' />
-          </SafeAreaProvider>
-        </View>
-      </GluestackUIProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={client}>
+        <GluestackUIProvider mode='system'>
+          <View
+            style={{ paddingTop, paddingBottom }}
+            className='h-full bg-arkaic-background px-arkaic-md'
+          >
+            <SafeAreaProvider>
+              <Stack
+                screenOptions={{
+                  animation: "none",
+                  headerShown: false,
+                  contentStyle: { backgroundColor: "transparent" },
+                }}
+              />
+              <StatusBar style='auto' />
+            </SafeAreaProvider>
+          </View>
+        </GluestackUIProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
