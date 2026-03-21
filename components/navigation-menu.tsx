@@ -5,7 +5,7 @@ import {
   LucideIcon,
   MessagesSquare,
   Plus,
-  Settings,
+  User2,
   Wallet,
 } from "lucide-react-native";
 import { Button, ButtonIcon, ButtonText } from "./ui/button";
@@ -17,8 +17,8 @@ const tabs: { label: string; icon: LucideIcon; path: Href }[] = [
   { label: "Sell", icon: Plus, path: "/listings/create" },
   // { label: "My listings", icon: User, path: "/listings/my-listings" },
   { label: "Chats", icon: MessagesSquare, path: "/chats" },
-  { label: "Wallet", icon: Wallet, path: "/account/dashboard" },
-  { label: "Settings", icon: Settings, path: "/account/settings" },
+  { label: "Wallet", icon: Wallet, path: "/wallet" },
+  { label: "Account", icon: User2, path: "/account" },
 ];
 
 export default function NavigationMenu() {
@@ -34,7 +34,7 @@ export default function NavigationMenu() {
           return (
             <Link key={toString(tab.path)} asChild href={tab.path}>
               <Button
-                variant={isActive ? undefined : "link"}
+                variant={isActive ? "outline" : "link"}
                 action={isActive ? undefined : "neutral"}
                 size={"sm"}
                 className={
