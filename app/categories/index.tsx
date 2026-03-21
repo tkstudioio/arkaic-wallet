@@ -1,19 +1,21 @@
 import { ListingItem } from "@/components/listing-item";
 import NavigationMenu from "@/components/navigation-menu";
-import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
+import { HStack } from "@/components/ui/hstack";
+import { Input, InputField, InputIcon } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { Muted, P, Small } from "@/components/ui/typography";
+import { Muted, P } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCategories } from "@/hooks/categories/use-categories";
 import { useFavorites } from "@/hooks/favorites/use-favorites";
 import { Category } from "@/types/backend";
+
 import { Link } from "expo-router";
 import { icons, Search, type LucideIcon } from "lucide-react-native";
 import { useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { match } from "ts-pattern";
 
-/** Convert kebab-case icon name to PascalCase and resolve from lucide */
 function getCategoryIcon(iconName: string | null): LucideIcon | null {
   if (!iconName) return null;
   const pascalCase = iconName
@@ -23,119 +25,94 @@ function getCategoryIcon(iconName: string | null): LucideIcon | null {
   return (icons as Record<string, LucideIcon>)[pascalCase] ?? null;
 }
 
-/** Convert hex color to a lighter background (20% opacity) */
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-function CategoryCircle({ category }: { category: Category }) {
+function CategoryButton({ category }: { category: Category }) {
   const IconComponent = getCategoryIcon(category.iconName);
   const color = category.color ?? "#6b7280";
 
   return (
     <Link href={`/categories/${category.slug}`} asChild>
-      <Pressable className='items-center gap-2'>
-        <View
-          style={{
-            width: 72,
-            height: 72,
-            borderRadius: 36,
-            backgroundColor: hexToRgba(color, 0.15),
-            borderWidth: 1.5,
-            borderColor: hexToRgba(color, 0.3),
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {IconComponent ? (
-            <IconComponent size={28} color={color} strokeWidth={1.8} />
-          ) : (
-            <Small style={{ color }}>{category.name.charAt(0)}</Small>
-          )}
-        </View>
-        <Small style={{ color }} className='font-heading text-center'>
+      <Button
+        className='flex-col aspect-square '
+        variant={"outline"}
+        size={"lg"}
+        style={{ borderColor: color }}
+      >
+        {IconComponent && <ButtonIcon as={IconComponent} color={color} />}
+        <ButtonText className='text-center' style={{ color }}>
           {category.name}
-        </Small>
-      </Pressable>
+        </ButtonText>
+      </Button>
     </Link>
   );
 }
 
-export default function CategoriesIndex() {
+export default function Listings() {
   const categoriesQuery = useCategories();
   const favoritesQuery = useFavorites();
   const [search, setSearch] = useState("");
 
   return (
     <VStack className='h-full'>
-      <ScrollView className='flex-1'>
+      <VStack className='flex-1'>
         <VStack space='xl'>
           {/* Search bar */}
-          <Input size='lg' className='border-solid rounded-xl bg-arkaic-card'>
-            <InputSlot className='pl-3'>
-              <InputIcon as={Search} />
-            </InputSlot>
+          <Input size='xl'>
             <InputField
               placeholder='Search listings...'
               value={search}
               onChangeText={setSearch}
               returnKeyType='search'
             />
+            <InputIcon as={Search} />
           </Input>
 
           {/* Categories */}
           <VStack space='sm'>
-            {match(categoriesQuery)
-              .with({ isLoading: true }, () => <Spinner />)
-              .with({ isError: true }, () => (
-                <Muted>Failed to load categories.</Muted>
-              ))
-              .otherwise(({ data: categories }) =>
-                categories && categories.length > 0 ? (
-                  <View className='flex-row flex-wrap justify-around py-2'>
-                    {categories.map((category) => (
-                      <View
-                        key={category.slug}
-                        className='flex-1 items-center min-w-[80px] max-w-[120px] mb-4'
-                      >
-                        <CategoryCircle category={category} />
-                      </View>
-                    ))}
-                  </View>
-                ) : null,
-              )}
+            <HStack space={"lg"}>
+              {match(categoriesQuery)
+                .with({ isLoading: true }, () => <Spinner />)
+                .with({ isError: true }, () => (
+                  <Muted>Failed to load categories.</Muted>
+                ))
+                .otherwise(({ data: categories }) =>
+                  categories?.map((category) => (
+                    <View key={category.slug} className='aspect-square flex-1'>
+                      <CategoryButton category={category} />
+                    </View>
+                  )),
+                )}
+            </HStack>
           </VStack>
 
-          {/* Favorites */}
-          <VStack space='sm'>
-            <P className='font-heading text-arkaic-foreground'>Favorites</P>
-            {match(favoritesQuery)
-              .with({ isLoading: true }, () => <Spinner />)
-              .with({ isError: true }, () => (
-                <Muted>Failed to load favorites.</Muted>
-              ))
-              .otherwise(({ data }) =>
-                data && data.length > 0 ? (
-                  <View className='flex-row flex-wrap gap-3'>
-                    {data.map((fav) => (
-                      <View key={fav.id} className='flex-1 min-w-[45%]'>
-                        <ListingItem listing={fav.listing} />
-                      </View>
-                    ))}
-                  </View>
-                ) : (
-                  <Muted>
-                    No favorites yet. Tap the heart icon on a listing to save
-                    it.
-                  </Muted>
-                ),
-              )}
-          </VStack>
+          <ScrollView className='flex-1'>
+            {/* Favorites */}
+            <VStack space='sm'>
+              <P className='font-heading text-arkaic-foreground'>Favorites</P>
+              {match(favoritesQuery)
+                .with({ isLoading: true }, () => <Spinner />)
+                .with({ isError: true }, () => (
+                  <Muted>Failed to load favorites.</Muted>
+                ))
+                .otherwise(({ data }) =>
+                  data && data.length > 0 ? (
+                    <View className='flex-row flex-wrap gap-3'>
+                      {data.map((fav) => (
+                        <View key={fav.id} className='flex-1 min-w-[45%]'>
+                          <ListingItem listing={fav.listing} />
+                        </View>
+                      ))}
+                    </View>
+                  ) : (
+                    <Muted>
+                      No favorites yet. Tap the heart icon on a listing to save
+                      it.
+                    </Muted>
+                  ),
+                )}
+            </VStack>
+          </ScrollView>
         </VStack>
-      </ScrollView>
+      </VStack>
       <NavigationMenu />
     </VStack>
   );
