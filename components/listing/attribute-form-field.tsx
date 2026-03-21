@@ -36,6 +36,28 @@ export function AttributeFormField({
   value,
   onChange,
 }: AttributeFormFieldProps) {
+  if (attr.type === "boolean") {
+    return (
+      <FormControl>
+        <View className="flex-row items-center justify-between">
+          <FormControlLabelText>
+            {attr.name}
+            {attr.required && (
+              <FormControlLabelText className="text-arkaic-negative">
+                {" "}
+                (required)
+              </FormControlLabelText>
+            )}
+          </FormControlLabelText>
+          <Switch
+            value={typeof value === "boolean" ? value : false}
+            onValueChange={(v) => onChange(v)}
+          />
+        </View>
+      </FormControl>
+    );
+  }
+
   return (
     <FormControl>
       <FormControlLabel>
@@ -78,14 +100,7 @@ export function AttributeFormField({
             </SelectPortal>
           </Select>
         ))
-        .with("boolean", () => (
-          <View className="flex-row items-center w-max">
-            <Switch
-              value={typeof value === "boolean" ? value : false}
-              onValueChange={(v) => onChange(v)}
-            />
-          </View>
-        ))
+        .with("boolean", () => null)
         .with("text", () => (
           <Input>
             <InputField
@@ -127,15 +142,15 @@ export function AttributeFormField({
         .with("multi_select", () => {
           const selectedIds = Array.isArray(value) ? value : [];
           return (
-            <View className="flex-row flex-wrap gap-2">
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
               {attr.values.map((option) => {
                 const isSelected = selectedIds.includes(option.id);
                 return (
                   <Button
                     key={option.id}
-                    size="sm"
-                    variant={isSelected ? "solid" : "outline"}
+                    variant="outline"
                     action={isSelected ? "primary" : "neutral"}
+                    className="w-max"
                     onPress={() => {
                       const next = isSelected
                         ? selectedIds.filter((id) => id !== option.id)
