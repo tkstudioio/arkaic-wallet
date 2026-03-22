@@ -26,6 +26,10 @@ arkaic-wallet/
 │   │   ├── [id].tsx          # Dettaglio listing
 │   │   ├── create.tsx        # Crea listing
 │   │   └── my-listings.tsx   # I miei listings
+│   ├── categories/
+│   │   ├── _layout.tsx       # Layout con NavigationMenu
+│   │   ├── index.tsx         # Griglia categorie + favorites
+│   │   └── [slug].tsx        # Dettaglio categoria con filtri e listings
 │   └── chats/
 │       ├── _layout.tsx
 │       ├── index.tsx         # Lista chat
@@ -51,6 +55,7 @@ arkaic-wallet/
 │   ├── escrow/               # Componenti escrow (card, confirm sheet, status badge)
 │   ├── chat/                 # Componenti chat (actions, send message, create offer)
 │   ├── listing/              # Componenti listing (buy listing)
+│   ├── categories/           # Componenti categorie (attribute-field, attribute-chip, subcategories-sheet)
 │   └── icons/                # Icone SVG (logo, sats)
 ├── utils/
 │   ├── parse-bip21-address.ts

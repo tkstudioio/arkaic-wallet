@@ -197,6 +197,10 @@ app/
 │   ├── dashboard.tsx     # /account/dashboard
 │   ├── buying.tsx        # /account/buying
 │   └── settings.tsx      # /account/settings
+├── categories/
+│   ├── _layout.tsx       # Layout con NavigationMenu
+│   ├── index.tsx         # /categories (griglia + favorites)
+│   └── [slug].tsx        # /categories/:slug (filtri + listings)
 ├── listings/
 │   ├── index.tsx         # /listings
 │   ├── [id].tsx          # /listings/:id
