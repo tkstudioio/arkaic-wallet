@@ -41,6 +41,16 @@ export type Review = {
   escrow?: Escrow;
 };
 
+export type ListingPhoto = {
+  id: number;
+  listingId: number;
+  filename: string;
+  mimeType: string;
+  size: number;
+  position: number;
+  createdAt: string;
+};
+
 export type Listing = {
   id: number;
 
@@ -57,6 +67,7 @@ export type Listing = {
   categoryId?: number;
   chats?: Chat[];
   attributes?: ListingAttributeValue[];
+  photos?: ListingPhoto[];
 };
 
 export type ListingCategory = {

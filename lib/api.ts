@@ -5,6 +5,7 @@ import { hex } from "@scure/base";
 import axios, { AxiosError } from "axios";
 
 export const API_BASE_URL = "http://localhost:4000/api";
+export const UPLOADS_BASE_URL = "http://localhost:4000/uploads";
 
 export const backend = axios.create({
   baseURL: API_BASE_URL,
@@ -24,6 +25,8 @@ backend.interceptors.request.use(async (config) => {
   const method = config.method?.toUpperCase();
 
   if (method === "POST" || method === "PUT" || method === "PATCH") {
+    if (config.data instanceof FormData) return config;
+
     if (!config.data) config.data = {};
 
     const sortedData = Object.keys(config.data)
