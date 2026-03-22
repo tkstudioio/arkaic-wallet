@@ -1,3 +1,9 @@
+import { AttributeChip } from "@/components/categories/attribute-chip";
+import {
+  AttributeField,
+  AttributeFormValues,
+} from "@/components/categories/attribute-field";
+import { SubcategoriesSheet } from "@/components/categories/subcategories-sheet";
 import { ListingItem } from "@/components/listing-item";
 import {
   Actionsheet,
@@ -7,294 +13,21 @@ import {
   ActionsheetDragIndicatorWrapper,
   ActionsheetScrollView,
 } from "@/components/ui/actionsheet";
-import { Button, ButtonText } from "@/components/ui/button";
-import {
-  FormControl,
-  FormControlLabel,
-  FormControlLabelText,
-} from "@/components/ui/form-control";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
-import { ChevronDownIcon } from "@/components/ui/icon";
-import { Input, InputField } from "@/components/ui/input";
-import {
-  Select,
-  SelectBackdrop,
-  SelectContent,
-  SelectDragIndicator,
-  SelectDragIndicatorWrapper,
-  SelectIcon,
-  SelectInput,
-  SelectItem,
-  SelectPortal,
-  SelectTrigger,
-} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
 import { Large, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCategory } from "@/hooks/categories/use-category";
 import { useCategoryAttributes } from "@/hooks/categories/use-category-attributes";
 import { useListingsByCategory } from "@/hooks/listings/use-listings-by-category";
-import { CategoryAttribute } from "@/types/backend";
-import { Link, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { filter, map } from "lodash";
+import { List, SlidersHorizontal } from "lucide-react-native";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ScrollView, View } from "react-native";
 import { match } from "ts-pattern";
-
-type AttributeFormValues = Record<string, string | boolean | number[]>;
-
-type AttributeFieldProps = {
-  attr: CategoryAttribute;
-  control: ReturnType<typeof useForm<AttributeFormValues>>["control"];
-};
-
-/** Full-form field used inside the action sheet */
-function AttributeField({ attr, control }: AttributeFieldProps) {
-  return (
-    <FormControl>
-      <FormControlLabel>
-        <FormControlLabelText>
-          {attr.name}
-          {attr.required && (
-            <FormControlLabelText className='text-arkaic-negative'>
-              {" "}
-              (required)
-            </FormControlLabelText>
-          )}
-        </FormControlLabelText>
-      </FormControlLabel>
-
-      {match(attr.type)
-        .with("select", () => (
-          <Controller
-            control={control}
-            name={String(attr.attributeId)}
-            defaultValue=''
-            render={({ field: { value, onChange } }) => (
-              <Select selectedValue={value as string} onValueChange={onChange}>
-                <SelectTrigger className='w-max'>
-                  <SelectInput placeholder='Select a value…' />
-                  <SelectIcon as={ChevronDownIcon} className='mr-3' />
-                </SelectTrigger>
-                <SelectPortal>
-                  <SelectBackdrop />
-                  <SelectContent>
-                    <SelectDragIndicatorWrapper>
-                      <SelectDragIndicator />
-                    </SelectDragIndicatorWrapper>
-                    {map(attr.values, (option) => (
-                      <SelectItem
-                        key={option.id}
-                        label={option.value}
-                        value={option.value}
-                      />
-                    ))}
-                  </SelectContent>
-                </SelectPortal>
-              </Select>
-            )}
-          />
-        ))
-        .with("boolean", () => (
-          <Controller
-            control={control}
-            name={String(attr.attributeId)}
-            defaultValue={false}
-            render={({ field: { value, onChange } }) => (
-              <View className='flex-row items-center w-max'>
-                <Switch
-                  value={typeof value === "boolean" ? value : false}
-                  onValueChange={onChange}
-                />
-              </View>
-            )}
-          />
-        ))
-        .with("text", () => (
-          <Controller
-            control={control}
-            name={String(attr.attributeId)}
-            defaultValue=''
-            render={({ field: { value, onChange } }) => (
-              <Input>
-                <InputField
-                  placeholder='Enter value...'
-                  value={typeof value === "string" ? value : ""}
-                  onChangeText={onChange}
-                />
-              </Input>
-            )}
-          />
-        ))
-        .with("range", () => (
-          <Controller
-            control={control}
-            name={String(attr.attributeId)}
-            defaultValue=''
-            render={({ field: { value, onChange } }) => {
-              const parts =
-                typeof value === "string" ? value.split(",") : ["", ""];
-              const minVal = parts[0] ?? "";
-              const maxVal = parts[1] ?? "";
-              return (
-                <VStack space='xs'>
-                  <HStack space='sm' className='items-center'>
-                    <VStack space='xs' className='flex-1'>
-                      <Small className='text-arkaic-muted'>Min</Small>
-                      <Input>
-                        <InputField
-                          placeholder={String(attr.rangeMin ?? 0)}
-                          value={minVal}
-                          onChangeText={(v) => onChange(`${v},${maxVal}`)}
-                          keyboardType='numeric'
-                        />
-                      </Input>
-                    </VStack>
-                    <VStack space='xs' className='flex-1'>
-                      <Small className='text-arkaic-muted'>Max</Small>
-                      <Input>
-                        <InputField
-                          placeholder={String(attr.rangeMax ?? "")}
-                          value={maxVal}
-                          onChangeText={(v) => onChange(`${minVal},${v}`)}
-                          keyboardType='numeric'
-                        />
-                      </Input>
-                    </VStack>
-                    {attr.rangeUnit ? (
-                      <Small className='text-arkaic-muted'>
-                        {attr.rangeUnit}
-                      </Small>
-                    ) : null}
-                  </HStack>
-                </VStack>
-              );
-            }}
-          />
-        ))
-        .with("date", () => (
-          <Controller
-            control={control}
-            name={String(attr.attributeId)}
-            defaultValue=''
-            render={({ field: { value, onChange } }) => (
-              <Input>
-                <InputField
-                  placeholder='YYYY-MM-DD'
-                  value={typeof value === "string" ? value : ""}
-                  onChangeText={onChange}
-                />
-              </Input>
-            )}
-          />
-        ))
-        .with("multi_select", () => (
-          <Controller
-            control={control}
-            name={String(attr.attributeId)}
-            defaultValue={[]}
-            render={({ field: { value, onChange } }) => {
-              const selectedIds = Array.isArray(value) ? value : [];
-              return (
-                <View className='flex-row flex-wrap gap-2'>
-                  {attr.values.map((option) => {
-                    const isSelected = selectedIds.includes(option.id);
-                    return (
-                      <Button
-                        key={option.id}
-                        size='sm'
-                        variant={isSelected ? "solid" : "outline"}
-                        action={isSelected ? "primary" : "neutral"}
-                        onPress={() => {
-                          const next = isSelected
-                            ? selectedIds.filter(
-                                (id: number) => id !== option.id,
-                              )
-                            : [...selectedIds, option.id];
-                          onChange(next);
-                        }}
-                      >
-                        <ButtonText>{option.value}</ButtonText>
-                      </Button>
-                    );
-                  })}
-                </View>
-              );
-            }}
-          />
-        ))
-        .otherwise(() => null)}
-    </FormControl>
-  );
-}
-
-/** Compact chip used in the horizontal filter row */
-function AttributeChip({ attr, control }: AttributeFieldProps) {
-  return match(attr.type)
-    .with("select", () => (
-      <Controller
-        control={control}
-        name={String(attr.attributeId)}
-        defaultValue=''
-        render={({ field: { value, onChange } }) => (
-          <Select selectedValue={value as string} onValueChange={onChange}>
-            <SelectTrigger>
-              <SelectInput placeholder={attr.name} className='text-sm' />
-              <SelectIcon as={ChevronDownIcon} className='mr-1' />
-            </SelectTrigger>
-            <SelectPortal>
-              <SelectBackdrop />
-              <SelectContent>
-                <SelectDragIndicatorWrapper>
-                  <SelectDragIndicator />
-                </SelectDragIndicatorWrapper>
-                {map(attr.values, (option) => (
-                  <SelectItem
-                    key={option.id}
-                    label={option.value}
-                    value={option.value}
-                  />
-                ))}
-              </SelectContent>
-            </SelectPortal>
-          </Select>
-        )}
-      />
-    ))
-    .with("multi_select", () => (
-      <Controller
-        control={control}
-        name={String(attr.attributeId)}
-        defaultValue=''
-        render={({ field: { value, onChange } }) => (
-          <Select selectedValue={value as string} onValueChange={onChange}>
-            <SelectTrigger>
-              <SelectInput placeholder={attr.name} className='text-sm' />
-              <SelectIcon as={ChevronDownIcon} className='mr-1' />
-            </SelectTrigger>
-            <SelectPortal>
-              <SelectBackdrop />
-              <SelectContent>
-                <SelectDragIndicatorWrapper>
-                  <SelectDragIndicator />
-                </SelectDragIndicatorWrapper>
-                {map(attr.values, (option) => (
-                  <SelectItem
-                    key={option.id}
-                    label={option.value}
-                    value={option.value}
-                  />
-                ))}
-              </SelectContent>
-            </SelectPortal>
-          </Select>
-        )}
-      />
-    ))
-    .otherwise(() => null);
-}
 
 export default function CategoryDetail() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -302,6 +35,7 @@ export default function CategoryDetail() {
   const attributesQuery = useCategoryAttributes(categoryQuery.data?.id);
   const { control, handleSubmit, watch } = useForm<AttributeFormValues>();
   const [showFilters, setShowFilters] = useState(false);
+  const [showSubcategories, setShowSubcategories] = useState(false);
 
   const filterValues = watch();
   const listingsQuery = useListingsByCategory(
@@ -325,7 +59,7 @@ export default function CategoryDetail() {
             <Spinner />
           </View>
         ))
-        .with({ isError: true }, () => (
+        .with({ isError: true }, { isSuccess: true, data: undefined }, () => (
           <View className='px-4'>
             <Small className='text-arkaic-negative'>
               Failed to load category.
@@ -335,79 +69,67 @@ export default function CategoryDetail() {
         .otherwise(({ data: category }) => (
           <>
             {/* Breadcrumb */}
-            <View className='flex-row items-center flex-wrap'>
-              <Link href='/categories'>
-                <Large className='text-typography-500'>All products</Large>
-              </Link>
-              {category?.parent && (
-                <>
-                  <Large className='text-arkaic-muted'>{" › "}</Large>
-                  <Link href={`/categories/${category.parent.slug}`}>
-                    <Large className='text-arkaic-muted'>
-                      {category.parent.name}
-                    </Large>
-                  </Link>
-                </>
-              )}
-              <Large className='text-typography-500'>{" › "}</Large>
-              <Large>{category?.name}</Large>
-            </View>
-
-            {/* Subcategories — horizontal scroll */}
-            {category?.children && category.children.length > 0 && (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                nestedScrollEnabled={true}
-                contentContainerClassName='flex-row gap-2'
+            <HStack className='items-center' space={"md"}>
+              <Button
+                variant={"link"}
+                action={"neutral"}
+                className='w-max'
+                onPress={() => setShowSubcategories(true)}
               >
-                {map(category.children, (child) => (
-                  <Link
-                    key={child.slug}
-                    href={`/categories/${child.slug}`}
-                    asChild
-                  >
-                    <Button
-                      variant='outline'
-                      action={"neutral"}
-                      className='w-max'
-                    >
-                      <ButtonText>{child.name}</ButtonText>
-                    </Button>
-                  </Link>
-                ))}
-              </ScrollView>
-            )}
+                <ButtonIcon as={List} />
+              </Button>
 
-            {/* Attribute chips — horizontal scroll */}
-            {match(attributesQuery)
-              .with({ isLoading: true }, () => <Spinner size='small' />)
-              .with({ isError: true }, () => null)
-              .otherwise(() =>
-                hasAttributes ? (
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    nestedScrollEnabled={true}
-                    contentContainerClassName='flex-row gap-2 '
-                  >
-                    {map(
-                      filter(
-                        attributes,
-                        ({ type }) =>
-                          type === "select" || type === "multi_select",
-                      ),
-                      (attr) => (
-                        <AttributeChip
-                          key={attr.attributeId}
-                          attr={attr}
-                          control={control}
-                        />
-                      ),
-                    )}
-                  </ScrollView>
-                ) : null,
+              <Large>{category?.name}</Large>
+            </HStack>
+
+            {/* Filter bar */}
+            <HStack className='items-center gap-2'>
+              {/* Attribute chips — horizontal scroll */}
+              {match(attributesQuery)
+                .with({ isLoading: true }, () => <Spinner size='small' />)
+                .with({ isError: true }, () => null)
+                .otherwise(() =>
+                  hasAttributes ? (
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      nestedScrollEnabled={true}
+                      contentContainerClassName='flex-row gap-2'
+                      className='flex-1'
+                    >
+                      {map(
+                        filter(
+                          attributes,
+                          ({ type }) =>
+                            type === "select" || type === "multi_select",
+                        ),
+                        (attr) => (
+                          <AttributeChip
+                            key={attr.attributeId}
+                            attr={attr}
+                            control={control}
+                          />
+                        ),
+                      )}
+                    </ScrollView>
+                  ) : (
+                    <View className='flex-1' />
+                  ),
+                )}
+
+              {/* Filters CTA */}
+              {hasAttributes && (
+                <Button
+                  variant='outline'
+                  action='primary'
+                  size='sm'
+                  className='w-max'
+                  onPress={() => setShowFilters(true)}
+                >
+                  <ButtonIcon as={SlidersHorizontal} />
+                </Button>
               )}
+            </HStack>
 
             {/* Filters action sheet */}
             <Actionsheet
@@ -415,7 +137,7 @@ export default function CategoryDetail() {
               onClose={() => setShowFilters(false)}
             >
               <ActionsheetBackdrop />
-              <ActionsheetContent>
+              <ActionsheetContent className='max-h-[60%]'>
                 <ActionsheetDragIndicatorWrapper>
                   <ActionsheetDragIndicator />
                 </ActionsheetDragIndicatorWrapper>
@@ -437,6 +159,16 @@ export default function CategoryDetail() {
               </ActionsheetContent>
             </Actionsheet>
 
+            {/* Subcategories action sheet */}
+            {category?.children && category.children.length > 0 && (
+              <SubcategoriesSheet
+                isOpen={showSubcategories}
+                parent={category.parent}
+                onClose={() => setShowSubcategories(false)}
+                subcategories={category.children}
+              />
+            )}
+
             {/* Listings */}
             <VStack space='md'>
               {match(listingsQuery)
@@ -450,7 +182,7 @@ export default function CategoryDetail() {
                   listings && listings.length > 0 ? (
                     <ScrollView
                       className='flex-shrink-0'
-                      contentContainerClassName='flex flex-col gap-4 '
+                      contentContainerClassName='flex flex-col gap-4'
                     >
                       {map(listings, (listing) => (
                         <ListingItem key={listing.id} listing={listing} />

@@ -1,5 +1,4 @@
 import { ListingItem } from "@/components/listing-item";
-import NavigationMenu from "@/components/navigation-menu";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
 import { Input, InputField, InputIcon } from "@/components/ui/input";
@@ -113,7 +112,6 @@ export default function Listings() {
           </ScrollView>
         </VStack>
       </VStack>
-      <NavigationMenu />
     </VStack>
   );
 }
