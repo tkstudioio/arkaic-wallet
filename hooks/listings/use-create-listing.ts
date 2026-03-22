@@ -3,7 +3,6 @@ import { CreateListingAttribute, Listing } from "@/types/backend";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { useRouter } from "expo-router";
 
 type CreateProductParams = {
   name: string;
@@ -15,7 +14,6 @@ type CreateProductParams = {
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationKey: ["create-product"],
@@ -25,7 +23,6 @@ export function useCreateProduct() {
     },
     onError: (err: Error) => { if (isAxiosError(err)) console.error(err.response?.data); },
     onSuccess: () => {
-      router.replace("/listings/my-listings");
       queryClient.invalidateQueries({ queryKey: ["listings"] });
       queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     },

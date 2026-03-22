@@ -1,6 +1,7 @@
 import { AmountComponent } from "@/components/amount";
 import { ChatListItem } from "@/components/chat-list-item";
 import { AttributeDisplay } from "@/components/listing/attribute-display";
+import { PhotoCarousel } from "@/components/listing/photo-carousel";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Divider } from "@/components/ui/divider";
@@ -19,8 +20,8 @@ import { ListingAttributeValue } from "@/types/backend";
 import { shortenAddress } from "@/utils/shorten-address";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { map } from "lodash";
-import { ArrowLeft, Heart, ImageIcon } from "lucide-react-native";
-import { ScrollView, View } from "react-native";
+import { ArrowLeft, Heart } from "lucide-react-native";
+import { ScrollView } from "react-native";
 import { match } from "ts-pattern";
 
 export default function Listing() {
@@ -53,12 +54,16 @@ export default function Listing() {
               <Button
                 action='neutral'
                 variant='link'
-                onPress={() => toggleFavorite.mutate({ listingId: Number(id), isFavorite })}
+                onPress={() =>
+                  toggleFavorite.mutate({ listingId: Number(id), isFavorite })
+                }
                 className='w-max'
               >
                 <ButtonIcon
                   as={Heart}
-                  className={isFavorite ? "text-arkaic-primary" : "text-arkaic-muted"}
+                  className={
+                    isFavorite ? "text-arkaic-primary" : "text-arkaic-muted"
+                  }
                   fill={isFavorite ? "currentColor" : "none"}
                 />
               </Button>
@@ -74,10 +79,7 @@ export default function Listing() {
                 <Large className='font-semibold'>Details</Large>
                 <Divider />
 
-                <View className='w-full aspect-video bg-arkaic-background rounded-lg items-center justify-center'>
-                  <ImageIcon size={48} className='text-arkaic-muted' />
-                  <Muted>No image</Muted>
-                </View>
+                <PhotoCarousel photos={data.photos ?? []} listingId={data.id} />
 
                 <Large>{data.name}</Large>
                 {data.description ? <P>{data.description}</P> : null}
@@ -156,7 +158,15 @@ export default function Listing() {
               );
             })()
           ) : (
-            <Button action='neutral' variant='outline' isDisabled>
+            <Button
+              variant='outline'
+              onPress={() =>
+                router.push({
+                  pathname: "/listings/create",
+                  params: { id: data.id },
+                })
+              }
+            >
               <ButtonText>Edit listing</ButtonText>
             </Button>
           )}

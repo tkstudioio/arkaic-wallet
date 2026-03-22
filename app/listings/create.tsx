@@ -1,107 +1,31 @@
 import { AttributeFormField } from "@/components/listing/attribute-form-field";
 import { CategoryPicker } from "@/components/category-picker";
+import { LocalPhoto, PhotoManager } from "@/components/listing/photo-manager";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { HStack } from "@/components/ui/hstack";
 import { Input, InputField } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import { Large, Small } from "@/components/ui/typography";
+import { Large, Muted, P, Small } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
 import { useCategoryAttributes } from "@/hooks/categories/use-category-attributes";
 import { useCreateProduct } from "@/hooks/listings/use-create-listing";
-import { CreateListingAttribute } from "@/types/backend";
+import { useDeletePhoto } from "@/hooks/listings/use-delete-photo";
+import { useListing } from "@/hooks/listings/use-listing";
+import { useReorderPhotos } from "@/hooks/listings/use-reorder-photos";
+import { useUpdateProduct } from "@/hooks/listings/use-update-listing";
+import { useUploadPhotos } from "@/hooks/listings/use-upload-photos";
+import { UPLOADS_BASE_URL } from "@/lib/api";
+import { CreateListingAttribute, ListingAttributeValue } from "@/types/backend";
 
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useFormik } from "formik";
 import { toNumber, toString } from "lodash";
-import { ArrowLeft, Camera, X } from "lucide-react-native";
-import React, { useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
+import { ArrowLeft } from "lucide-react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { ScrollView } from "react-native";
 import { match } from "ts-pattern";
 import { Divider } from "@/components/ui/divider";
-
-const MAX_PHOTOS = 10;
-const SLOT_SIZE = 80;
-
-type DraggablePhotoSlotProps = {
-  photoId: string | undefined;
-  index: number;
-  onRemove: (index: number) => void;
-  onReorder: (fromIndex: number, toIndex: number) => void;
-};
-
-function DraggablePhotoSlot({ photoId, index, onRemove, onReorder }: DraggablePhotoSlotProps) {
-  const translateX = useSharedValue(0);
-  const isActive = useSharedValue(false);
-  const zIndex = useSharedValue(0);
-
-  const panGesture = Gesture.Pan()
-    .enabled(!!photoId)
-    .activateAfterLongPress(300)
-    .runOnJS(true)
-    .onStart(() => {
-      isActive.value = true;
-      zIndex.value = 100;
-    })
-    .onUpdate((event) => {
-      translateX.value = event.translationX;
-    })
-    .onEnd((event) => {
-      const slotsMoved = Math.round(event.translationX / (SLOT_SIZE + 8));
-      const newIndex = Math.max(0, Math.min(index + slotsMoved, MAX_PHOTOS - 2));
-
-      if (newIndex !== index && photoId) {
-        onReorder(index, newIndex);
-      }
-
-      translateX.value = withSpring(0);
-      isActive.value = false;
-      zIndex.value = 0;
-    });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-    zIndex: zIndex.value,
-    opacity: isActive.value ? 0.8 : 1,
-  }));
-
-  if (!photoId) {
-    return (
-      <Skeleton
-        isLoaded={false}
-        style={{ width: SLOT_SIZE, height: SLOT_SIZE }}
-        className="rounded-arkaic-button"
-      />
-    );
-  }
-
-  return (
-    <GestureDetector gesture={panGesture}>
-      <Animated.View
-        style={[{ width: SLOT_SIZE, height: SLOT_SIZE }, animatedStyle]}
-        className="rounded-arkaic-button bg-arkaic-border relative"
-      >
-        <View className="flex-1 items-center justify-center">
-          <Small className="text-arkaic-foreground">{index + 1}</Small>
-        </View>
-
-        <Pressable
-          onPress={() => onRemove(index)}
-          className="absolute top-1 right-1 z-10 h-5 w-5 items-center justify-center rounded-full bg-arkaic-negative"
-        >
-          <X size={12} color="white" />
-        </Pressable>
-      </Animated.View>
-    </GestureDetector>
-  );
-}
 
 type FormValues = {
   name: string;
@@ -111,10 +35,60 @@ type FormValues = {
   attributes: Record<string, string | boolean | number[]>;
 };
 
+type EditablePhoto = LocalPhoto & { remoteId?: number };
+
+function buildAttributeFormValues(
+  attributes: ListingAttributeValue[] | undefined,
+): Record<string, string | boolean | number[]> {
+  if (!attributes) return {};
+
+  const result: Record<string, string | boolean | number[]> = {};
+
+  for (const attr of attributes) {
+    const key = String(attr.attributeId);
+
+    match(attr.attribute.type)
+      .with("select", () => {
+        if (attr.valueId !== null) {
+          result[key] = String(attr.valueId);
+        }
+      })
+      .with("boolean", () => {
+        if (attr.valueBool !== null) {
+          result[key] = attr.valueBool;
+        }
+      })
+      .with("text", "range", "date", () => {
+        if (attr.valueText !== null) {
+          result[key] = attr.valueText;
+        }
+      })
+      .with("multi_select", () => {
+        if (attr.multiValues) {
+          result[key] = attr.multiValues.map((mv) => mv.value.id);
+        }
+      })
+      .otherwise(() => {});
+  }
+
+  return result;
+}
+
 function ProductCreateForm() {
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const isEditMode = !!id;
+
+  const listingQuery = useListing(id ?? "");
+
   const createProduct = useCreateProduct();
-  const [photos, setPhotos] = useState<string[]>([]);
+  const updateProduct = useUpdateProduct();
+  const uploadPhotos = useUploadPhotos();
+  const deletePhoto = useDeletePhoto();
+  const reorderPhotos = useReorderPhotos();
+
+  const [photos, setPhotos] = useState<EditablePhoto[]>([]);
+  const didPopulate = useRef(false);
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -124,7 +98,7 @@ function ProductCreateForm() {
       categoryId: null,
       attributes: {},
     },
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const attributeValues: CreateListingAttribute[] = [];
 
       if (attributesQuery.data) {
@@ -176,17 +150,107 @@ function ProductCreateForm() {
         }
       }
 
-      createProduct.mutate({
-        name: values.name,
-        description: values.description,
-        price: values.price,
-        categoryId: values.categoryId!,
-        attributes: attributeValues,
-      });
+      if (isEditMode && id) {
+        await updateProduct.mutateAsync({
+          id: Number(id),
+          name: values.name,
+          description: values.description,
+          price: values.price,
+          categoryId: values.categoryId!,
+          attributes: attributeValues,
+        });
+
+        const originalPhotoIds = (listingQuery.data?.photos ?? []).map((p) => p.id);
+        const currentRemoteIds = photos
+          .filter((p) => p.remoteId !== undefined)
+          .map((p) => p.remoteId!);
+        const removedPhotoIds = originalPhotoIds.filter((pid) => !currentRemoteIds.includes(pid));
+
+        for (const photoId of removedPhotoIds) {
+          await deletePhoto.mutateAsync({ listingId: Number(id), photoId });
+        }
+
+        const newPhotos = photos.filter((p) => !p.remoteId);
+        let newPhotoIds: number[] = [];
+        if (newPhotos.length > 0) {
+          const uploaded = await uploadPhotos.mutateAsync({
+            listingId: Number(id),
+            uris: newPhotos.map((p) => p.uri),
+          });
+          newPhotoIds = uploaded.map((p) => p.id);
+        }
+
+        // Build final order: map each photo to its remote ID (existing) or
+        // the corresponding newly uploaded ID (in upload order)
+        let newIdx = 0;
+        const finalOrder: number[] = [];
+        for (const p of photos) {
+          if (p.remoteId) {
+            finalOrder.push(p.remoteId);
+          } else {
+            if (newIdx < newPhotoIds.length) {
+              finalOrder.push(newPhotoIds[newIdx]);
+              newIdx++;
+            }
+          }
+        }
+
+        if (finalOrder.length > 0) {
+          await reorderPhotos.mutateAsync({
+            listingId: Number(id),
+            photoIds: finalOrder,
+          });
+        }
+
+        router.back();
+      } else {
+        const listing = await createProduct.mutateAsync({
+          name: values.name,
+          description: values.description,
+          price: values.price,
+          categoryId: values.categoryId!,
+          attributes: attributeValues,
+        });
+
+        if (photos.length > 0) {
+          await uploadPhotos.mutateAsync({
+            listingId: listing.id,
+            uris: photos.map((p) => p.uri),
+          });
+        }
+
+        router.replace("/listings/my-listings");
+      }
     },
   });
 
   const { values, setFieldValue, handleChange, handleSubmit } = formik;
+
+  useEffect(() => {
+    if (!isEditMode || !listingQuery.data || didPopulate.current) return;
+    didPopulate.current = true;
+
+    const listing = listingQuery.data;
+
+    formik.setValues({
+      name: listing.name,
+      description: listing.description ?? "",
+      price: listing.price,
+      categoryId: listing.categoryId ?? null,
+      attributes: buildAttributeFormValues(listing.attributes),
+    });
+
+    if (listing.photos && listing.photos.length > 0) {
+      const existingPhotos: EditablePhoto[] = listing.photos
+        .sort((a, b) => a.position - b.position)
+        .map((p) => ({
+          id: String(p.id),
+          uri: `${UPLOADS_BASE_URL}/listings/${listing.id}/${p.filename}`,
+          remoteId: p.id,
+        }));
+      setPhotos(existingPhotos);
+    }
+  }, [isEditMode, listingQuery.data]);
 
   const attributesQuery = useCategoryAttributes(
     values.categoryId ?? undefined,
@@ -207,26 +271,26 @@ function ProductCreateForm() {
     values.price > 0 &&
     values.description.length >= 12 &&
     hasAllRequiredAttributes &&
-    !createProduct.isPending;
+    !createProduct.isPending &&
+    !updateProduct.isPending &&
+    !uploadPhotos.isPending &&
+    !deletePhoto.isPending &&
+    !reorderPhotos.isPending;
 
-  function handleAddPhoto() {
-    if (photos.length >= MAX_PHOTOS - 1) return;
-    const newId = `photo_${Date.now()}`;
-    setPhotos((prev) => [...prev, newId]);
-  }
-
-  function handleRemovePhoto(index: number) {
-    setPhotos((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  function handleReorder(fromIndex: number, toIndex: number) {
-    setPhotos((prev) => {
-      const updated = [...prev];
-      const [moved] = updated.splice(fromIndex, 1);
-      updated.splice(toIndex, 0, moved);
-      console.log('Photo order updated:', updated);
-      return updated;
+  function handlePhotosChange(newPhotos: LocalPhoto[]) {
+    const photosWithRemoteIds: EditablePhoto[] = newPhotos.map((np) => {
+      const existing = photos.find((p) => p.id === np.id);
+      return existing?.remoteId ? { ...np, remoteId: existing.remoteId } : np;
     });
+    setPhotos(photosWithRemoteIds);
+  }
+
+  if (isEditMode && listingQuery.isLoading) {
+    return (
+      <VStack className="flex-1 items-center justify-center">
+        <Spinner />
+      </VStack>
+    );
   }
 
   return (
@@ -249,30 +313,7 @@ function ProductCreateForm() {
       <ScrollView className="flex-1 py-arkaic-md" contentContainerStyle={{ gap: 12 }}>
         <Card>
           <Large className="font-semibold">Photos</Large>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 8 }}
-          >
-            <Pressable
-              onPress={handleAddPhoto}
-              className="items-center justify-center rounded-arkaic-button border border-dashed border-arkaic-border bg-arkaic-background"
-              style={{ width: SLOT_SIZE, height: SLOT_SIZE }}
-            >
-              <Camera size={24} className="text-arkaic-muted" />
-              <Small className="text-arkaic-muted">Add</Small>
-            </Pressable>
-
-            {Array.from({ length: MAX_PHOTOS - 1 }).map((_, index) => (
-              <DraggablePhotoSlot
-                key={photos[index] ?? `empty_${index}`}
-                photoId={photos[index]}
-                index={index}
-                onRemove={handleRemovePhoto}
-                onReorder={handleReorder}
-              />
-            ))}
-          </ScrollView>
+          <PhotoManager photos={photos} onPhotosChange={handlePhotosChange} />
         </Card>
 
         <Card>
@@ -324,6 +365,16 @@ function ProductCreateForm() {
 
         <Card>
           <Large className="font-semibold">Category</Large>
+          {isEditMode && listingQuery.data?.category && !values.categoryId && (
+            <HStack className="items-center gap-2">
+              <Small className="text-arkaic-muted">Current:</Small>
+              <P>
+                {listingQuery.data.category.parent
+                  ? `${listingQuery.data.category.parent.name} > ${listingQuery.data.category.name}`
+                  : listingQuery.data.category.name}
+              </P>
+            </HStack>
+          )}
           <CategoryPicker
             onSelect={(categoryId) => {
               setFieldValue("categoryId", categoryId);
@@ -372,8 +423,22 @@ function ProductCreateForm() {
 
       <VStack className="py-4">
         <Button onPress={() => handleSubmit()} isDisabled={!canSubmit}>
+          {(createProduct.isPending || updateProduct.isPending || uploadPhotos.isPending || deletePhoto.isPending || reorderPhotos.isPending) && <Spinner />}
           <ButtonText>
-            {createProduct.isPending ? "Creating..." : "Create"}
+            {match({
+              creating: createProduct.isPending,
+              updating: updateProduct.isPending,
+              uploading: uploadPhotos.isPending,
+              deleting: deletePhoto.isPending,
+              reordering: reorderPhotos.isPending,
+              isEditMode,
+            })
+              .with({ uploading: true }, () => "Uploading photos...")
+              .with({ deleting: true }, () => "Removing photos...")
+              .with({ reordering: true }, () => "Reordering photos...")
+              .with({ updating: true }, () => "Updating...")
+              .with({ creating: true }, () => "Creating...")
+              .otherwise(() => (isEditMode ? "Save changes" : "Create"))}
           </ButtonText>
         </Button>
       </VStack>

@@ -1,5 +1,4 @@
 import { ListingItem } from "@/components/listing-item";
-import NavigationMenu from "@/components/navigation-menu";
 import { Spinner } from "@/components/ui/spinner";
 import { H1, P } from "@/components/ui/typography";
 import { VStack } from "@/components/ui/vstack";
@@ -29,7 +28,6 @@ export default function Selling() {
             )}
         </VStack>
       </ScrollView>
-      <NavigationMenu />
     </VStack>
   );
 }
