@@ -5,7 +5,6 @@ import { hex } from "@scure/base";
 import axios, { AxiosError } from "axios";
 
 export const API_BASE_URL = "http://localhost:4000/api";
-export const UPLOADS_BASE_URL = "http://localhost:4000/uploads";
 
 export const backend = axios.create({
   baseURL: API_BASE_URL,

@@ -79,7 +79,7 @@ export default function Listing() {
                 <Large className='font-semibold'>Details</Large>
                 <Divider />
 
-                <PhotoCarousel photos={data.photos ?? []} listingId={data.id} />
+                <PhotoCarousel photos={data.photos ?? []} />
 
                 <Large>{data.name}</Large>
                 {data.description ? <P>{data.description}</P> : null}

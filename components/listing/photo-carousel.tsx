@@ -1,6 +1,5 @@
 import { HStack } from "@/components/ui/hstack";
 import { Muted } from "@/components/ui/typography";
-import { UPLOADS_BASE_URL } from "@/lib/api";
 import { ListingPhoto } from "@/types/backend";
 import { Image } from "expo-image";
 import { ImageIcon } from "lucide-react-native";
@@ -12,7 +11,6 @@ import ImageViewing from "react-native-image-viewing";
 
 type PhotoCarouselProps = {
   photos: ListingPhoto[];
-  listingId: number;
 };
 
 function NoImageFallback() {
@@ -24,7 +22,7 @@ function NoImageFallback() {
   );
 }
 
-export function PhotoCarousel({ photos, listingId }: PhotoCarouselProps) {
+export function PhotoCarousel({ photos }: PhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
@@ -36,7 +34,7 @@ export function PhotoCarousel({ photos, listingId }: PhotoCarouselProps) {
   const height = width * (9 / 16);
 
   const images = photos.map((photo) => ({
-    uri: `${UPLOADS_BASE_URL}/listings/${listingId}/${photo.filename}`,
+    uri: photo.url,
   }));
 
   if (photos.length === 0) return <NoImageFallback />;

@@ -45,6 +45,7 @@ export type ListingPhoto = {
   id: number;
   listingId: number;
   filename: string;
+  url: string;
   mimeType: string;
   size: number;
   position: number;

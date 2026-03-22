@@ -15,7 +15,6 @@ import { useListing } from "@/hooks/listings/use-listing";
 import { useReorderPhotos } from "@/hooks/listings/use-reorder-photos";
 import { useUpdateProduct } from "@/hooks/listings/use-update-listing";
 import { useUploadPhotos } from "@/hooks/listings/use-upload-photos";
-import { UPLOADS_BASE_URL } from "@/lib/api";
 import { CreateListingAttribute, ListingAttributeValue } from "@/types/backend";
 
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -245,7 +244,7 @@ function ProductCreateForm() {
         .sort((a, b) => a.position - b.position)
         .map((p) => ({
           id: String(p.id),
-          uri: `${UPLOADS_BASE_URL}/listings/${listing.id}/${p.filename}`,
+          uri: p.url,
           remoteId: p.id,
         }));
       setPhotos(existingPhotos);

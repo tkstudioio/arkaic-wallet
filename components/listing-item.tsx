@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card";
 import { Large, Small } from "@/components/ui/typography";
 import { useIsFavorite } from "@/hooks/favorites/use-is-favorite";
 import { useToggleFavorite } from "@/hooks/favorites/use-toggle-favorite";
-import { UPLOADS_BASE_URL } from "@/lib/api";
 import { Listing } from "@/types/backend";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -45,17 +44,19 @@ export function ListingItem({ listing }: { listing: Listing }) {
             .with(undefined, () => (
               <View
                 style={{ width: 80, height: 80 }}
-                className="rounded-arkaic-button bg-arkaic-background items-center justify-center"
+                className='rounded-arkaic-button bg-arkaic-background items-center justify-center'
               >
-                <ImageIcon size={28} className="text-arkaic-muted" />
+                <ImageIcon size={28} className='text-arkaic-muted' />
               </View>
             ))
             .otherwise((photo) => (
               <Image
-                source={{ uri: `${UPLOADS_BASE_URL}/listings/${listing.id}/${photo.filename}` }}
-                className="aspect-square rounded-arkaic-button"
+                source={{
+                  uri: photo.url,
+                }}
+                className='aspect-square rounded-arkaic-button'
                 style={{ width: 80, height: 80 }}
-                contentFit="cover"
+                contentFit='cover'
                 placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
                 transition={200}
               />
