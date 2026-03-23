@@ -1,18 +1,11 @@
 import { backend } from "@/lib/api";
+import { initializeSdk } from "@/lib/initialize-sdk";
 import useAccountStore, { StorageKeys } from "@/stores/account";
 import { ArkaicAccount } from "@/types/arkaic";
 import { getPubkeyHex } from "@/utils/get-pubkey-hex";
-import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
-import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
-import { createStorageConfig } from "@/lib/sqlite-storage";
 import { schnorr } from "@noble/curves/secp256k1";
-
-import {
-  ExpoArkProvider,
-  ExpoIndexerProvider,
-} from "@arkade-os/sdk/adapters/expo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hex } from "@scure/base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type CreateAccountParams = {
@@ -30,20 +23,8 @@ export function useCreateAccount() {
       const storedAccounts = await AsyncStorage.getItem(StorageKeys.Accounts);
       const currentAccounts = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-      const arkProvider = new ExpoArkProvider("https://mutinynet.arkade.sh");
-      const indexerProvider = new ExpoIndexerProvider(
-        "https://mutinynet.arkade.sh",
-      );
-
-      const identity = SingleKey.fromHex(privateKey);
-      const storage = createStorageConfig();
-      const wallet = await Wallet.create({
-        identity,
-        arkProvider,
-        indexerProvider,
-        storage,
-      });
-      const pubkey = await getPubkeyHex(wallet);
+      const sdk = await initializeSdk(privateKey);
+      const pubkey = await getPubkeyHex(sdk.wallet);
 
       const registerMessage = new TextEncoder().encode(
         `${account.name} ${pubkey}`,
@@ -56,19 +37,6 @@ export function useCreateAccount() {
           schnorr.sign(registerMessage, hex.decode(privateKey)),
         ),
       });
-
-      const swapProvider = new BoltzSwapProvider({
-        apiUrl: "https://api.ark.boltz.exchange",
-        network: "bitcoin",
-      });
-
-      const arkadeLightning = new ArkadeLightning({
-        // @ts-expect-error some strange type error.
-        wallet,
-        swapProvider,
-      });
-
-      const vtxoManager = new VtxoManager(wallet);
 
       const { data: challenge } = await backend.post<{
         nonce: string;
@@ -89,21 +57,16 @@ export function useCreateAccount() {
       });
 
       setStore({
-        account: account,
+        account,
         pubkey,
         token,
-        wallet,
-        arkProvider,
-        indexerProvider,
-        vtxoManager,
-        arkadeLightning,
+        ...sdk,
       });
 
       await AsyncStorage.setItem(
         StorageKeys.Accounts,
         JSON.stringify([...currentAccounts, account]),
       );
-
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });

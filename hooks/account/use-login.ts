@@ -1,19 +1,11 @@
 import { backend } from "@/lib/api";
+import { initializeSdk } from "@/lib/initialize-sdk";
+import useAccountStore from "@/stores/account";
 import { ArkaicAccount } from "@/types/arkaic";
 import { getMasterFingerprint, mnemonicToPrivateKey } from "@/utils/mnemonic";
-import { SingleKey, VtxoManager, Wallet } from "@arkade-os/sdk";
 import { schnorr } from "@noble/curves/secp256k1";
 import { hex } from "@scure/base";
 import { useMutation } from "@tanstack/react-query";
-
-import { createStorageConfig } from "@/lib/sqlite-storage";
-import { ArkadeLightning, BoltzSwapProvider } from "@arkade-os/boltz-swap";
-import {
-  ExpoArkProvider,
-  ExpoIndexerProvider,
-} from "@arkade-os/sdk/adapters/expo";
-
-import useAccountStore from "@/stores/account";
 import { useRouter } from "expo-router";
 
 type LoginParams = {
@@ -21,7 +13,7 @@ type LoginParams = {
   passphrase?: string;
 };
 
-export function useLoginMutation() {
+export function useLogin() {
   const { setStore } = useAccountStore();
   const router = useRouter();
 
@@ -34,9 +26,9 @@ export function useLoginMutation() {
         throw new Error("No private key or mnemonic available");
       }
 
-      const identity = SingleKey.fromHex(privateKey);
+      const sdk = await initializeSdk(privateKey);
 
-      const pubkeyBytes = await identity.compressedPublicKey();
+      const pubkeyBytes = await sdk.wallet.identity.compressedPublicKey();
       const pubkey = Array.from(pubkeyBytes)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
@@ -71,32 +63,6 @@ export function useLoginMutation() {
         ),
       });
 
-      const arkProvider = new ExpoArkProvider("https://mutinynet.arkade.sh");
-      const indexerProvider = new ExpoIndexerProvider(
-        "https://mutinynet.arkade.sh",
-      );
-
-      const storage = createStorageConfig();
-      const wallet = await Wallet.create({
-        identity,
-        arkProvider,
-        indexerProvider,
-        storage,
-      });
-
-      const swapProvider = new BoltzSwapProvider({
-        apiUrl: "https://api.ark.boltz.exchange",
-        network: "bitcoin",
-      });
-
-      const arkadeLightning = new ArkadeLightning({
-        // @ts-expect-error some strange type error.
-        wallet,
-        swapProvider,
-      });
-
-      const vtxoManager = new VtxoManager(wallet);
-
       const fingerprint = account.mnemonic
         ? getMasterFingerprint(account.mnemonic, passphrase)
         : undefined;
@@ -104,13 +70,9 @@ export function useLoginMutation() {
       setStore({
         pubkey,
         account,
-        wallet,
         token,
-        arkProvider,
-        indexerProvider,
-        vtxoManager,
-        arkadeLightning,
         fingerprint,
+        ...sdk,
       });
 
       router.replace("/wallet");
