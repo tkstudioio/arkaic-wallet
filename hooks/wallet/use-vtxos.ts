@@ -9,5 +9,6 @@ export function useVtxos() {
       if (!wallet) throw new Error("missing vtxo manager");
       return wallet.getVtxos();
     },
+    enabled: !!wallet,
   });
 }

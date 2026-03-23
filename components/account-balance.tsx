@@ -11,8 +11,8 @@ import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function AccountBalance() {
-  const { account, wallet } = useAccountStore();
-  const balanceQuery = useBalance(wallet);
+  const { account } = useAccountStore();
+  const balanceQuery = useBalance();
 
   if (!balanceQuery.isFetched) return <Spinner />;
 

@@ -33,6 +33,7 @@ export function useTransactions() {
   return useQuery({
     refetchInterval: 10 * 1000,
     queryKey: ["transactions", wallet?.arkAddress, account?.customVtxoScripts],
+    enabled: !!wallet,
     queryFn: async () => {
       if (!wallet) throw new Error("missing wallet");
       const defaultTransactions = await wallet.getTransactionHistory();

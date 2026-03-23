@@ -9,5 +9,6 @@ export function useAspInfo() {
       if (!wallet) throw new Error("missing wallet");
       return await wallet.arkProvider.getInfo();
     },
+    enabled: !!wallet,
   });
 }
