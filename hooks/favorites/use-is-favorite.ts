@@ -1,4 +1,4 @@
-import { useFavorites } from "./use-favorites";
+import { useFavorites } from "@/hooks/favorites/use-favorites";
 
 export function useIsFavorite(listingId: number): {
   isFavorite: boolean;

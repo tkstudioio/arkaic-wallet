@@ -9,7 +9,7 @@ import {
 } from "@arkade-os/sdk";
 import { hex } from "@scure/base";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSendBitcoin } from "../wallet/use-send-bitcoin";
+import { useSendBitcoin } from "@/hooks/wallet/use-send-bitcoin";
 
 type CreateEscrowParams = {
   chatId: number;

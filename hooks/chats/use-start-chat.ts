@@ -3,7 +3,7 @@ import { Chat, Listing } from "@/types/backend";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { isEmpty } from "lodash";
-import { useSendMessage } from "../messages/use-send-message";
+import { useSendMessage } from "@/hooks/messages/use-send-message";
 
 export function useStartChat() {
   const router = useRouter();

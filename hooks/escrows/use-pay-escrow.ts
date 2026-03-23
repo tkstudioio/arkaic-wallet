@@ -1,7 +1,7 @@
 import useAccountStore from "@/stores/account";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSendBitcoin } from "../wallet/use-send-bitcoin";
-import { useAspInfo } from "../use-asp-info";
+import { useSendBitcoin } from "@/hooks/wallet/use-send-bitcoin";
+import { useAspInfo } from "@/hooks/use-asp-info";
 
 type PayEscrowParams = {
   escrowAddress: string;
