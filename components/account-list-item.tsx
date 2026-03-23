@@ -1,4 +1,4 @@
-import { useLoginMutation } from "@/hooks/account/use-login";
+import { useLogin } from "@/hooks/account/use-login";
 import { ArkaicAccount } from "@/types/arkaic";
 import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
@@ -20,7 +20,7 @@ import { Large, P } from "./ui/typography";
 import { VStack } from "./ui/vstack";
 
 export function AccountListItem(props: { account: ArkaicAccount }) {
-  const loginMutation = useLoginMutation();
+  const loginMutation = useLogin();
   const [showPassphraseModal, setShowPassphraseModal] = useState(false);
   const [passphrase, setPassphrase] = useState("");
 
