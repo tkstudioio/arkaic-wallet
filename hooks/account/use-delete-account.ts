@@ -26,10 +26,10 @@ export function useDeleteAccount() {
         StorageKeys.Accounts,
         JSON.stringify(newStoredAccounts),
       );
-      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
 
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
       router.dismissTo("/");
       setStore({});
     },

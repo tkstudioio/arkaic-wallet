@@ -11,6 +11,7 @@ export function useToggleFavorite() {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ["toggle-favorite"],
     mutationFn: async ({ listingId, isFavorite }: ToggleFavoriteParams) => {
       if (isFavorite) {
         await backend.delete(`/favorites/${listingId}`);
