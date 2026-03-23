@@ -2,7 +2,7 @@
 description: Write React hooks following project patterns and conventions
 ---
 
-# react-hookers
+# react-hooker
 
 Write React hooks that follow the project's established patterns using React Query, Zustand, and TypeScript.
 
@@ -32,15 +32,17 @@ hooks/
 ## File Organization
 
 **File naming**: kebab-case with `use-` prefix
+
 ```
 hooks/<domain>/use-<feature>.ts
 ```
 
 **Hook naming**: camelCase with `use` prefix
+
 ```typescript
-export function useBalance() { }
-export function useCreateListing() { }
-export function useCopyToClipboard() { }
+export function useBalance() {}
+export function useCreateListing() {}
+export function useCopyToClipboard() {}
 ```
 
 ## Three Core Patterns
@@ -58,19 +60,20 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useListing(id: number | string) {
   return useQuery({
-    queryKey: ["listing", id],           // array: [domain, identifier]
+    queryKey: ["listing", id], // array: [domain, identifier]
     queryFn: async (): Promise<Listing> => {
       const { data } = await backend.get(`/listings/${id}`);
       return data;
     },
-    enabled: !!id,                        // enable only when id is present
-    refetchInterval: 15 * 60 * 1000,      // refetch every 15 minutes
-    throwOnError: true,                   // let React Query handle errors
+    enabled: !!id, // enable only when id is present
+    refetchInterval: 15 * 60 * 1000, // refetch every 15 minutes
+    throwOnError: true, // let React Query handle errors
   });
 }
 ```
 
 **Guidelines:**
+
 - Query key: always an array `[domain, ...identifiers]`
 - Use `enabled` when hook depends on wallet initialization or user state
 - Let React Query handle loading/error states (don't wrap in try-catch)
@@ -102,7 +105,7 @@ export function useCreateListing() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ["create-listing"],      // optional but recommended
+    mutationKey: ["create-listing"], // optional but recommended
     mutationFn: async (params: CreateListingParams): Promise<Listing> => {
       const { data } = await backend.post("/listings", params);
       return data;
@@ -123,6 +126,7 @@ export function useCreateListing() {
 ```
 
 **Guidelines:**
+
 - Always type mutation parameters with a `type` (not `interface`)
 - Return type from `mutationFn` should be explicit
 - Use `onSuccess` to invalidate related queries
@@ -182,6 +186,7 @@ export function useWebSocket() {
 ```
 
 **Guidelines:**
+
 - Use `useEffect` for setup/teardown logic
 - Always include a **cleanup function** in the return
 - Include dependencies array `[token, queryClient, ...]`
@@ -254,13 +259,13 @@ export default function useBitcoinPrice(symbol: CurrencySymbol) {
 
 ## Naming Conventions
 
-| What | Convention | Example |
-|------|-----------|---------|
-| File | kebab-case | `use-balance.ts` |
-| Hook function | camelCase + `use` prefix | `useBalance()` |
-| Type | PascalCase | `ExchangeRate`, `CreateListingParams` |
-| Query key | array, kebab-case domain | `["balance", id]`, `["chat-offer", chatId]` |
-| Mutation key | array, kebab-case | `["create-listing"]`, `["delete-chat"]` |
+| What          | Convention               | Example                                     |
+| ------------- | ------------------------ | ------------------------------------------- |
+| File          | kebab-case               | `use-balance.ts`                            |
+| Hook function | camelCase +`use` prefix  | `useBalance()`                              |
+| Type          | PascalCase               | `ExchangeRate`, `CreateListingParams`       |
+| Query key     | array, kebab-case domain | `["balance", id]`, `["chat-offer", chatId]` |
+| Mutation key  | array, kebab-case        | `["create-listing"]`, `["delete-chat"]`     |
 
 ---
 
@@ -293,14 +298,14 @@ import { Listing } from "../types/backend";
 type CreateParams = { name: string; price: number };
 export function useCreate() {
   return useMutation({
-    mutationFn: async (params: CreateParams): Promise<Listing> => { },
+    mutationFn: async (params: CreateParams): Promise<Listing> => {},
   });
 }
 
 // ❌ Avoid
 export function useCreate() {
   return useMutation({
-    mutationFn: async (params: any) => { },
+    mutationFn: async (params: any) => {},
   });
 }
 ```
@@ -335,7 +340,7 @@ queryFn: async () => {
   } catch (e) {
     return null; // hiding the error
   }
-}
+};
 ```
 
 ---
@@ -359,11 +364,11 @@ Before committing a new hook, verify:
 
 ## Real Examples in the Codebase
 
-| File | Pattern | Purpose |
-|------|---------|---------|
-| `hooks/wallet/use-balance.ts` | Query | Fetch wallet balance with refetch |
-| `hooks/listings/use-listings.ts` | Query | Fetch all listings |
-| `hooks/listings/use-create-listing.ts` | Mutation | Create new listing + invalidate |
-| `hooks/use-clipboard.ts` | Mutation (×2) | Copy/paste with named exports |
-| `hooks/use-websocket.ts` | Effect | WebSocket listener with cleanup |
-| `hooks/use-bitcoin-price.ts` | Query + Type export | BTC price + currency type |
+| File                                   | Pattern             | Purpose                           |
+| -------------------------------------- | ------------------- | --------------------------------- |
+| `hooks/wallet/use-balance.ts`          | Query               | Fetch wallet balance with refetch |
+| `hooks/listings/use-listings.ts`       | Query               | Fetch all listings                |
+| `hooks/listings/use-create-listing.ts` | Mutation            | Create new listing + invalidate   |
+| `hooks/use-clipboard.ts`               | Mutation (×2)       | Copy/paste with named exports     |
+| `hooks/use-websocket.ts`               | Effect              | WebSocket listener with cleanup   |
+| `hooks/use-bitcoin-price.ts`           | Query + Type export | BTC price + currency type         |
