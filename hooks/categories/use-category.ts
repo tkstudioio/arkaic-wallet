@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useCategory(slug: string) {
   return useQuery({
-    queryKey: ["categories", slug],
+    queryKey: ["category", slug],
     queryFn: async (): Promise<Category> => {
       const { data } = await backend.get(`/categories/${slug}`);
       return data;

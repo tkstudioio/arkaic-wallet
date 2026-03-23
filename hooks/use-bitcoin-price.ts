@@ -41,9 +41,9 @@ export type ExchangeRate = {
   symbol: CurrencySymbol;
 };
 
-export default function useBitcoinPrice(symbol: CurrencySymbol) {
+export function useBitcoinPrice(symbol: CurrencySymbol) {
   return useQuery({
-    queryKey: ["bitcoin-price", symbol],
+    queryKey: ["btc-price", symbol],
     refetchInterval: 15 * 60 * 1000, // refetch every 15 minutes
     queryFn: async () => {
       const { data: exchangeRates } = await axios.get<

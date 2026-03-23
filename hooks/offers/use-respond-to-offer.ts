@@ -1,4 +1,5 @@
 import { backend } from "@/lib/api";
+import { OfferAcceptance } from "@/types/backend";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type RespondToOfferParams = {
@@ -16,8 +17,8 @@ export function useRespondToOffer() {
       chatId,
       offerId,
       accepted,
-    }: RespondToOfferParams): Promise<unknown> => {
-      const { data } = await backend.post(
+    }: RespondToOfferParams): Promise<OfferAcceptance> => {
+      const { data } = await backend.post<OfferAcceptance>(
         `/messages/${chatId}/offers/${offerId}/respond`,
         { accepted },
       );

@@ -149,7 +149,7 @@ Client configurato in `app/_layout.tsx`.
 | Balance      | `['balance', accountId]`      |
 | Transactions | `['transactions', accountId]` |
 | VTXOs        | `['vtxos', accountId]`        |
-| BTC Price    | `['btc-price']`               |
+| BTC Price    | `['btc-price', symbol]`       |
 | ASP Info     | `['asp-info', serverUrl]`     |
 | Listing      | `['listing', listingId]`      |
 | Listings     | `['listings']`                |

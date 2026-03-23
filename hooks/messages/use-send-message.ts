@@ -1,5 +1,5 @@
 import { backend } from "@/lib/api";
-
+import { Message } from "@/types/backend";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type SendMessageParams = {
@@ -17,8 +17,8 @@ export function useSendMessage() {
       chatId,
       offeredPrice,
       message,
-    }: SendMessageParams): Promise<unknown> => {
-      const { data } = await backend.post(`/messages/${chatId}`, {
+    }: SendMessageParams): Promise<Message> => {
+      const { data } = await backend.post<Message>(`/messages/${chatId}`, {
         offeredPrice,
         message,
       });
